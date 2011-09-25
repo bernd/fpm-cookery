@@ -87,6 +87,9 @@ See _CAVEATS_ for an incomplete list of missing stuff.
 
 ## Example Recipe
 
+The following is an example recipe. I have some more in my recipe collection
+[over here](https://github.com/bernd/fpm-recipes).
+
 ```ruby
     class Redis < FPM::Cookery::Recipe
       homepage 'http://redis.io'
