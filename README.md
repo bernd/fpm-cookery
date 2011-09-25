@@ -8,7 +8,7 @@ building operating system packages like `.deb` and `.rpm`. But it only helps
 you to create the packages and doesn't help you with actually building the
 software.
 
-*fpm-cookery* provides an infrastructure to automatically build software
+_fpm-cookery_ provides an infrastructure to automatically build software
 based on recipes. It's heavily inspired and borrows code from the great
 [homebrew](https://github.com/mxcl/homebrew) and
 [brew2deb](https://github.com/tmm1/brew2deb) projects.
@@ -16,7 +16,7 @@ The [OpenBSD Ports System](http://www.openbsd.org/faq/ports/index.html) is
 probably another source of inspiration since I've been working with that for
 quite some time
 
-It is using *fpm* to create the actual packages.
+It is using _fpm_ to create the actual packages.
 
 ## Why?
 
@@ -26,27 +26,27 @@ packages. Jordan's [fpm](https://github.com/jordansissel/fpm) removes the
 biggest hurdle by providing a simple command line tool to build packages
 for different operating systems.
 
-Before you can use *fpm* to create the package, you have to build the software,
+Before you can use _fpm_ to create the package, you have to build the software,
 though. In the past I've been using some shell scripts and Makefiles to
 automate this task.
 
 Then I discovered Aman's [brew2deb](https://github.com/tmm1/brew2deb) which is
 actually [homebrew](https://github.com/mxcl/homebrew) with some modifications
-to make it work on Linux. (only Debian/Ubuntu for now) Since *homebrew* was
+to make it work on Linux. (only Debian/Ubuntu for now) Since _homebrew_ was
 designed for Mac OS X, I thought it would be nice to have a "native" Linux
 tool for the job.
 
-*fpm-cookery* is my attempt to build such a tool.
+_fpm-cookery_ is my attempt to build such a tool.
 
 ## Features
 
-* Download of the source archives. (via *curl(1)*)
+* Download of the source archives. (via _curl(1)_)
 * Recipes to describe and execute the software build.
   (e.g. configure, make, make install)
 * Sandboxed builds.
-* Package creation via *fpm*.
+* Package creation via _fpm_.
 * Standalone recipe trees/books/you name it. No need to put the recipes into
-  the *fpm-cookery* source tree.
+  the _fpm-cookery_ source tree.
 
 ## Upcoming Features
 
@@ -76,14 +76,14 @@ Or change into the recipe directory.
     $ fpm-cook clean
     $ fpm-cook
 
-You can run the included test suite with `rake test`. This needs the *rake*
-and *minitest* gems.
+You can run the included test suite with `rake test`. This needs the _rake_
+and _minitest_ gems.
 
 ## Status
 
 It can build the included `recipes/redis/recipe.rb` and
-`recipes/nodejs/recipe.rb` recipes. (both imported from *brew2deb*)
-See *CAVEATS* for an incomplete list of missing stuff.
+`recipes/nodejs/recipe.rb` recipes. (both imported from _brew2deb_)
+See _CAVEATS_ for an incomplete list of missing stuff.
 
 ## Example Recipe
 
@@ -128,7 +128,7 @@ See *CAVEATS* for an incomplete list of missing stuff.
 
 ## CAVEATS
 
-* At the moment, there's only a small subset of the *homebrew* DSL implemented.
+* At the moment, there's only a small subset of the _homebrew_ DSL implemented.
 * No recipe documentation and API documentation yet.
 * No recipe validation yet.
 * No dependency validation yet.
@@ -141,7 +141,7 @@ See *CAVEATS* for an incomplete list of missing stuff.
 
 ## Credits
 
-*fpm-cookery* borrows lots of *ideas* and also *code* from the
+_fpm-cookery_ borrows lots of _ideas_ and also _code_ from the
 [homebrew](https://github.com/mxcl/homebrew) and
 [brew2deb](https://github.com/tmm1/brew2deb) projects. Both projects don't
 have any licensing information included in their repositories. So licensing
