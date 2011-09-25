@@ -44,7 +44,7 @@ module FPM
               :revision, :section, :vendor, :version
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
-                   :patches, :provides, :replaces
+                   :exclude, :patches, :provides, :replaces
 
       def self.source(source_url = nil, options = {})
         return @source if source_url.nil?

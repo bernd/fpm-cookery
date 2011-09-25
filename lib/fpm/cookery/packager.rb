@@ -136,7 +136,7 @@ module FPM
 #            opts += ['--post-uninstall', postrm_file.path]
 #          end
 
-          %w[ depends provides replaces conflicts config_files ].each do |type|
+          %w[ depends exclude provides replaces conflicts config_files ].each do |type|
             if recipe.send(type).any?
               recipe.send(type).each do |dep|
                 opts += ["--#{type.gsub('_','-')}", dep]

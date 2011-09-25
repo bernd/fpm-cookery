@@ -100,6 +100,7 @@ describe "Recipe" do
   spec_recipe_attribute_list(:config_files, %w{one two})
   spec_recipe_attribute_list(:conflicts, %w{one two})
   spec_recipe_attribute_list(:depends, %w{one two})
+  spec_recipe_attribute_list(:exclude, %w{one two})
   spec_recipe_attribute_list(:patches, %w{one two})
   spec_recipe_attribute_list(:provides, %w{one two})
   spec_recipe_attribute_list(:replaces, %w{one two})
