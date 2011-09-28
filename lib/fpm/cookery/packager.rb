@@ -28,7 +28,7 @@ module FPM
 
         recipe.installing = false
 
-        source = recipe.source
+        source = recipe.source_handler
 
         recipe.cachedir.mkdir
         Dir.chdir(recipe.cachedir) do

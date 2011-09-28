@@ -1,4 +1,4 @@
-require 'fpm/cookery/source/types'
+require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
 
@@ -47,9 +47,10 @@ module FPM
                    :exclude, :patches, :provides, :replaces
 
       class << self
-        def source(source_url = nil, options = {})
-          return @source if source_url.nil?
-          @source = Source::Types.new_type_for(source_url, options)
+        def source(source = nil, spec = {})
+          return @source if source.nil?
+          @source = source
+          @spec = spec
         end
         alias_method :url, :source
       end
@@ -60,6 +61,7 @@ module FPM
 
       def initialize(filename)
         @filename = Path.new(filename).expand_path
+        @source_handler = SourceHandler.new(source, spec, cachedir, builddir)
 
         # Set some defaults.
         vendor || self.class.vendor('fpm')
