@@ -36,6 +36,16 @@ describe "Recipe" do
     end
   end
 
+  describe "#source_handler" do
+    it "returns the recipe's source handler" do
+      klass.class_eval do
+        source 'http://example.com/foo-1.0.tar.gz', :foo => 'bar'
+      end
+
+      recipe.source_handler.must_be_instance_of FPM::Cookery::SourceHandler
+    end
+  end
+
   #############################################################################
   # Recipe attributes
   #############################################################################

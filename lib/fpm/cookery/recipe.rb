@@ -66,7 +66,7 @@ module FPM
         revision || self.class.revision(0)
       end
 
-      attr_reader :filename
+      attr_reader :filename, :source_handler
 
       def workdir=(value)  @workdir  = Path.new(value) end
       def destdir=(value)  @destdir  = Path.new(value) end
