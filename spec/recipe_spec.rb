@@ -30,7 +30,7 @@ describe "Recipe" do
     describe "with a relative filename path" do
       it "expands the workdir path" do
         filename = "spec/#{File.basename(__FILE__)}"
-        r = klass.new.tap {|r| r.filename = filename }
+        r = klass.new(filename)
         r.workdir.to_s.must_equal File.dirname(__FILE__)
       end
     end
