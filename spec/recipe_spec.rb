@@ -105,6 +105,26 @@ describe "Recipe" do
   spec_recipe_attribute_list(:provides, %w{one two})
   spec_recipe_attribute_list(:replaces, %w{one two})
 
+  describe ".source" do
+    it "sets a source type" do
+      klass.class_eval do
+        source 'http://example.com/foo-1.0.tar.gz'
+      end
+
+      klass.source.must_be_instance_of FPM::Cookery::SourceType::HTTP
+    end
+  end
+
+  describe ".url" do
+    it "sets a source type (homebrew compat)" do
+      klass.class_eval do
+        url 'http://example.com/foo-1.0.tar.gz'
+      end
+
+      klass.source.must_be_instance_of FPM::Cookery::SourceType::HTTP
+    end
+  end
+
 
   #############################################################################
   # Directories

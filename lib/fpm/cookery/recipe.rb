@@ -46,9 +46,12 @@ module FPM
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces
 
-      def self.source(source_url = nil, options = {})
-        return @source if source_url.nil?
-        @source = Source::Types.new_type_for(source_url, options)
+      class << self
+        def source(source_url = nil, options = {})
+          return @source if source_url.nil?
+          @source = Source::Types.new_type_for(source_url, options)
+        end
+        alias_method :url, :source
       end
 
       def source
