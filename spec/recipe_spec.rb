@@ -105,12 +105,24 @@ describe "Recipe" do
   spec_recipe_attribute_list(:replaces, %w{one two})
 
   describe ".source" do
-    it "sets a source type" do
+    it "sets a source url" do
       klass.class_eval do
         source 'http://example.com/foo-1.0.tar.gz'
       end
 
-      klass.source.must_be_instance_of FPM::Cookery::SourceType::HTTP
+      klass.source.must_equal 'http://example.com/foo-1.0.tar.gz'
+      klass.new(__FILE__).source.must_equal 'http://example.com/foo-1.0.tar.gz'
+    end
+
+    describe "with specs" do
+      it "sets specs" do
+        klass.class_eval do
+          source 'http://example.com/foo-1.0.tar.gz', :foo => 'bar'
+        end
+
+        klass.spec.must_equal({:foo => 'bar'})
+        klass.new(__FILE__).spec.must_equal({:foo => 'bar'})
+      end
     end
   end
 
@@ -120,7 +132,19 @@ describe "Recipe" do
         url 'http://example.com/foo-1.0.tar.gz'
       end
 
-      klass.source.must_be_instance_of FPM::Cookery::SourceType::HTTP
+      klass.source.must_equal 'http://example.com/foo-1.0.tar.gz'
+      klass.new(__FILE__).source.must_equal 'http://example.com/foo-1.0.tar.gz'
+    end
+
+    describe "with specs" do
+      it "sets specs" do
+        klass.class_eval do
+          url 'http://example.com/foo-1.0.tar.gz', :foo => 'bar'
+        end
+
+        klass.spec.must_equal({:foo => 'bar'})
+        klass.new(__FILE__).spec.must_equal({:foo => 'bar'})
+      end
     end
   end
 
