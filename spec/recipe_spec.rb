@@ -60,6 +60,7 @@ describe "Recipe" do
   spec_recipe_attribute(:name, 'redis')
   spec_recipe_attribute(:revision, 12)
   spec_recipe_attribute(:section, 'lang')
+  spec_recipe_attribute(:spec, {:foo => true})
   spec_recipe_attribute(:vendor, 'myvendor')
   spec_recipe_attribute(:version, '1.2')
 

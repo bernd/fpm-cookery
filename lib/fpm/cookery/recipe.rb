@@ -41,7 +41,7 @@ module FPM
       end
 
       attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
-              :revision, :section, :vendor, :version
+              :revision, :section, :spec, :vendor, :version
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces
