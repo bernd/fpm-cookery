@@ -5,3 +5,5 @@ Rake::TestTask.new do |t|
   t.libs << 'spec'
   t.verbose = false
 end
+
+task :default => :test
