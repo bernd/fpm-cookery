@@ -58,17 +58,15 @@ module FPM
         self.class.source
       end
 
-      def initialize
+      def initialize(filename)
+        @filename = Path.new(filename).expand_path
+
         # Set some defaults.
         vendor || self.class.vendor('fpm')
         revision || self.class.revision(0)
       end
 
       attr_reader :filename
-
-      def filename=(value)
-        @filename = Path.new(value).expand_path
-      end
 
       def workdir=(value)  @workdir  = Path.new(value) end
       def destdir=(value)  @destdir  = Path.new(value) end

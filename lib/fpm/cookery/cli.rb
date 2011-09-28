@@ -20,10 +20,7 @@ module FPM
 
         FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
 
-        FPM::Cookery::Book.load(filename) do |recipe_class|
-          recipe = recipe_class.new
-          recipe.filename = filename
-
+        FPM::Cookery::Book.load_recipe(filename) do |recipe|
           packager = FPM::Cookery::Packager.new(recipe)
 
           if @argv.include?('clean')

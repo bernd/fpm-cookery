@@ -15,9 +15,7 @@ describe "Recipe" do
   end
 
   let(:recipe) do
-    klass.new.tap do |r|
-      r.filename = __FILE__
-    end
+    klass.new(__FILE__)
   end
 
   it "sets the filename" do
