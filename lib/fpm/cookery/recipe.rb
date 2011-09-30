@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
@@ -5,6 +6,7 @@ require 'fpm/cookery/path_helper'
 module FPM
   module Cookery
     class Recipe
+      include FileUtils
       include FPM::Cookery::Utils
       include FPM::Cookery::PathHelper
 
