@@ -10,8 +10,8 @@ module FPM
       end
 
       # Most of the path helper stuff comes from brew2deb and homebrew.
-      def prefix
-        current_pathname_for('usr')
+      def prefix(path = nil)
+        current_pathname_for('usr')/path
       end
 
       def etc(path = nil)
