@@ -19,5 +19,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "fpm"
+  s.add_development_dependency "minitest"
   s.add_runtime_dependency "fpm"
 end
