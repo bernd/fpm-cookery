@@ -64,21 +64,18 @@ __fpm-cookery__ is my attempt to build such a tool.
 
 ## Getting Started
 
-Since there is no gem available yet, you have to clone the repository to
-your local machine and run the following to build a recipe.
+__fpm-cookery__ is available as a gem.
 
-    $ ruby bin/fpm-cook recipes/redis/recipe.rb clean
-    $ ruby bin/fpm-cook recipes/redis/recipe.rb
+	$ gem install fpm-cookery
 
-Or change into the recipe directory.
+Create a recipe directory or change into an existing recipe tree.
 
-    $ export PATH="$PWD/bin:$PATH"
     $ cd recipes/redis
     $ fpm-cook clean
     $ fpm-cook
 
-You can run the included test suite with `rake test`. This needs the __rake__
-and __minitest__ gems.
+You can install the development dependencies with `bundle install` and run
+the included test suite with `rake test`.
 
 ## Status
 
