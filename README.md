@@ -137,7 +137,6 @@ The following is an example recipe. I have some more in my recipe collection
 * No support for patches yet.
 * Only simple source/url types (via curl) for now.
 * No real logging output yet.
-* No gem on rubygems.org yet.
 * Pretty new and not well tested.
 
 ## Credits
