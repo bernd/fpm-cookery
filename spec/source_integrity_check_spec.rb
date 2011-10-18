@@ -18,6 +18,36 @@ describe "SourceIntegrityCheck" do
     end
   end
 
+  describe "without any checksum defined" do
+    describe "#error?" do
+      it "returns true" do
+        check.error?.must_equal true
+      end
+    end
+
+    describe "#checksum_missing?" do
+      it "returns true" do
+        check.checksum_missing?.must_equal true
+      end
+    end
+
+    it "has checksum_expected set to nil" do
+      check.checksum_expected.must_equal nil
+    end
+
+    it "has checksum_actual set to nil" do
+      check.checksum_actual.must_equal nil
+    end
+
+    it "has filename set" do
+      check.filename.must_equal fixture_path('test-source-1.0.tar.gz')
+    end
+
+    it "has digest set to nil" do
+      check.digest.must_equal nil
+    end
+  end
+
   describe "with a correct sha256 checksum defined" do
     describe "#error?" do
       it "returns false" do

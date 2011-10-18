@@ -19,14 +19,21 @@ module FPM
         @error
       end
 
+      def checksum_missing?
+        checksum_expected.nil?
+      end
+
       private
       def verify!
         digest, checksum = get_checksum
-        build_checksum(digest)
 
         @digest = digest
         @checksum_expected = checksum
         @checksum_actual = build_checksum(digest)
+
+        unless digest
+          @error = true
+        end
 
         if @checksum_expected.to_s != @checksum_actual.to_s
           @error = true
@@ -41,9 +48,13 @@ module FPM
         end
 
         [type, @recipe.send(type)]
+      rescue TypeError
+        [nil, nil]
       end
 
       def build_checksum(type)
+        return unless type
+
         digest = Digest.const_get(type.to_s.upcase).new
 
         File.open(@recipe.local_path, 'r') do |file|
