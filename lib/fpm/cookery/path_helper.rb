@@ -23,7 +23,7 @@ module FPM
       end
 
       def bin(path = nil)     prefix/'bin'/path            end
-      def doc(path = nil)     prefix/'share/doc'/path/name end
+      def doc(path = nil)     prefix/'share/doc'/path      end
       def include(path = nil) prefix/'include'/path        end
       def info(path = nil)    prefix/'share/info'/path     end
       def lib(path = nil)     prefix/'lib'/path            end
