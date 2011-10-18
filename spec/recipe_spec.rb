@@ -66,6 +66,8 @@ describe "Recipe" do
   spec_recipe_attribute(:description, 'A nice program.')
   spec_recipe_attribute(:homepage, 'http://example.com')
   spec_recipe_attribute(:maintainer, 'John Doe <john@example.com>')
+  spec_recipe_attribute(:sha256, '123456789abcdef')
+  spec_recipe_attribute(:sha1, '123456789abcdef')
   spec_recipe_attribute(:md5, '123456789abcdef')
   spec_recipe_attribute(:name, 'redis')
   spec_recipe_attribute(:revision, 12)
