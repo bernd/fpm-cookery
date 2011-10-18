@@ -10,6 +10,24 @@ describe "PathHelper" do
 
   let(:helper) { PathTest.new }
 
+  describe "#installing?" do
+    context "with installing set to true" do
+      before { helper.installing = true}
+
+      it "returns true" do
+        helper.installing?.must_equal true
+      end
+    end
+
+    context "with installing set to false" do
+      before { helper.installing = false }
+
+      it "returns true" do
+        helper.installing?.must_equal false
+      end
+    end
+  end
+
   describe "#with_trueprefix" do
     context "with installing set to true" do
       before { helper.installing = true }
