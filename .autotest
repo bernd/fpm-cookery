@@ -1,0 +1,21 @@
+require 'autotest/restart'
+
+Autotest.add_hook :initialize do |at|
+  at.testlib = 'minitest/autorun'
+  at.order = :natural
+  at.libs = '.:lib:spec'
+
+  at.clear_mappings
+
+  at.add_mapping(%r{^spec/.*_spec\.rb$}) do |filename, _|
+    filename
+  end
+
+  at.add_mapping(%r{^lib/(.*)\.rb$}) do |_, m|
+    ["spec/#{m[1].gsub('fpm/cookery/', '')}_spec.rb"]
+  end
+
+  at.add_mapping(%r{^spec/spec_helper\.rb$}) do
+    at.files_matching %r{^spec/.*_spec\.rb$}
+  end
+end
