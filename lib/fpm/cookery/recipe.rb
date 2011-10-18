@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'fileutils'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
@@ -71,6 +72,9 @@ module FPM
       end
 
       attr_reader :filename, :source_handler
+
+      extend Forwardable
+      def_delegator :@source_handler, :local_path
 
       def workdir=(value)  @workdir  = Path.new(value) end
       def destdir=(value)  @destdir  = Path.new(value) end

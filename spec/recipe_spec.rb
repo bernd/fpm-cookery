@@ -158,6 +158,16 @@ describe "Recipe" do
     end
   end
 
+  describe "#local_path" do
+    it "returns the path to the local source file" do
+      klass.class_eval do
+        source 'http://example.com/foo-1.0.tar.gz'
+      end
+
+      File.basename(klass.new(__FILE__).local_path.to_s).must_equal 'foo-1.0.tar.gz'
+    end
+  end
+
 
   #############################################################################
   # Directories
