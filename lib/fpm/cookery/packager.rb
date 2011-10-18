@@ -121,7 +121,7 @@ Filename:          #{check.filename}
             '-t', 'deb',
             '-s', 'dir',
             '--url', recipe.homepage || recipe.url,
-            '-C', recipe.destdir,
+            '-C', recipe.destdir.to_s,
             '--maintainer', maintainer,
             '--category', recipe.section || 'optional',
           ]
