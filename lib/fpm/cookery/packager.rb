@@ -2,6 +2,7 @@
 #require 'fpm/cookery/recipe_inspector'
 #require 'fpm/cookery/dependency_inspector'
 require 'fpm/cookery/utils'
+require 'fpm/cookery/source_integrity_check'
 
 module FPM
   module Cookery
@@ -34,11 +35,27 @@ module FPM
         Dir.chdir(recipe.cachedir) do
           source.fetch
 
-          #check = Source::IntegrityCheck.new(source.filename, recipe.md5, Digest::MD5)
-
-          #if check.error?
-            # check.actual, check.expected, check.filename, check.digest
-          #end
+          SourceIntegrityCheck.new(recipe).tap do |check|
+            if check.checksum_missing?
+              STDERR.puts <<-__WARN
+WARNING: Recipe does not provide a checksum. (sha256, sha1 or md5)
+------------------------------------------------------------------
+Digest:   #{check.digest}
+Checksum: #{check.checksum_actual}
+Filename: #{check.filename}
+              __WARN
+            elsif check.error?
+              STDERR.puts <<-__ERROR
+ERROR: Integrity check failed!
+------------------------------
+Digest:            #{check.digest}
+Checksum expected: #{check.checksum_expected}
+Checksum actual:   #{check.checksum_actual}
+Filename:          #{check.filename}
+              __ERROR
+              exit 1
+            end
+          end
         end
 
         recipe.builddir.mkdir
