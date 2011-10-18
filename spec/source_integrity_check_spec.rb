@@ -35,8 +35,8 @@ describe "SourceIntegrityCheck" do
       check.checksum_expected.must_equal nil
     end
 
-    it "has checksum_actual set to nil" do
-      check.checksum_actual.must_equal nil
+    it "has checksum_actual set to the sha256 checksum" do
+      check.checksum_actual.must_equal '285a6b8098ecc9040ece8f621e37c20edba39545c5d195c4894f410ed9d44b22'
     end
 
     it "has filename set" do
@@ -44,7 +44,7 @@ describe "SourceIntegrityCheck" do
     end
 
     it "has digest set to nil" do
-      check.digest.must_equal nil
+      check.digest.must_equal :sha256
     end
   end
 

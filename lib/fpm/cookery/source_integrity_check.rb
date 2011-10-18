@@ -33,6 +33,8 @@ module FPM
 
         unless digest
           @error = true
+          @digest = :sha256
+          @checksum_actual = build_checksum(@digest)
         end
 
         if @checksum_expected.to_s != @checksum_actual.to_s
