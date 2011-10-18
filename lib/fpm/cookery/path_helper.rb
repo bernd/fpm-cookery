@@ -40,6 +40,21 @@ module FPM
       def sbin(path = nil)    prefix/'sbin'/path           end
       def share(path = nil)   prefix/'share'/path          end
 
+      # Return real paths for the scope of the given block.
+      #
+      # prefix('usr') # => /../software/tmp-dest/usr
+      #
+      # with_trueprefix do
+      #   prefix('usr') # => /usr
+      # end
+      def with_trueprefix
+        old_value = installing
+        self.installing = false
+        yield
+      ensure
+        self.installing = old_value
+      end
+
       private
       def current_pathname_for(dir)
         installing? ? destdir/dir : Path.new("/#{dir}")
