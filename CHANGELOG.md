@@ -1,4 +1,4 @@
-# v0.2.0 (xxxx-xx-xx)
+# v0.2.0 (2011-10-22)
 * Add flag for package target. (deb, rpm) (jordansissel)
 * Improve recipe detection. (jordansissel)
 
