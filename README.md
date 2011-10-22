@@ -55,7 +55,6 @@ __fpm-cookery__ is my attempt to build such a tool.
 * Recipe validation.
 * More source types. (git, svn, ...)
 * Progress output and logging.
-* Make package output type configurable. (deb, rpm)
 * Extend recipe features and build/install helpers.
 * Configuration file. (for stuff like vendor and maintainer)
 * Options for the `fpm-cook` command.
