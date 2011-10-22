@@ -1,3 +1,7 @@
+# v0.2.0 (xxxx-xx-xx)
+* Add flag for package target. (deb, rpm) (jordansissel)
+* Improve recipe detection. (jordansissel)
+
 # v0.1.0 (2011-10-18)
 * Add `with_trueprefix` path helper.
 * Add and enable source integrity check.
