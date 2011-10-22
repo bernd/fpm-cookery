@@ -4,4 +4,4 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'fpm/cookery/cli'
 
-FPM::Cookery::CLI.new(ARGV).run
+FPM::Cookery::CLI.new.args(ARGV).run

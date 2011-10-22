@@ -16,7 +16,14 @@ module FPM
         @config = config
       end
 
+      def target=(target)
+        # TODO(sissel): do sanity checking
+        @target = target
+      end
+
       def cleanup
+        # TODO(sissel): do some sanity checking to make sure we don't
+        # accidentally rm -rf the wrong thing.
         FileUtils.rm_rf(recipe.builddir)
         FileUtils.rm_rf(recipe.destdir)
       end
@@ -115,10 +122,12 @@ Filename:          #{check.filename}
             "#{username} <#{useremail}>"
           end
 
+          # TODO(sissel): This should use an API in fpm. fpm doesn't have this
+          # yet.  fpm needs this.
           opts = [
             '-n', recipe.name,
             '-v', version,
-            '-t', 'deb',
+            '-t', @target,
             '-s', 'dir',
             '--url', recipe.homepage || recipe.url,
             '-C', recipe.destdir.to_s,
