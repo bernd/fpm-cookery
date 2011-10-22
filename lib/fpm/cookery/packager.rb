@@ -75,7 +75,7 @@ Filename:          #{check.filename}
             build_cookie = build_cookie_name("#{recipe.name}-#{recipe.version}")
 
             if File.exists?(build_cookie)
-              STDERR.puts 'Skipping build (`cook clean` to rebuild)'
+              STDERR.puts 'Skipping build (`fpm-cook clean` to rebuild)'
             else
               recipe.build and FileUtils.touch(build_cookie)
             end
