@@ -169,21 +169,6 @@ Filename:          #{check.filename}
             end
           end
 
-#          if self.postinst
-#            postinst_file = Tempfile.open('postinst')
-#            postinst_file.puts(postinst)
-#            chmod 0755, postinst_file.path
-#            postinst_file.close
-#            opts += ['--post-install', postinst_file.path]
-#          end
-#          if self.postrm
-#            postrm_file = Tempfile.open('postrm')
-#            postrm_file.puts(postrm)
-#            chmod 0755, postrm_file.path
-#            postrm_file.close
-#            opts += ['--post-uninstall', postrm_file.path]
-#          end
-
           %w[ depends exclude provides replaces conflicts config_files ].each do |type|
             if recipe.send(type).any?
               recipe.send(type).each do |dep|
