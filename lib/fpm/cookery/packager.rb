@@ -155,8 +155,8 @@ Filename:          #{check.filename}
             '--architecture', recipe.arch.to_s
           ] if recipe.arch
 
-          script_map = {"preinst" => "--pre-install", "postinst" => "--post-install", "preun" => "--pre-uninstall", "postun" => "--post-uninstall"}
-          %w[preinst postinst preun postun].each do |script|
+          script_map = {"pre_install" => "--pre-install", "post_install" => "--post-install", "pre_uninstall" => "--pre-uninstall", "post_uninstall" => "--post-uninstall"}
+          %w[pre_install post_install pre_uninstall post_uninstall].each do |script|
             unless recipe.send(script).nil?
               script_file = File.expand_path("../#{recipe.send(script)}", recipe.filename)
 

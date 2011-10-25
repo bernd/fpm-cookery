@@ -45,7 +45,7 @@ module FPM
 
       attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
               :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
-              :preinst, :postinst, :preun, :postun
+              :pre_install, :post_install, :pre_uninstall, :post_uninstall
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces
