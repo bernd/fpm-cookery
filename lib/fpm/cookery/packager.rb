@@ -113,7 +113,15 @@ Filename:          #{check.filename}
           # Build a version including vendor and revision.
           vendor = config[:vendor] || recipe.vendor
           vendor_rev = "#{vendor}#{recipe.revision}"
-          version = [ver, vendor_rev].join('+')
+          case @target
+          when "deb"
+            vendor_delimiter = "+"
+          when "rpm"
+            vendor_delimiter = "."
+          else
+            vendor_delimiter = "-"
+          end
+          version = [ver, vendor_rev].join(vendor_delimiter)
 
           maintainer = recipe.maintainer || begin
             username = `git config --get user.name`.strip
