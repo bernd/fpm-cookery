@@ -75,6 +75,10 @@ describe "Recipe" do
   spec_recipe_attribute(:spec, {:foo => true})
   spec_recipe_attribute(:vendor, 'myvendor')
   spec_recipe_attribute(:version, '1.2')
+  spec_recipe_attribute(:preinst, 'preinstall')
+  spec_recipe_attribute(:postinst, 'postinstall')
+  spec_recipe_attribute(:preun, 'preuninstall')
+  spec_recipe_attribute(:postun, 'postuninstall')
 
   describe "#revision" do
     it "sets a default revision" do

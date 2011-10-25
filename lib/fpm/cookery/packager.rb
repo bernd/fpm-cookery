@@ -147,6 +147,19 @@ Filename:          #{check.filename}
             '--architecture', recipe.arch.to_s
           ] if recipe.arch
 
+          script_map = {"preinst" => "--pre-install", "postinst" => "--post-install", "preun" => "--pre-uninstall", "postun" => "--post-uninstall"}
+          %w[preinst postinst preun postun].each do |script|
+            unless recipe.send(script).nil?
+              s = recipe.send(script)
+              if File.exists?("../#{s}")
+                p_opt = script_map[script]
+                opts += ["#{p_opt}", "../#{s}"]
+              else
+                raise "#{script} script '#{s}' is missing"
+              end
+            end
+          end
+
 #          if self.postinst
 #            postinst_file = Tempfile.open('postinst')
 #            postinst_file.puts(postinst)
