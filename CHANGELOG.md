@@ -1,3 +1,7 @@
+# v0.3.0 (2011-10-25)
+* Select vendor string delimiter based on the package target. (lusis)
+* Add pre/post install/uninstall script support. (lusis)
+
 # v0.2.0 (2011-10-22)
 * Add flag for package target. (deb, rpm) (jordansissel)
 * Improve recipe detection. (jordansissel)
