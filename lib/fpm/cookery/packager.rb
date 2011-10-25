@@ -158,12 +158,13 @@ Filename:          #{check.filename}
           script_map = {"preinst" => "--pre-install", "postinst" => "--post-install", "preun" => "--pre-uninstall", "postun" => "--post-uninstall"}
           %w[preinst postinst preun postun].each do |script|
             unless recipe.send(script).nil?
-              s = recipe.send(script)
-              if File.exists?("../#{s}")
+              script_file = File.expand_path("../#{recipe.send(script)}", recipe.filename)
+
+              if File.exists?(script_file)
                 p_opt = script_map[script]
-                opts += ["#{p_opt}", "../#{s}"]
+                opts += ["#{p_opt}", script_file]
               else
-                raise "#{script} script '#{s}' is missing"
+                raise "#{script} script '#{script_file}' is missing"
               end
             end
           end
