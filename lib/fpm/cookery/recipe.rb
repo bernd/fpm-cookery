@@ -1,5 +1,6 @@
 require 'forwardable'
 require 'fileutils'
+require 'facter'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
@@ -23,6 +24,11 @@ module FPM
             end
           }
         end
+      end
+
+      def self.platforms(valid_platforms, &blk)
+        p = []
+        p.push(valid_platforms).flatten.member?(self.platform) ? (yield if block_given?) : false
       end
 
       def self.attr_rw_list(*attrs)
@@ -55,6 +61,10 @@ module FPM
           return @source if source.nil?
           @source = source
           @spec = spec
+        end
+
+        def platform
+          Facter.fact(:operatingsystem).value.downcase.to_sym
         end
         alias_method :url, :source
       end
