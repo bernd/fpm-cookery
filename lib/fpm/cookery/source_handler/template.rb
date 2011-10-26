@@ -6,13 +6,14 @@ module FPM
       class Template
         include FPM::Cookery::Utils
 
-        attr_reader :url, :options, :cachedir, :builddir
+        attr_reader :url, :options, :cachedir, :builddir, :has_checksum
 
         def initialize(source_url, options, cachedir, builddir)
           @url = source_url
           @options = options
           @cachedir = cachedir
           @builddir = builddir
+          @has_checksum = true
         end
 
         def fetch
@@ -21,6 +22,10 @@ module FPM
 
         def extract
           raise "#{self}#extract not implemented!"
+        end
+
+        def checksum?
+          @has_checksum
         end
 
         def local_path
