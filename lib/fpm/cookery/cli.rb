@@ -74,9 +74,9 @@ module FPM
 
         # Override the detected platform.
         if @platform
-          FPM::Cookery::Facts.operatingsystem = @platform
+          FPM::Cookery::Facts.platform = @platform
         end
-        puts "Platform: #{FPM::Cookery::Facts.operatingsystem}"
+        puts "Platform: #{FPM::Cookery::Facts.platform}"
       end
 
       def run
