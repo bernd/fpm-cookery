@@ -26,9 +26,8 @@ module FPM
         end
       end
 
-      def self.platforms(valid_platforms, &blk)
-        p = []
-        p.push(valid_platforms).flatten.member?(self.platform) ? (yield if block_given?) : false
+      def self.platforms(valid_platforms)
+        Array(valid_platforms).member?(self.platform) and block_given? ? yield : false
       end
 
       def self.attr_rw_list(*attrs)
