@@ -18,7 +18,7 @@ describe "Facts" do
     end
 
     it "can be set" do
-      FPM::Cookery::Facts.platform = :foo
+      FPM::Cookery::Facts.platform = 'foo'
       FPM::Cookery::Facts.platform.must_equal :foo
     end
   end
