@@ -5,15 +5,17 @@ module FPM
     class SourceHandler
       class Svn < FPM::Cookery::SourceHandler::Template
 
+        CHECKSUM = false
+        NAME = :svn
+
         # TODO(lusis)
         # make vcs revision an attribute that gets passed in?
         # How best to do that universally?
         def fetch
           # TODO(lusis) - implement some caching using 'svn info'?
           Dir.chdir(cachedir) do
-            svn(url, local_path)
+            svn(url, local_path, @options[:revision])
           end
-          @has_checksum = false
         end
 
         def extract
@@ -24,22 +26,8 @@ module FPM
         end
 
         private
-        def svn(url, path)
-          real_url, revision = parse_url(url)
+        def svn(url, path, revision="HEAD")
           safesystem('svn', 'export', '--force', '-q', '-r', revision, real_url, path)
-        end
-
-        def parse_url(url)
-          # This makes some pretty bold assumption.
-          # urls for repos will NOT have any query strings other than the single revision
-          # Totally need to fix this
-          require 'uri'
-          u = URI.parse(url)
-          if u.query.nil?
-            [url, 'HEAD']
-          else
-            [url.chomp("?#{u.query}"), u.query]
-          end
         end
 
         def extracted_source

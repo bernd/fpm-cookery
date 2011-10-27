@@ -50,8 +50,7 @@ module FPM
 
       attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
               :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
-              :pre_install, :post_install, :pre_uninstall, :post_uninstall,
-              :handler
+              :pre_install, :post_install, :pre_uninstall, :post_uninstall
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces
@@ -59,6 +58,8 @@ module FPM
       class << self
         def source(source = nil, spec = {})
           return @source if source.nil?
+          spec[:with] ||= :curl
+          puts spec
           @source = source
           @spec = spec
         end
@@ -74,9 +75,8 @@ module FPM
       end
 
       def initialize(filename)
-        handler || self.class.handler(:curl)
         @filename = Path.new(filename).expand_path
-        @source_handler = SourceHandler.new(source, spec, cachedir, builddir, handler)
+        @source_handler = SourceHandler.new(source, spec, cachedir, builddir)
 
         # Set some defaults.
         vendor || self.class.vendor('fpm')

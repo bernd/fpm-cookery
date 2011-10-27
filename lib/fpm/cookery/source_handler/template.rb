@@ -6,14 +6,18 @@ module FPM
       class Template
         include FPM::Cookery::Utils
 
-        attr_reader :url, :options, :cachedir, :builddir, :has_checksum
+        NAME = :template
+        CHECKSUM = true
+
+        attr_reader :url, :options, :cachedir, :builddir, :has_checksum, :name
 
         def initialize(source_url, options, cachedir, builddir)
           @url = source_url
           @options = options
           @cachedir = cachedir
           @builddir = builddir
-          @has_checksum = true
+          @has_checksum = self.class::CHECKSUM
+          @name = self.class::NAME
         end
 
         def fetch

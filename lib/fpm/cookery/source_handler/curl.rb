@@ -4,6 +4,10 @@ module FPM
   module Cookery
     class SourceHandler
       class Curl < FPM::Cookery::SourceHandler::Template
+
+        NAME = :curl
+        CHECKSUM = true
+
         def fetch
           unless local_path.exist?
             Dir.chdir(cachedir) do
