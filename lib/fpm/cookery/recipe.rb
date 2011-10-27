@@ -1,6 +1,6 @@
 require 'forwardable'
 require 'fileutils'
-require 'facter'
+require 'fpm/cookery/facts'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
@@ -65,7 +65,7 @@ module FPM
         alias_method :url, :source
 
         def platform
-          Facter.fact(:operatingsystem).value.downcase.to_sym
+          FPM::Cookery::Facts.operatingsystem
         end
       end
 
