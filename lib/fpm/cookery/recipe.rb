@@ -64,7 +64,7 @@ module FPM
         alias_method :url, :source
 
         def platform
-          FPM::Cookery::Facts.operatingsystem
+          FPM::Cookery::Facts.platform
         end
       end
 

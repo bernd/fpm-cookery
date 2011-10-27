@@ -3,7 +3,7 @@ require 'ostruct'
 require 'fpm/cookery/facts'
 
 describe "Facts" do
-  describe "operatingsystem" do
+  describe "platform" do
     before do
       Facter.class_eval do
         def self.fact(v)
@@ -14,12 +14,12 @@ describe "Facts" do
     end
 
     it "is using Facter to autodetect the platform" do
-      FPM::Cookery::Facts.operatingsystem.must_equal :centos
+      FPM::Cookery::Facts.platform.must_equal :centos
     end
 
     it "can be set" do
-      FPM::Cookery::Facts.operatingsystem = :foo
-      FPM::Cookery::Facts.operatingsystem.must_equal :foo
+      FPM::Cookery::Facts.platform = :foo
+      FPM::Cookery::Facts.platform.must_equal :foo
     end
   end
 end

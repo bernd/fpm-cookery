@@ -3,12 +3,12 @@ require 'facter'
 module FPM
   module Cookery
     class Facts
-      def self.operatingsystem
-        @operatingsystem ||= Facter.fact(:operatingsystem).value.downcase.to_sym
+      def self.platform
+        @platform ||= Facter.fact(:operatingsystem).value.downcase.to_sym
       end
 
-      def self.operatingsystem=(value)
-        @operatingsystem = value
+      def self.platform=(value)
+        @platform= value
       end
 
       def self.reset!
