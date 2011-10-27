@@ -7,7 +7,7 @@ describe "Facts" do
     before do
       Facter.class_eval do
         def self.fact(v)
-          v == :operatingsystem ? OpenStruct.new(:value => :centos) : nil
+          v == :operatingsystem ? OpenStruct.new(:value => 'CentOS') : nil
         end
       end
       FPM::Cookery::Facts.reset!
