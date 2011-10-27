@@ -21,6 +21,11 @@ module FPM
           @target = o
         end
 
+        options.on("-p PLATFORM", "--platform PLATFORM",
+                  "Set the target platform. (centos, ubuntu, debian)") do |o|
+          @platform = o
+        end
+
         # Parse flags and such, remainder is all non-option args.
         remainder = options.parse(argv)
 
@@ -66,6 +71,12 @@ module FPM
           @actions = ["package"]
           puts "No actions given, assuming 'package'"
         end
+
+        # Override the detected platform.
+        if @platform
+          FPM::Cookery::Facts.operatingsystem = @platform
+        end
+        puts "Platform: #{FPM::Cookery::Facts.operatingsystem}"
       end
 
       def run
