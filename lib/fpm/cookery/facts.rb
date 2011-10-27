@@ -8,7 +8,18 @@ module FPM
       end
 
       def self.platform=(value)
-        @platform = value.to_sym
+        @platform = value.downcase.to_sym
+      end
+
+      def self.target
+        @target ||= case platform
+                    when :centos, :redhat, :fedora then :rpm
+                    when :debian, :ubuntu          then :deb
+                    end
+      end
+
+      def self.target=(value)
+        @target = value.to_sym
       end
 
       def self.reset!
