@@ -174,6 +174,56 @@ describe "Recipe" do
     end
   end
 
+  describe ".platforms" do
+    describe "with a list of platforms" do
+      it "allows platform specific settings" do
+        klass.class_eval do
+          def self.platform; :ubuntu; end
+
+          vendor 'a'
+
+          platforms [:centos, :ubuntu] do
+            vendor 'b'
+          end
+        end
+
+        klass.new(__FILE__).vendor.must_equal 'b'
+      end
+    end
+
+    describe "with a single platform" do
+      it "allows platform specific settings" do
+        klass.class_eval do
+          def self.platform; :ubuntu; end
+
+          vendor 'a'
+
+          platforms :ubuntu do
+            vendor 'b'
+          end
+        end
+
+        klass.new(__FILE__).vendor.must_equal 'b'
+      end
+    end
+
+    describe "without a matching platform" do
+      it "does not set platform specific stuff" do
+        klass.class_eval do
+          def self.platform; :centos; end
+
+          vendor 'a'
+
+          platforms :ubuntu do
+            vendor 'b'
+          end
+        end
+
+        klass.new(__FILE__).vendor.must_equal 'a'
+      end
+    end
+  end
+
 
   #############################################################################
   # Directories
