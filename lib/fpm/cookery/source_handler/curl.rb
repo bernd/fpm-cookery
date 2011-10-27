@@ -18,6 +18,8 @@ module FPM
             case local_path.extname
             when '.bz2', '.gz', '.tgz'
               safesystem('tar', 'xf', local_path)
+            when '.zip'
+              safesystem('unzip', '-d', local_path.basename('.zip'), local_path)
             end
           end
           extracted_source
