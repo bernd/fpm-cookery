@@ -60,12 +60,6 @@ module FPM
           exit 1
         end
 
-        if @target.nil?
-          # TODO(sissel): Detect platform, try to guess @target?
-          @target = "deb"
-          puts "No --target given, assuming #{@target}"
-        end
-
         # Default action is "package"
         if @actions.empty?
           @actions = ["package"]
@@ -76,7 +70,18 @@ module FPM
         if @platform
           FPM::Cookery::Facts.platform = @platform
         end
+
+        if @target
+          FPM::Cookery::Facts.target = @target
+        end
+
+        if FPM::Cookery::Facts.target.nil?
+          STDERR.puts "No target given and we're unable to detect your platform"
+          exit 1
+        end
+
         puts "Platform: #{FPM::Cookery::Facts.platform}"
+        puts "Target:   #{FPM::Cookery::Facts.target}"
       end
 
       def run
@@ -86,7 +91,7 @@ module FPM
 
         FPM::Cookery::Book.load_recipe(@filename) do |recipe|
           packager = FPM::Cookery::Packager.new(recipe)
-          packager.target = @target
+          packager.target = FPM::Cookery::Facts.target.to_s
 
           @actions.each do |action|
             case action
