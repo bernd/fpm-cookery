@@ -63,11 +63,11 @@ module FPM
           @source = source
           @spec = spec
         end
+        alias_method :url, :source
 
         def platform
           Facter.fact(:operatingsystem).value.downcase.to_sym
         end
-        alias_method :url, :source
       end
 
       def source
