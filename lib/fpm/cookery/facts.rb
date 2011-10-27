@@ -8,7 +8,7 @@ module FPM
       end
 
       def self.platform=(value)
-        @platform= value
+        @platform = value.to_sym
       end
 
       def self.reset!
