@@ -1,3 +1,11 @@
+# v0.4.0 (2011-10-28)
+* Add svn source handler. (lusis)
+* Framework for alternate source handlers. (lusis)
+* Add .zip support to the curl source handler.
+* Detect package target based on the platform.
+* Allow platform specific options. (like dependencies) (lusis)
+* Add platform (operating system) detection. (lusis)
+
 # v0.3.0 (2011-10-25)
 * Select vendor string delimiter based on the package target. (lusis)
 * Add pre/post install/uninstall script support. (lusis)
