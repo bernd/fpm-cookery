@@ -58,8 +58,6 @@ module FPM
       class << self
         def source(source = nil, spec = {})
           return @source if source.nil?
-          spec[:with] ||= :curl
-          puts spec
           @source = source
           @spec = spec
         end

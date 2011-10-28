@@ -8,14 +8,12 @@ module FPM
         CHECKSUM = false
         NAME = :svn
 
-        # TODO(lusis)
-        # make vcs revision an attribute that gets passed in?
-        # How best to do that universally?
         def fetch
           # TODO(lusis) - implement some caching using 'svn info'?
           Dir.chdir(cachedir) do
-            svn(url, local_path, @options[:revision])
+            svn(url, local_path)
           end
+          local_path
         end
 
         def extract
@@ -26,8 +24,9 @@ module FPM
         end
 
         private
-        def svn(url, path, revision="HEAD")
-          safesystem('svn', 'export', '--force', '-q', '-r', revision, real_url, path)
+        def svn(url, path)
+          @options.has_key?(:revision) ? revision=@options[:revision] : revision='HEAD'
+          safesystem('svn', 'export', '--force', '-q', '-r', revision, url, path)
         end
 
         def extracted_source
