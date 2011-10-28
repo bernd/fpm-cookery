@@ -1,10 +1,13 @@
 class Redis < FPM::Cookery::Recipe
   homepage 'http://redis.io'
-  source   'http://redis.googlecode.com/files/redis-2.2.5.tar.gz'
-  md5      'fe6395bbd2cadc45f4f20f6bbe05ed09'
+  # different source methods
+  #source   'https://github.com/antirez/redis/trunk', :with => :svn
+  #source   'https://github.com/antirez/redis/trunk', :with => :svn, :revision => '2400'
+  source    'http://redis.googlecode.com/files/redis-2.4.2.tar.gz'
+  md5      'c4b0b5e4953a11a503cb54cf6b09670e'
 
   name     'redis-server'
-  version  '2.2.5'
+  version  '2.4.2'
 #  revision '0' # => redis-server-2.2.5+fpm1
 
   description 'An advanced key-value store.'
