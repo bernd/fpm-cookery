@@ -3,35 +3,30 @@ require 'fpm/cookery/source_handler/template'
 module FPM
   module Cookery
     class SourceHandler
-      class Curl < FPM::Cookery::SourceHandler::Template
+      class Svn < FPM::Cookery::SourceHandler::Template
 
-        NAME = :curl
-        CHECKSUM = true
+        CHECKSUM = false
+        NAME = :svn
 
         def fetch
-          unless local_path.exist?
-            Dir.chdir(cachedir) do
-              curl(url, local_path) unless local_path.exist?
-            end
+          # TODO(lusis) - implement some caching using 'svn info'?
+          Dir.chdir(cachedir) do
+            svn(url, local_path)
           end
           local_path
         end
 
         def extract
           Dir.chdir(builddir) do
-            case local_path.extname
-            when '.bz2', '.gz', '.tgz'
-              safesystem('tar', 'xf', local_path)
-            when '.zip'
-              safesystem('unzip', '-d', local_path.basename('.zip'), local_path)
-            end
+            safesystem('cp', '-Rp', local_path, '.')
           end
           extracted_source
         end
 
         private
-        def curl(url, path)
-          safesystem('curl', '-fL', '--progress-bar', '-o', path, url)
+        def svn(url, path)
+          @options.has_key?(:revision) ? revision=@options[:revision] : revision='HEAD'
+          safesystem('svn', 'export', '--force', '-q', '-r', revision, url, path)
         end
 
         def extracted_source
@@ -39,7 +34,7 @@ module FPM
 
           case entries.size
           when 0
-            raise "Empty archive! (#{local_path})"
+            raise "Empty checkout! (#{local_path})"
           when 1
             entries.first
           else

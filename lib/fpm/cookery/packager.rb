@@ -42,25 +42,27 @@ module FPM
         Dir.chdir(recipe.cachedir) do
           source.fetch
 
-          SourceIntegrityCheck.new(recipe).tap do |check|
-            if check.checksum_missing?
-              STDERR.puts <<-__WARN
-WARNING: Recipe does not provide a checksum. (sha256, sha1 or md5)
-------------------------------------------------------------------
-Digest:   #{check.digest}
-Checksum: #{check.checksum_actual}
-Filename: #{check.filename}
-              __WARN
-            elsif check.error?
-              STDERR.puts <<-__ERROR
-ERROR: Integrity check failed!
-------------------------------
-Digest:            #{check.digest}
-Checksum expected: #{check.checksum_expected}
-Checksum actual:   #{check.checksum_actual}
-Filename:          #{check.filename}
-              __ERROR
-              exit 1
+          if source.checksum?
+            SourceIntegrityCheck.new(recipe).tap do |check|
+              if check.checksum_missing?
+                STDERR.puts <<-__WARN
+  WARNING: Recipe does not provide a checksum. (sha256, sha1 or md5)
+  ------------------------------------------------------------------
+  Digest:   #{check.digest}
+  Checksum: #{check.checksum_actual}
+  Filename: #{check.filename}
+                __WARN
+              elsif check.error?
+                STDERR.puts <<-__ERROR
+  ERROR: Integrity check failed!
+  ------------------------------
+  Digest:            #{check.digest}
+  Checksum expected: #{check.checksum_expected}
+  Checksum actual:   #{check.checksum_actual}
+  Filename:          #{check.filename}
+                __ERROR
+                exit 1
+              end
             end
           end
         end
