@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'fpm/cookery/recipe'
 
 class TestRecipe < FPM::Cookery::Recipe
+  NAME = :test_recipe
+  CHECKSUM = true
 end
 
 describe "Recipe" do
@@ -72,6 +74,8 @@ describe "Recipe" do
   spec_recipe_attribute(:name, 'redis')
   spec_recipe_attribute(:revision, 12)
   spec_recipe_attribute(:section, 'lang')
+  # NOTE(lusis)
+  # see comment in `SourceHandler#initialize` r.e. options as `String`
   spec_recipe_attribute(:spec, {:foo => true})
   spec_recipe_attribute(:vendor, 'myvendor')
   spec_recipe_attribute(:version, '1.2')
