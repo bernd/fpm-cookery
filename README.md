@@ -53,7 +53,7 @@ __fpm-cookery__ is my attempt to build such a tool.
 * Apply custom patches.
 * Dependency checking.
 * Recipe validation.
-* More source types. (git, svn, ...)
+* More source types. (hg, bzr, ...)
 * Progress output and logging.
 * Extend recipe features and build/install helpers.
 * Configuration file. (for stuff like vendor and maintainer)
@@ -132,7 +132,6 @@ The following is an example recipe. I have some more in my recipe collection
 * No recipe validation yet.
 * No dependency validation yet.
 * No support for patches yet.
-* Only simple source/url types (via curl) for now.
 * No real logging output yet.
 * Pretty new and not well tested.
 
