@@ -1,3 +1,6 @@
+# v0.5.0 (2011-11-05)
+* Add git source handler.
+
 # v0.4.0 (2011-10-28)
 * Add svn source handler. (lusis)
 * Framework for alternate source handlers. (lusis)
