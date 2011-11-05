@@ -1,6 +1,7 @@
 require 'forwardable'
 require 'fpm/cookery/source_handler/curl'
 require 'fpm/cookery/source_handler/svn'
+require 'fpm/cookery/source_handler/git'
 
 module FPM
   module Cookery
