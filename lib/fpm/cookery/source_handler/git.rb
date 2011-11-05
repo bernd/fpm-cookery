@@ -22,17 +22,21 @@ module FPM
         end
 
         def extract
-          extracted_source = (builddir/local_path.basename.to_s).to_s
+          extracted_source = (builddir/local_path.basename('.git').to_s).to_s
 
           Dir.chdir(local_path) do
             if options[:sha]
               git('reset', '--hard', options[:sha])
+              extracted_source << "-#{options[:sha]}"
             elsif options[:tag]
               git('checkout', '-f', options[:tag])
+              extracted_source << "-tag-#{options[:tag]}"
             elsif options[:branch]
               git('checkout', '-f', "origin/#{options[:branch]}")
+              extracted_source << "-branch-#{options[:branch]}"
             else
               git('checkout', '-f', 'origin/HEAD')
+              extracted_source << '-HEAD'
             end
 
             # Trailing '/' is important! (see git-checkout-index(1))
