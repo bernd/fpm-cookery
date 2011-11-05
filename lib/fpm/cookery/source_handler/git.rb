@@ -22,8 +22,6 @@ module FPM
         end
 
         def extract
-          (builddir/local_path.basename.to_s).mkpath
-
           extracted_source = (builddir/local_path.basename.to_s).to_s
 
           Dir.chdir(local_path) do
