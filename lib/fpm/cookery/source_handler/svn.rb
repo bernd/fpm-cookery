@@ -25,7 +25,7 @@ module FPM
 
         private
         def svn(url, path)
-          @options.has_key?(:revision) ? revision=@options[:revision] : revision='HEAD'
+          revision = options[:revision] || 'HEAD'
           safesystem('svn', 'export', '--force', '-q', '-r', revision, url, path)
         end
 
