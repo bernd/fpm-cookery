@@ -11,6 +11,7 @@ module FPM
     class CLI
       def initialize
         @colors = true
+        @debug = false
       end
 
       def args(argv)
@@ -28,6 +29,10 @@ module FPM
           @colors = !@colors
         end
 
+        options.on("-D", "--debug", "Enable debug output.") do |o|
+          @debug = true
+        end
+
         options.on("-t TARGET", "--target TARGET",
                   "Set the desired fpm output target (deb, rpm, etc)") do |o|
           @target = o
@@ -42,6 +47,7 @@ module FPM
         remainder = options.parse(argv)
 
         # Initialize logging.
+        FPM::Cookery::Log.enable_debug(@debug)
         if @colors
           FPM::Cookery::Log.output(FPM::Cookery::Log::Output::ConsoleColor.new)
         else
