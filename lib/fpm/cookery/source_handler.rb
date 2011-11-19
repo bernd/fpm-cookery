@@ -2,6 +2,7 @@ require 'forwardable'
 require 'fpm/cookery/source_handler/curl'
 require 'fpm/cookery/source_handler/svn'
 require 'fpm/cookery/source_handler/git'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -38,7 +39,7 @@ module FPM
         begin
           self.class.const_get(provider.to_s.capitalize)
         rescue NameError
-          STDERR.puts "Specified provider #{provider} does not exist."
+          Log.error "Specified provider #{provider} does not exist."
           exit(1)
         end
       end

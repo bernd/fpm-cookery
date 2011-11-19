@@ -75,14 +75,14 @@ module FPM
 
       def validate
         unless File.exists?(@filename)
-          STDERR.puts 'No recipe.rb found in the current directory, abort.'
+          Log.error 'No recipe.rb found in the current directory, abort.'
           exit 1
         end
 
         # Default action is "package"
         if @actions.empty?
           @actions = ["package"]
-          puts "No actions given, assuming 'package'"
+          Log.info "No actions given, assuming 'package'"
         end
 
         # Override the detected platform.
@@ -95,12 +95,12 @@ module FPM
         end
 
         if FPM::Cookery::Facts.target.nil?
-          STDERR.puts "No target given and we're unable to detect your platform"
+          Log.error "No target given and we're unable to detect your platform"
           exit 1
         end
 
-        puts "Platform: #{FPM::Cookery::Facts.platform}"
-        puts "Target:   #{FPM::Cookery::Facts.target}"
+        Log.info "Platform: #{FPM::Cookery::Facts.platform}"
+        Log.info "Target:   #{FPM::Cookery::Facts.target}"
       end
 
       def run
@@ -118,7 +118,7 @@ module FPM
             when "package" ; packager.dispense
             else
               # TODO(sissel): fail if this happens
-              puts "Unknown action: #{action}"
+              Log.error "Unknown action: #{action}"
             end
           end
         end

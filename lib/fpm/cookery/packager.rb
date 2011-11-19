@@ -4,6 +4,7 @@
 require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -46,21 +47,21 @@ module FPM
           if source.checksum?
             SourceIntegrityCheck.new(recipe).tap do |check|
               if check.checksum_missing?
-                STDERR.puts <<-__WARN
-  WARNING: Recipe does not provide a checksum. (sha256, sha1 or md5)
-  ------------------------------------------------------------------
+                Log.warn 'Recipe does not provide a checksum. (sha256, sha1 or md5)'
+                Log.puts <<-__WARN
   Digest:   #{check.digest}
   Checksum: #{check.checksum_actual}
   Filename: #{check.filename}
+
                 __WARN
               elsif check.error?
-                STDERR.puts <<-__ERROR
-  ERROR: Integrity check failed!
-  ------------------------------
+                Log.error 'Integrity check failed!'
+                Log.puts <<-__ERROR
   Digest:            #{check.digest}
   Checksum expected: #{check.checksum_expected}
   Checksum actual:   #{check.checksum_actual}
   Filename:          #{check.filename}
+
                 __ERROR
                 exit 1
               end
@@ -78,7 +79,7 @@ module FPM
             build_cookie = build_cookie_name("#{recipe.name}-#{recipe.version}")
 
             if File.exists?(build_cookie)
-              STDERR.puts 'Skipping build (`fpm-cook clean` to rebuild)'
+              Log.info 'Skipping build (`fpm-cook clean` to rebuild)'
             else
               recipe.build and FileUtils.touch(build_cookie)
             end
@@ -188,7 +189,7 @@ module FPM
 
           opts << '.'
 
-          STDERR.puts ['fpm', opts].flatten.inspect
+          Log.info ['fpm', opts].flatten.inspect
           safesystem(*['fpm', opts].flatten)
         end
       end

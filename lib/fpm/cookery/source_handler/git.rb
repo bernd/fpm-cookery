@@ -1,4 +1,5 @@
 require 'fpm/cookery/source_handler/template'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -48,7 +49,7 @@ module FPM
 
         private
         def git(command, *args)
-          #puts "[DEBUG] git #{command} #{args.join(' ')}"
+          #Log.debug "git #{command} #{args.join(' ')}"
           safesystem('git', command, *args)
         end
       end
