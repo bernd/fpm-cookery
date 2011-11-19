@@ -3,16 +3,20 @@ require 'fpm/cookery/log/output/null'
 module FPM
   module Cookery
     module Log
+      @debug = false
       @output = FPM::Cookery::Log::Output::Null.new
 
       class << self
+        def enable_debug(value = true)
+          @debug = value
+        end
 
         def output(out)
           @output = out
         end
 
         def debug(message)
-          @output.debug(message)
+          @output.debug(message) if @debug
         end
 
         def info(message)
