@@ -3,6 +3,7 @@
 #require 'fpm/cookery/dependency_inspector'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
+require 'fpm/cookery/path'
 
 module FPM
   module Cookery
@@ -160,11 +161,17 @@ module FPM
           script_map = {"pre_install" => "--pre-install", "post_install" => "--post-install", "pre_uninstall" => "--pre-uninstall", "post_uninstall" => "--post-uninstall"}
           %w[pre_install post_install pre_uninstall post_uninstall].each do |script|
             unless recipe.send(script).nil?
-              script_file = File.expand_path("../#{recipe.send(script)}", recipe.filename)
+              script_file = FPM::Cookery::Path.new(recipe.send(script))
+
+              # If the script file is an absolute path, just use that path.
+              # Otherwise consider the location relative to the recipe.
+              unless script_file.absolute?
+                script_file = File.expand_path("../#{script_file.to_s}", recipe.filename)
+              end
 
               if File.exists?(script_file)
                 p_opt = script_map[script]
-                opts += ["#{p_opt}", script_file]
+                opts += ["#{p_opt}", script_file.to_s]
               else
                 raise "#{script} script '#{script_file}' is missing"
               end
