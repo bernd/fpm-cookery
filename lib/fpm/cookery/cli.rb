@@ -1,5 +1,6 @@
 require 'fpm/cookery/book_hook'
 require 'fpm/cookery/recipe'
+require 'fpm/cookery/facts'
 require 'fpm/cookery/packager'
 require 'fpm/cookery/log'
 require 'fpm/cookery/log/output/console'
