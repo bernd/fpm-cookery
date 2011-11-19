@@ -12,6 +12,8 @@ module FPM
       extend Forwardable
       def_delegators :@handler, :fetch, :extract, :local_path, :checksum?
 
+      attr_reader :source_url
+
       def initialize(source_url, options, cachedir, builddir)
         # The reason for these checks is related to the test cases
         # Test cases for individual recipe attributes
