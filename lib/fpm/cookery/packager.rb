@@ -189,7 +189,8 @@ module FPM
 
           opts << '.'
 
-          Log.info ['fpm', opts].flatten.inspect
+          Log.info 'Calling fpm to build the package'
+          Log.debug ['fpm', opts].flatten.inspect
           safesystem(*['fpm', opts].flatten)
         end
       end
