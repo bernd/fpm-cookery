@@ -1,3 +1,8 @@
+# v0.6.0 (2011-11-19)
+* Add a logging/output system.
+* Improve extracted source detection for the curl and svn source handler.
+* Allow absolute paths for pre/post scripts.
+
 # v0.5.0 (2011-11-05)
 * Add git source handler.
 
