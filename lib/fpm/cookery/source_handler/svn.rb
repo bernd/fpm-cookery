@@ -19,8 +19,8 @@ module FPM
         def extract
           Dir.chdir(builddir) do
             safesystem('cp', '-Rp', local_path, '.')
+            extracted_source
           end
-          extracted_source
         end
 
         private

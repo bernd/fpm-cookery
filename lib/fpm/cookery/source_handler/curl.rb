@@ -25,8 +25,8 @@ module FPM
             when '.zip'
               safesystem('unzip', '-d', local_path.basename('.zip'), local_path)
             end
+            extracted_source
           end
-          extracted_source
         end
 
         private
