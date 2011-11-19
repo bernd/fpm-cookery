@@ -1,11 +1,18 @@
 require 'fpm/cookery/book_hook'
 require 'fpm/cookery/recipe'
 require 'fpm/cookery/packager'
+require 'fpm/cookery/log'
+require 'fpm/cookery/log/output/console'
+require 'fpm/cookery/log/output/console_color'
 require 'optparse'
 
 module FPM
   module Cookery
     class CLI
+      def initialize
+        @colors = true
+      end
+
       def args(argv)
         program = File.basename($0)
         options = OptionParser.new
@@ -15,6 +22,11 @@ module FPM
         options.separator "  package - builds the package"
         options.separator "  clean - cleans up"
         options.separator "Options:"
+
+        options.on("-c", "--color",
+                   "Toggle color. (default #{@colors.inspect})") do |o|
+          @colors = !@colors
+        end
 
         options.on("-t TARGET", "--target TARGET",
                   "Set the desired fpm output target (deb, rpm, etc)") do |o|
@@ -28,6 +40,13 @@ module FPM
 
         # Parse flags and such, remainder is all non-option args.
         remainder = options.parse(argv)
+
+        # Initialize logging.
+        if @colors
+          FPM::Cookery::Log.output(FPM::Cookery::Log::Output::ConsoleColor.new)
+        else
+          FPM::Cookery::Log.output(FPM::Cookery::Log::Output::Console.new)
+        end
 
         # Default recipe to find is in current directory named 'recipe.rb'
         @filename = File.expand_path('recipe.rb')
