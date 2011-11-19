@@ -89,7 +89,6 @@ module FPM
         # Default action is "package"
         if @actions.empty?
           @actions = ["package"]
-          Log.info "No actions given, assuming 'package'"
         end
 
         # Override the detected platform.
@@ -106,8 +105,6 @@ module FPM
           exit 1
         end
 
-        Log.info "Platform: #{FPM::Cookery::Facts.platform}"
-        Log.info "Target:   #{FPM::Cookery::Facts.target}"
       end
 
       def run

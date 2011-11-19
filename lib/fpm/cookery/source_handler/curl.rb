@@ -1,4 +1,5 @@
 require 'fpm/cookery/source_handler/template'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -9,7 +10,9 @@ module FPM
         CHECKSUM = true
 
         def fetch
-          unless local_path.exist?
+          if local_path.exist?
+            Log.info "Using cached file #{local_path}"
+          else
             Dir.chdir(cachedir) do
               curl(url, local_path) unless local_path.exist?
             end

@@ -24,6 +24,7 @@ module FPM
       end
 
       def cleanup
+        Log.info "Cleanup!"
         # TODO(sissel): do some sanity checking to make sure we don't
         # accidentally rm -rf the wrong thing.
         FileUtils.rm_rf(recipe.builddir)
@@ -32,6 +33,12 @@ module FPM
 
       def dispense
         env = ENV.to_hash
+        package_name = "#{recipe.name}-#{recipe.version}"
+        platform = FPM::Cookery::Facts.platform
+        target = FPM::Cookery::Facts.target
+
+        Log.info "Starting package creation for #{package_name} (#{platform}, #{target})"
+        Log.info ''
 
         # RecipeInspector.verify!(recipe)
         # DependencyInspector.verify!(recipe.depends, recipe.build_depends)
@@ -42,6 +49,7 @@ module FPM
 
         recipe.cachedir.mkdir
         Dir.chdir(recipe.cachedir) do
+          Log.info "Fetching source: #{source.source_url}"
           source.fetch
 
           if source.checksum?
@@ -76,11 +84,12 @@ module FPM
           Dir.chdir(extracted_source) do
             #Source::Patches.new(recipe.patches).apply!
 
-            build_cookie = build_cookie_name("#{recipe.name}-#{recipe.version}")
+            build_cookie = build_cookie_name(package_name)
 
             if File.exists?(build_cookie)
               Log.info 'Skipping build (`fpm-cook clean` to rebuild)'
             else
+              Log.info "Building in #{File.expand_path(extracted_source)}"
               recipe.build and FileUtils.touch(build_cookie)
             end
 
@@ -89,6 +98,7 @@ module FPM
 
             begin
               recipe.installing = true
+              Log.info "Installing into #{recipe.destdir}"
               recipe.install
             ensure
               recipe.installing = false
