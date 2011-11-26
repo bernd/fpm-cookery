@@ -1,3 +1,7 @@
+# v0.7.0 (2011-11-26)
+* Add hg (mercurial) source handler.
+* Fix tags fetchting for the git source handler.
+
 # v0.6.0 (2011-11-19)
 * Add a logging/output system.
 * Improve extracted source detection for the curl and svn source handler.
