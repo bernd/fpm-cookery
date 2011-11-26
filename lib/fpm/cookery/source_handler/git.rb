@@ -12,6 +12,7 @@ module FPM
           if local_path.exist?
             Dir.chdir(local_path) do
               git('fetch', url)
+              git('fetch', '--tags', url)
             end
           else
             Dir.chdir(cachedir) do
