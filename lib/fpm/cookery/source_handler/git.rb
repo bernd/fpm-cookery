@@ -50,7 +50,7 @@ module FPM
 
         private
         def git(command, *args)
-          #Log.debug "git #{command} #{args.join(' ')}"
+          Log.debug "git #{command} #{args.join(' ')}"
           safesystem('git', command, *args)
         end
       end
