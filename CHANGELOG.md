@@ -1,3 +1,6 @@
+# v0.x.x (xxxx-xx-xx)
+* Skip git fetch if the specified sha or tag exists.
+
 # v0.7.0 (2011-11-26)
 * Add hg (mercurial) source handler.
 * Fix tags fetchting for the git source handler.
