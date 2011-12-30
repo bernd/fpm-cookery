@@ -9,10 +9,16 @@ module FPM
         NAME = :git
 
         def fetch
+          rev = options[:sha] || options[:tag]
+
           if local_path.exist?
             Dir.chdir(local_path) do
-              git('fetch', url)
-              git('fetch', '--tags', url)
+              if rev and has_rev?(rev)
+                Log.info("Skipping fetch, rev #{rev} exists.")
+              else
+                git('fetch', url)
+                git('fetch', '--tags', url)
+              end
             end
           else
             Dir.chdir(cachedir) do
@@ -52,6 +58,14 @@ module FPM
         def git(command, *args)
           Log.debug "git #{command} #{args.join(' ')}"
           safesystem('git', command, *args)
+        end
+
+        def has_rev?(rev)
+          Log.debug "git show #{rev} >/dev/null 2>&1"
+          safesystem("git show #{rev} >/dev/null 2>&1")
+          true
+        rescue
+          false
         end
       end
     end
