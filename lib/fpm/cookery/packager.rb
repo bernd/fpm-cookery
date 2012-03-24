@@ -175,7 +175,6 @@ module FPM
 
           output = input.convert(output_class)
 
-          Log.info "Creating package: #{File.join(Dir.pwd, output.to_s)}"
           begin
             output.output(output.to_s)
           rescue FPM::Package::FileAlreadyExists
@@ -185,6 +184,7 @@ module FPM
           ensure
             input.cleanup if input
             output.cleanup if output
+            Log.info "Created package: #{File.join(Dir.pwd, output.to_s)}"
           end
         end
       end
