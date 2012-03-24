@@ -143,8 +143,8 @@ module FPM
           maintainer = recipe.maintainer || begin
             username = `git config --get user.name`.strip
             useremail = `git config --get user.email`.strip
-            raise 'Set maintainer name/email via `git config --global user.name <name>`' if username.empty?
-            "#{username} <#{useremail}>"
+
+            username && useremail ? "#{username} <#{useremail}>" : nil
           end
 
           input = FPM::Package::Dir.new
