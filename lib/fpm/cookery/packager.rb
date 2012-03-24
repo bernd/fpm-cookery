@@ -5,6 +5,9 @@ require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
 require 'fpm/cookery/log'
+require 'fpm/package/dir'
+require 'fpm/package/deb'
+require 'fpm/package/rpm'
 
 module FPM
   module Cookery
@@ -144,64 +147,93 @@ module FPM
             "#{username} <#{useremail}>"
           end
 
-          # TODO(sissel): This should use an API in fpm. fpm doesn't have this
-          # yet.  fpm needs this.
-          opts = [
-            '-n', recipe.name,
-            '-v', version,
-            '-t', @target,
-            '-s', 'dir',
-            '--url', recipe.homepage || recipe.url,
-            '-C', recipe.destdir.to_s,
-            '--maintainer', maintainer,
-            '--category', recipe.section || 'optional',
-          ]
+          input = FPM::Package::Dir.new
 
-          opts += [
-            '--epoch', epoch
-          ] if epoch
+          input.name = recipe.name
+          input.version = version
+          input.url = recipe.homepage || recipe.url
+          input.maintainer = maintainer
+          input.category = recipe.section || 'optional'
+          input.epoch = epoch if epoch
+          input.description = recipe.description.strip if recipe.description
+          input.architecture = recipe.arch.to_s if recipe.arch
 
-          opts += [
-            '--description', recipe.description.strip
-          ] if recipe.description
+          input.dependencies += recipe.depends
+          input.conflicts += recipe.conflicts
+          input.provides += recipe.provides
+          input.replaces += recipe.replaces
+          input.config_files += recipe.config_files
 
-          opts += [
-            '--architecture', recipe.arch.to_s
-          ] if recipe.arch
+          add_scripts(recipe, input)
+          remove_excluded_files(recipe)
 
-          script_map = {"pre_install" => "--pre-install", "post_install" => "--post-install", "pre_uninstall" => "--pre-uninstall", "post_uninstall" => "--post-uninstall"}
-          %w[pre_install post_install pre_uninstall post_uninstall].each do |script|
-            unless recipe.send(script).nil?
-              script_file = FPM::Cookery::Path.new(recipe.send(script))
+          input.attributes[:prefix] = '/'
+          input.attributes[:chdir] = recipe.destdir.to_s
+          input.input('.')
 
-              # If the script file is an absolute path, just use that path.
-              # Otherwise consider the location relative to the recipe.
-              unless script_file.absolute?
-                script_file = File.expand_path("../#{script_file.to_s}", recipe.filename)
-              end
+          output_class = FPM::Package.types[@target]
 
-              if File.exists?(script_file)
-                p_opt = script_map[script]
-                opts += ["#{p_opt}", script_file.to_s]
-              else
-                raise "#{script} script '#{script_file}' is missing"
+          output = input.convert(output_class)
+
+          Log.info "Creating package: #{File.join(Dir.pwd, output.to_s)}"
+          begin
+            output.output(output.to_s)
+          rescue FPM::Package::FileAlreadyExists
+            Log.info "Removing existing package file: #{output.to_s}"
+            FileUtils.rm_f(output.to_s)
+            retry
+          ensure
+            input.cleanup if input
+            output.cleanup if output
+          end
+        end
+      end
+
+      def add_scripts(recipe, input)
+        error = false
+
+        # Map script names to fpm method names.
+        script_map = {
+          'pre_install' => :before_install,
+          'post_install' => :after_install,
+          'pre_uninstall' => :before_remove,
+          'post_uninstall' => :after_remove
+        }
+
+        script_map.each do |script, fpm_script|
+          unless recipe.send(script).nil?
+            script_file = FPM::Cookery::Path.new(recipe.send(script))
+
+            # If the script file is an absolute path, just use that path.
+            # Otherwise consider the location relative to the recipe.
+            unless script_file.absolute?
+              script_file = File.expand_path("../#{script_file.to_s}", recipe.filename)
+            end
+
+            if File.exists?(script_file)
+              input.scripts[fpm_script] = File.read(script_file.to_s)
+            else
+              Log.error "#{script} script '#{script_file}' is missing"
+              error = true
+            end
+          end
+        end
+
+        exit(1) if error
+      end
+
+      # Remove all excluded files from the destdir so they do not end up in the
+      # package.
+      def remove_excluded_files(recipe)
+        Dir.chdir(recipe.destdir.to_s) do
+          Dir['**/*'].each do |file|
+            recipe.exclude.each do |ex|
+              if File.fnmatch(ex, file)
+                Log.info "Exclude file: #{file}"
+                FileUtils.rm_f(file)
               end
             end
           end
-
-          %w[ depends exclude provides replaces conflicts config_files ].each do |type|
-            if recipe.send(type).any?
-              recipe.send(type).each do |dep|
-                opts += ["--#{type.gsub('_','-')}", dep]
-              end
-            end
-          end
-
-          opts << '.'
-
-          Log.info 'Calling fpm to build the package'
-          Log.debug ['fpm', opts].flatten.inspect
-          safesystem(*['fpm', opts].flatten)
         end
       end
     end
