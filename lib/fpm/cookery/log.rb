@@ -1,10 +1,15 @@
 require 'fpm/cookery/log/output/null'
+require 'cabin' # Via fpm.
 
 module FPM
   module Cookery
     module Log
       @debug = false
       @output = FPM::Cookery::Log::Output::Null.new
+
+      @channel = ::Cabin::Channel.get
+      @channel.subscribe(self)
+      @channel.level = :debug
 
       class << self
         def enable_debug(value = true)
@@ -37,6 +42,19 @@ module FPM
 
         def puts(message)
           @output.puts(message)
+        end
+
+        def <<(event)
+          level = event.fetch(:level, :info).downcase.to_sym
+
+          event.delete(:level)
+
+          data = event.clone
+
+          data.delete(:message)
+          data.delete(:timestamp)
+
+          send(level, "[FPM] #{event[:message]} #{data.to_json}")
         end
       end
     end
