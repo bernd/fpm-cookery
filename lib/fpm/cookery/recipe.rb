@@ -34,7 +34,7 @@ module FPM
         attrs.each do |attr|
           class_eval %Q{
             def self.#{attr}(*list)
-              @#{attr} ||= superclass.respond_to?(:#{attr}) ? superclass.#{attr} : []
+              @#{attr} ||= []
               @#{attr} << list
               @#{attr}.flatten!
               @#{attr}.uniq!
