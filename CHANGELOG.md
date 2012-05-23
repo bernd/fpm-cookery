@@ -1,4 +1,7 @@
-# v0.x.x (xxxx-xx-xx)
+# v0.8.0 (2012-05-23)
+* Add /opt path helper.
+* Use the new fpm API. (requires at least fpm-0.4.x)
+* Show the fpm log output via cabin.
 * Skip git fetch if the specified sha or tag exists.
 
 # v0.7.0 (2011-11-26)
