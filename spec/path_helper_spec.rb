@@ -13,6 +13,7 @@ describe "PathHelper" do
   describe "path helper methods" do
     [ ['prefix', '/usr'],
       ['etc', '/etc'],
+      ['opt', '/opt'],
       ['var', '/var'],
       ['bin', '/usr/bin'],
       ['doc', '/usr/share/doc'],

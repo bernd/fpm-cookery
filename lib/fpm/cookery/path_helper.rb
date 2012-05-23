@@ -18,6 +18,10 @@ module FPM
         current_pathname_for('etc')/path
       end
 
+      def opt(path = nil)
+        current_pathname_for('opt')/path
+      end
+
       def var(path = nil)
         current_pathname_for('var')/path
       end
