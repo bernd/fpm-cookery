@@ -169,6 +169,7 @@ module FPM
 
           input.attributes[:prefix] = '/'
           input.attributes[:chdir] = recipe.destdir.to_s
+          input.attributes[:excludes] = [] # TODO replace remove_excluded_files() with this
           input.input('.')
 
           output_class = FPM::Package.types[@target]
