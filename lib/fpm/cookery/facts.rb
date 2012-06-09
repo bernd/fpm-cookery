@@ -3,6 +3,10 @@ require 'facter'
 module FPM
   module Cookery
     class Facts
+      def self.arch
+        @arch ||= Facter.fact(:architecture).value.downcase.to_sym
+      end
+
       def self.platform
         @platform ||= Facter.fact(:operatingsystem).value.downcase.to_sym
       end

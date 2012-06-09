@@ -7,6 +7,20 @@ describe "Facts" do
     FPM::Cookery::Facts.reset!
   end
 
+  describe "arch" do
+    before do
+      Facter.class_eval do
+        def self.fact(v)
+          v == :architecture ? OpenStruct.new(:value => 'x86_64') : nil
+        end
+      end
+    end
+
+    it "is returns the current platform" do
+      FPM::Cookery::Facts.arch.must_equal :x86_64
+    end
+  end
+
   describe "platform" do
     before do
       Facter.class_eval do
