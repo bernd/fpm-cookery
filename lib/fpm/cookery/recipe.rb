@@ -30,6 +30,10 @@ module FPM
         Array(valid_platforms).member?(self.platform) and block_given? ? yield : false
       end
 
+      def self.architectures(archs)
+        Array(archs).member?(FPM::Cookery::Facts.arch) and block_given? ? yield : false
+      end
+
       def self.attr_rw_list(*attrs)
         attrs.each do |attr|
           class_eval %Q{

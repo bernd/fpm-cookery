@@ -228,6 +228,56 @@ describe "Recipe" do
     end
   end
 
+  describe ".architectures" do
+    before do
+      FPM::Cookery::Facts.class_eval do
+        def self.arch; :x86_64; end
+      end
+    end
+
+    describe "with a list of architectures" do
+      it "allows arch specific settings" do
+        klass.class_eval do
+          vendor 'a'
+
+          architectures [:i386, :x86_64] do
+            vendor 'b'
+          end
+        end
+
+        klass.new(__FILE__).vendor.must_equal 'b'
+      end
+    end
+
+    describe "with a single architecture" do
+      it "allows arch specific settings" do
+        klass.class_eval do
+          vendor 'a'
+
+          architectures :x86_64 do
+            vendor 'b'
+          end
+        end
+
+        klass.new(__FILE__).vendor.must_equal 'b'
+      end
+    end
+
+    describe "without a matching architecture" do
+      it "does not set arch specific settings" do
+        klass.class_eval do
+          vendor 'a'
+
+          architectures :i386 do
+            vendor 'b'
+          end
+        end
+
+        klass.new(__FILE__).vendor.must_equal 'a'
+      end
+    end
+  end
+
 
   #############################################################################
   # Directories
