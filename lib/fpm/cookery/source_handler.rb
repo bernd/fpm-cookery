@@ -3,6 +3,7 @@ require 'fpm/cookery/source_handler/curl'
 require 'fpm/cookery/source_handler/svn'
 require 'fpm/cookery/source_handler/git'
 require 'fpm/cookery/source_handler/hg'
+require 'fpm/cookery/source_handler/gem'
 require 'fpm/cookery/log'
 
 module FPM
