@@ -1,3 +1,7 @@
+# v0.9.0 (2012-07-21)
+* Allow architecture specific settings via the `architectures` method.
+* Unbreak RPM creation on RHEL5. (brandonmartin)
+
 # v0.8.0 (2012-05-23)
 * Add /opt path helper.
 * Use the new fpm API. (requires at least fpm-0.4.x)
