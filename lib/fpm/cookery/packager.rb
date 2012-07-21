@@ -170,6 +170,11 @@ module FPM
           input.attributes[:prefix] = '/'
           input.attributes[:chdir] = recipe.destdir.to_s
           input.attributes[:excludes] = [] # TODO replace remove_excluded_files() with this
+          input.attributes[:rpm_compression] = "gzip"
+          input.attributes[:rpm_digest] = "md5"
+          input.attributes[:rpm_user] = "root"
+          input.attributes[:rpm_group] = "root"
+
           input.input('.')
 
           output_class = FPM::Package.types[@target]
