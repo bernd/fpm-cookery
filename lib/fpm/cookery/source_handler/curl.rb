@@ -25,6 +25,9 @@ module FPM
             case local_path.extname
             when '.bz2', '.gz', '.tgz'
               safesystem('tar', 'xf', local_path)
+            when '.shar', '.bin'
+              File.chmod(0755, local_path)
+              safesystem(local_path)
             when '.zip'
               safesystem('unzip', '-d', local_path.basename('.zip'), local_path)
             end
