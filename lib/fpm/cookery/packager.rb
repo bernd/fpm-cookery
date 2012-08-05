@@ -5,7 +5,7 @@ require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
 require 'fpm/cookery/log'
-require 'fpm/package/dir'
+require 'fpm/cookery/package/dir'
 require 'fpm/package/deb'
 require 'fpm/package/rpm'
 
@@ -147,35 +147,14 @@ module FPM
             username && useremail ? "#{username} <#{useremail}>" : nil
           end
 
-          input = FPM::Package::Dir.new
+          input = FPM::Cookery::Package::Dir.new(recipe)
 
-          input.name = recipe.name
           input.version = version
-          input.url = recipe.homepage || recipe.url
           input.maintainer = maintainer
-          input.category = recipe.section || 'optional'
           input.epoch = epoch if epoch
-          input.description = recipe.description.strip if recipe.description
-          input.architecture = recipe.arch.to_s if recipe.arch
-
-          input.dependencies += recipe.depends
-          input.conflicts += recipe.conflicts
-          input.provides += recipe.provides
-          input.replaces += recipe.replaces
-          input.config_files += recipe.config_files
 
           add_scripts(recipe, input)
           remove_excluded_files(recipe)
-
-          input.attributes[:prefix] = '/'
-          input.attributes[:chdir] = recipe.destdir.to_s
-          input.attributes[:excludes] = [] # TODO replace remove_excluded_files() with this
-          input.attributes[:rpm_compression] = "gzip"
-          input.attributes[:rpm_digest] = "md5"
-          input.attributes[:rpm_user] = "root"
-          input.attributes[:rpm_group] = "root"
-
-          input.input('.')
 
           output_class = FPM::Package.types[@target]
 
