@@ -36,6 +36,8 @@ module FPM
         end
       end
 
+      # @deprecated Will be made private in the future.
+      # @private
       def install_p(src, new_basename = nil)
         if new_basename
           new_basename = File.basename(new_basename) # rationale: see Pathname.+
