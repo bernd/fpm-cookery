@@ -119,5 +119,16 @@ describe "Path" do
         end
       end
     end
+
+    describe "with a new basename argument" do
+      it "installs the file with a new basename" do
+        Dir.mktmpdir do |dir|
+          path = FPM::Cookery::Path.new(dir)
+          path.install(File.expand_path('../spec_helper.rb', __FILE__), 'foo.rb')
+
+          File.exist?(path/'foo.rb').must_equal true
+        end
+      end
+    end
   end
 end

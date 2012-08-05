@@ -25,14 +25,14 @@ module FPM
         FileUtils.mkdir_p(self.to_s)
       end
 
-      def install(src)
+      def install(src, new_basename = nil)
         case src
         when Array
           src.collect {|src| install_p(src) }
         when Hash
           src.collect {|src, new_basename| install_p(src, new_basename) }
         else
-          install_p(src)
+          install_p(src, new_basename)
         end
       end
 
