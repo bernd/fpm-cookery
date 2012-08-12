@@ -32,6 +32,10 @@ module FPM
           attributes[:excludes] = []
 
           input('.')
+
+          # The call to input() overwrites the license and vendor attributes.
+          # XXX Needs to be fixed in fpm/package/dir.rb.
+          self.license = recipe.license if recipe.license
         end
       end
     end

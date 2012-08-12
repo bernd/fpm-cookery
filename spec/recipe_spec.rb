@@ -67,6 +67,7 @@ describe "Recipe" do
   spec_recipe_attribute(:arch, 'i386')
   spec_recipe_attribute(:description, 'A nice program.')
   spec_recipe_attribute(:homepage, 'http://example.com')
+  spec_recipe_attribute(:license, 'MIT')
   spec_recipe_attribute(:maintainer, 'John Doe <john@example.com>')
   spec_recipe_attribute(:sha256, '123456789abcdef')
   spec_recipe_attribute(:sha1, '123456789abcdef')
