@@ -1,3 +1,9 @@
+# v0.10.0 (2012-08-12)
+* Add support for shar and bin files to curl source handler. (brandonmartin)
+* Support an optional basename parameter for the `install` helper.
+* Deprecate public usage of the `install_p` helper.
+* Add license option to the recipe class.
+
 # v0.9.0 (2012-07-21)
 * Allow architecture specific settings via the `architectures` method.
 * Unbreak RPM creation on RHEL5. (brandonmartin)
