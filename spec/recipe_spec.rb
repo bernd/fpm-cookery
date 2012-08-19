@@ -51,49 +51,128 @@ describe "Recipe" do
   #############################################################################
   # Recipe attributes
   #############################################################################
-  def self.spec_recipe_attribute(name, value)
-    value = Numeric === value ? value : "\"#{value}\""
-    class_eval %Q{
-      describe "##{name}" do
-        it "can be set" do
-          klass.class_eval { #{name} #{value} }
-          klass.#{name}.must_equal #{value}
-          recipe.#{name}.must_equal #{value}
-        end
-      end
-    }
+  def check_attribute(attr, value, expect = nil)
+    expect ||= value
+
+    klass.send(attr, value)
+
+    klass.send(attr).must_equal expect
+    recipe.send(attr).must_equal expect
   end
 
-  spec_recipe_attribute(:arch, 'i386')
-  spec_recipe_attribute(:description, 'A nice program.')
-  spec_recipe_attribute(:homepage, 'http://example.com')
-  spec_recipe_attribute(:license, 'MIT')
-  spec_recipe_attribute(:maintainer, 'John Doe <john@example.com>')
-  spec_recipe_attribute(:sha256, '123456789abcdef')
-  spec_recipe_attribute(:sha1, '123456789abcdef')
-  spec_recipe_attribute(:md5, '123456789abcdef')
-  spec_recipe_attribute(:name, 'redis')
-  spec_recipe_attribute(:revision, 12)
-  spec_recipe_attribute(:section, 'lang')
-  # NOTE(lusis)
-  # see comment in `SourceHandler#initialize` r.e. options as `String`
-  spec_recipe_attribute(:spec, {:foo => true})
-  spec_recipe_attribute(:vendor, 'myvendor')
-  spec_recipe_attribute(:version, '1.2')
-  spec_recipe_attribute(:pre_install, 'preinstall')
-  spec_recipe_attribute(:post_install, 'postinstall')
-  spec_recipe_attribute(:pre_uninstall, 'preuninstall')
-  spec_recipe_attribute(:post_uninstall, 'postuninstall')
+  describe "#arch" do
+    it "can be set" do
+      check_attribute(:arch, 'i386')
+    end
+  end
+
+  describe "#description" do
+    it "can be set" do
+      check_attribute(:description, 'A nice program.')
+    end
+  end
+
+  describe "#homepage" do
+    it "can be set" do
+      check_attribute(:homepage, 'http://example.com/')
+    end
+  end
+
+  describe "#license" do
+    it "can be set" do
+      check_attribute(:license, 'MIT')
+    end
+  end
+
+  describe "#maintainer" do
+    it "can be set" do
+      check_attribute(:maintainer, 'John Doe <john@example.com>')
+    end
+  end
+
+  describe "#sha256" do
+    it "can be set" do
+      check_attribute(:sha256, '123456789abcdef')
+    end
+  end
+
+  describe "#sha1" do
+    it "can be set" do
+      check_attribute(:sha1, '123456789abcdef')
+    end
+  end
+
+  describe "#md5" do
+    it "can be set" do
+      check_attribute(:md5, '123456789abcdef')
+    end
+  end
+
+  describe "#name" do
+    it "can be set" do
+      check_attribute(:name, 'redis')
+    end
+  end
 
   describe "#revision" do
+    it "can be set with a string" do
+      check_attribute(:revision, '12')
+    end
+
     it "sets a default revision" do
       recipe.revision.must_equal 0
     end
   end
 
+  describe "#section" do
+    it "can be set" do
+      check_attribute(:section, 'lang')
+    end
+  end
+
+  describe "#spec" do
+    it "can be set" do
+      check_attribute(:spec, {:foo => true})
+    end
+  end
+
   describe "#vendor" do
+    it "can be set" do
+      check_attribute(:vendor, 'myvendor')
+    end
+
     it "sets a default vendor" do
       recipe.vendor.must_equal 'fpm'
+    end
+  end
+
+  describe "#version" do
+    it "can be set" do
+      check_attribute(:version, '1.2')
+    end
+  end
+
+  describe "#pre_install" do
+    it "can be set" do
+      check_attribute(:pre_install, 'preinstall')
+    end
+  end
+
+  describe "#post_install" do
+    it "can be set" do
+      check_attribute(:post_install, 'postinstall')
+    end
+  end
+
+  describe "#pre_uninstall" do
+    it "can be set" do
+      check_attribute(:pre_uninstall, 'preuninstall')
+    end
+  end
+
+  describe "#post_uninstall" do
+    it "can be set" do
+      check_attribute(:post_uninstall, 'postuninstall')
     end
   end
 
