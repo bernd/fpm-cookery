@@ -16,11 +16,7 @@ module FPM
       attr_reader :source_url
 
       def initialize(source_url, options, cachedir, builddir)
-        # The reason for these checks is related to the test cases
-        # Test cases for individual recipe attributes
-        # are not setting spec before hand (due to delegation chain?)
-        # Additionally, one test actually has options being sent as a String
-        if (options.nil? || options.class == String || options.has_key?(:with) == false)
+        if options.nil? || options.has_key?(:with) == false
           @source_provider = DEFAULT_HANDLER
         else
           @source_provider = options[:with]
