@@ -37,4 +37,12 @@ describe "Source" do
       end
     end
   end
+
+  describe "#path" do
+    it "returns the url path" do
+      source = FPM::Cookery::Source.new('file:///opt/src/foo')
+
+      source.path.must_equal '/opt/src/foo'
+    end
+  end
 end

@@ -25,6 +25,10 @@ module FPM
         @url.to_s
       end
 
+      def path
+        @url.path
+      end
+
       def to_s
         @url.to_s
       end
