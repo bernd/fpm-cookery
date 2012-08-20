@@ -1,6 +1,7 @@
 require 'forwardable'
 require 'fileutils'
 require 'fpm/cookery/facts'
+require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
@@ -79,7 +80,7 @@ module FPM
 
       def initialize(filename)
         @filename = Path.new(filename).expand_path
-        @source_handler = SourceHandler.new(source, spec, cachedir, builddir)
+        @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
 
         # Set some defaults.
         vendor || self.class.vendor('fpm')
