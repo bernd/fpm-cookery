@@ -1,3 +1,6 @@
+# v0.11.0 (2012-08-20)
+* Add source handler to handle local source directories via file:// urls.
+
 # v0.10.0 (2012-08-12)
 * Add support for shar and bin files to curl source handler. (brandonmartin)
 * Support an optional basename parameter for the `install` helper.
