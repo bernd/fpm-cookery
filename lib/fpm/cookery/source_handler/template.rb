@@ -20,6 +20,10 @@ module FPM
           @name = self.class::NAME
         end
 
+        def source
+          @url
+        end
+
         def fetch
           raise "#{self}#fetch not implemented!"
         end
