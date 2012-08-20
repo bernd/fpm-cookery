@@ -36,7 +36,7 @@ module FPM
 
       def handler_to_class(provider)
         begin
-          self.class.const_get(provider.to_s.capitalize)
+          self.class.const_get(provider.to_s.split('_').map(&:capitalize).join)
         rescue NameError
           Log.error "Specified provider #{provider} does not exist."
           exit(1)
