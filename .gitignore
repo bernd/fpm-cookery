@@ -6,3 +6,5 @@ cache/
 pkg/
 tmp-build/
 tmp-dest/
+.buildpath
+.project
