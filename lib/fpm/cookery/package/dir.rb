@@ -23,6 +23,8 @@ module FPM
           attributes[:prefix] = '/'
           attributes[:chdir] = recipe.destdir.to_s
           attributes[:deb_compression] = 'gzip'
+          attributes[:deb_user] = 'root'
+          attributes[:deb_group] = 'root'
           attributes[:rpm_compression] = 'gzip'
           attributes[:rpm_digest] = 'md5'
           attributes[:rpm_user] = 'root'
