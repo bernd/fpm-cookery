@@ -1,3 +1,6 @@
+# v0.13.0 (2013-01-28)
+* Make local file source behave like the remote url source. (#14)
+
 # v0.12.0 (2013-01-28)
 * Copy source files with no or unknown file extension to
   the source dir. (smasset)
