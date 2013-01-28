@@ -151,6 +151,7 @@ module FPM
 
           input.version = version
           input.maintainer = maintainer
+          input.vendor = vendor if vendor
           input.epoch = epoch if epoch
 
           add_scripts(recipe, input)
