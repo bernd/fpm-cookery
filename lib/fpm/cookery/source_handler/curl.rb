@@ -31,11 +31,11 @@ module FPM
             when '.zip'
               safesystem('unzip', '-d', local_path.basename('.zip'), local_path)
             else
-              unless local_path.basename.exist?
+              if !local_path.directory? && !local_path.basename.exist?
                 Dir.mkdir(local_path.basename)
               end
 
-              safesystem('cp', '-f', local_path, local_path.basename)
+              FileUtils.cp_r(local_path, local_path.basename)
             end
             extracted_source
           end

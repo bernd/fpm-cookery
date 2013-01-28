@@ -5,23 +5,18 @@ require 'fileutils'
 module FPM
   module Cookery
     class SourceHandler
-      class LocalPath < FPM::Cookery::SourceHandler::Template
+      class LocalPath < FPM::Cookery::SourceHandler::Curl
         CHECKSUM = false
         NAME = :local_path
 
         def fetch
-          # No need to fetch anything. The files are on the disk already.
-          Log.info "Local path: #{source.path}"
-          @local_path = source.path
-        end
-
-        def extract
-          extracted_source = (builddir/File.basename(local_path)).to_s
-
-          FileUtils.rm_rf(extracted_source)
-          FileUtils.cp_r(source.path, extracted_source)
-
-          extracted_source
+          if local_path.exist?
+            Log.info "Using cached file #{local_path}"
+          else
+            Log.info "Copying #{source.path} to cache"
+            FileUtils.cp_r(source.path, cachedir)
+          end
+          local_path
         end
       end
     end
