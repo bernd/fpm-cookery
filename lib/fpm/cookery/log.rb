@@ -1,5 +1,6 @@
 require 'fpm/cookery/log/output/null'
 require 'cabin' # Via fpm.
+require 'json'
 
 module FPM
   module Cookery
