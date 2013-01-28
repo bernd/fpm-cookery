@@ -1,3 +1,10 @@
+# v0.12.0 (2013-01-28)
+* Copy source files with no or unknown file extension to
+  the source dir. (smasset)
+* Set deb\_user and deb\_group attributes to root.
+* Ensure passing the vendor attribute to fpm. (aussielunix)
+* Unbreak logging with the latest fpm.
+
 # v0.11.0 (2012-08-20)
 * Add source handler to handle local source directories via file:// urls.
 
