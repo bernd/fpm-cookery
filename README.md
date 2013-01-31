@@ -138,9 +138,11 @@ The following is an example recipe. I have some more in my recipe collection
 
 __fpm-cookery__ borrows lots of __ideas__ and also __code__ from the
 [homebrew](https://github.com/mxcl/homebrew) and
-[brew2deb](https://github.com/tmm1/brew2deb) projects. Both projects don't
-have any licensing information included in their repositories. So licensing
-is still an open question for now.
+[brew2deb](https://github.com/tmm1/brew2deb) projects.
+
+## License
+
+The BSD 2-Clause License - See [LICENSE](LICENSE) for details
 
 ## How To Contribute
 
