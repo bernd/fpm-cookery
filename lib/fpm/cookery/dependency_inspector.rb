@@ -27,6 +27,11 @@ module FPM
 
       private
       def self.install_package(package)
+        # How can we handle "or" style depends?
+        if package =~ / \| /
+          Log.warn "Required package '#{package}' is an 'or' string; not attempting to install a package to satisfy"
+          return
+        end
         # Use Puppet to install a package
         resource = Puppet::Resource.new("package", package, :parameters => {
           :ensure => "present"
