@@ -48,6 +48,7 @@ module FPM
         if failed
           Log.fatal "While processing depends package '#{package}':"
           result.logs.each {|log_line| Log.fatal log_line}
+          exit 1
         else
           Log.info "Processing depends package '#{package}'"
           result.logs.each {|log_line| Log.info log_line}
