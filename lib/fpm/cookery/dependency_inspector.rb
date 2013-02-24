@@ -32,7 +32,8 @@ module FPM
           :ensure => "present"
         })
         result = Puppet::Resource.indirection.save(resource)[1]
-        if result.status == "failed"
+        failed = Puppet::Resource.indirection.save(resource)[1].resource_statuses.values.first.failed
+        if failed
           Log.fatal "While processing depends package '#{package}':"
           result.logs.each {|log_line| Log.fatal log_line}
         else
