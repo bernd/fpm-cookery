@@ -32,6 +32,13 @@ module FPM
           Log.warn "Required package '#{package}' is an 'or' string; not attempting to install a package to satisfy"
           return
         end
+
+        # We can't handle >=, <<, >>, ==, <=
+        if package =~ />=|<<|>>|<=/
+          Log.warn "Required package '#{package}' has a version requirement; not attempting to install a package to satisfy"
+          return
+        end
+
         # Use Puppet to install a package
         resource = Puppet::Resource.new("package", package, :parameters => {
           :ensure => "present"
