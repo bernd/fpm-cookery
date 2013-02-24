@@ -1,6 +1,6 @@
 #require 'digest/md5'
 #require 'fpm/cookery/recipe_inspector'
-#require 'fpm/cookery/dependency_inspector'
+require 'fpm/cookery/dependency_inspector'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
