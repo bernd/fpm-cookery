@@ -62,66 +62,68 @@ module FPM
 
         recipe.installing = false
 
-        source = recipe.source_handler
+        if defined? recipe.source_handler()
+          source = recipe.source_handler
 
-        recipe.cachedir.mkdir
-        Dir.chdir(recipe.cachedir) do
-          Log.info "Fetching source: #{source.source_url}"
-          source.fetch
+          recipe.cachedir.mkdir
+          Dir.chdir(recipe.cachedir) do
+            Log.info "Fetching source: #{source.source_url}"
+            source.fetch
 
-          if source.checksum?
-            SourceIntegrityCheck.new(recipe).tap do |check|
-              if check.checksum_missing?
-                Log.warn 'Recipe does not provide a checksum. (sha256, sha1 or md5)'
-                Log.puts <<-__WARN
+            if source.checksum?
+              SourceIntegrityCheck.new(recipe).tap do |check|
+                if check.checksum_missing?
+                  Log.warn 'Recipe does not provide a checksum. (sha256, sha1 or md5)'
+                  Log.puts <<-__WARN
   Digest:   #{check.digest}
   Checksum: #{check.checksum_actual}
   Filename: #{check.filename}
 
-                __WARN
-              elsif check.error?
-                Log.error 'Integrity check failed!'
-                Log.puts <<-__ERROR
+                  __WARN
+                elsif check.error?
+                  Log.error 'Integrity check failed!'
+                  Log.puts <<-__ERROR
   Digest:            #{check.digest}
   Checksum expected: #{check.checksum_expected}
   Checksum actual:   #{check.checksum_actual}
   Filename:          #{check.filename}
 
-                __ERROR
-                exit 1
+                  __ERROR
+                  exit 1
+                end #end checksum missing
+              end #end check
+            end #end checksum
+          end #end chdir cachedir
+
+          recipe.builddir.mkdir
+          Dir.chdir(recipe.builddir) do
+            extracted_source = source.extract
+
+            Dir.chdir(extracted_source) do
+              #Source::Patches.new(recipe.patches).apply!
+
+              build_cookie = build_cookie_name(package_name)
+
+              if File.exists?(build_cookie)
+                Log.info 'Skipping build (`fpm-cook clean` to rebuild)'
+              else
+                Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
+                recipe.build and FileUtils.touch(build_cookie)
               end
-            end
-          end
-        end
 
-        recipe.builddir.mkdir
-        Dir.chdir(recipe.builddir) do
-          extracted_source = source.extract
+              FileUtils.rm_rf(recipe.destdir) unless keep_destdir?
+              recipe.destdir.mkdir unless File.exists?(recipe.destdir)
 
-          Dir.chdir(extracted_source) do
-            #Source::Patches.new(recipe.patches).apply!
-
-            build_cookie = build_cookie_name(package_name)
-
-            if File.exists?(build_cookie)
-              Log.info 'Skipping build (`fpm-cook clean` to rebuild)'
-            else
-              Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
-              recipe.build and FileUtils.touch(build_cookie)
-            end
-
-            FileUtils.rm_rf(recipe.destdir) unless keep_destdir?
-            recipe.destdir.mkdir unless File.exists?(recipe.destdir)
-
-            begin
-              recipe.installing = true
-              Log.info "Installing into #{recipe.destdir}"
-              recipe.install
-            ensure
-              recipe.installing = false
-            end
-          end
-        end
+              begin
+                recipe.installing = true
+                Log.info "Installing into #{recipe.destdir}"
+                recipe.install
+              ensure
+                recipe.installing = false
+              end
+            end #end chdir extracted_source
+          end #end chdir builddir
+        end #end defined source_handler
 
         if skip_package?
           Log.info "Package building disabled"
@@ -165,7 +167,7 @@ module FPM
             username && useremail ? "#{username} <#{useremail}>" : nil
           end
 
-          input = FPM::Cookery::Package::Dir.new(recipe, :input => config[:input])
+          input = recipe.input
 
           input.version = version
           input.maintainer = maintainer
@@ -229,12 +231,14 @@ module FPM
       # Remove all excluded files from the destdir so they do not end up in the
       # package.
       def remove_excluded_files(recipe)
-        Dir.chdir(recipe.destdir.to_s) do
-          Dir['**/*'].each do |file|
-            recipe.exclude.each do |ex|
-              if File.fnmatch(ex, file)
-                Log.info "Exclude file: #{file}"
-                FileUtils.rm_f(file)
+        if File.directory?(recipe.destdir)
+          Dir.chdir(recipe.destdir.to_s) do
+            Dir['**/*'].each do |file|
+              recipe.exclude.each do |ex|
+                if File.fnmatch(ex, file)
+                  Log.info "Exclude file: #{file}"
+                  FileUtils.rm_f(file)
+                end
               end
             end
           end
