@@ -92,7 +92,7 @@ module FPM
             if File.exists?(build_cookie)
               Log.info 'Skipping build (`fpm-cook clean` to rebuild)'
             else
-              Log.info "Building in #{File.expand_path(extracted_source)}"
+              Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
               recipe.build and FileUtils.touch(build_cookie)
             end
 
