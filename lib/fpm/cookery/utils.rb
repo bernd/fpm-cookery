@@ -60,7 +60,7 @@ module FPM
 
       def patch(src, level = 0)
         raise "patch level must be integer" unless level.is_a?(Fixnum)
-         raise "#{src} does not exist" unless File.exist? src
+        raise "#{src} does not exist" unless File.exist? src
         safesystem "patch -p#{level} --batch < #{src}"
       end
     end
