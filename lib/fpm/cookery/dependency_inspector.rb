@@ -54,6 +54,7 @@ module FPM
         return unless self.package_suitable?(package)
 
         # Use Puppet to install a package
+        Puppet[:noop] = false
         resource = Puppet::Resource.new("package", package, :parameters => {
           :ensure => "present"
         })
