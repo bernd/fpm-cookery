@@ -13,31 +13,45 @@ module FPM
 
       def self.verify!(depends, build_depends)
 
-        Log.info "Verifying and installing build_depends and depends with Puppet"
+        Log.info "Verifying build_depends and depends with Puppet"
 
-        build_depends.each do |package|
-          self.install_package(package)
+        missing = (build_depends + depends).map do |package|
+          unless self.package_installed?(package)
+            package
+          end
         end
 
-        depends.each do |package|
-          self.install_package(package)
+        if missing.length == 0
+          Log.info "All build_depends and depends packages installed"
+        else
+          if Process.euid != 0
+            Log.error "Not running as root; please run 'sudo fpm-cook install-deps' to install dependencies."
+            exit 1
+          else
+            Log.info "Running as root; installing missing/wrong version build_depends and depends with Puppet"
+            Log.info "Missing/wrong version packages: #{missing.join(', ')}"
+            missing.each do |package|
+              self.install_package(package)
+            end
+          end
         end
 
       end
 
-      private
-      def self.install_package(package)
-        # How can we handle "or" style depends?
-        if package =~ / \| /
-          Log.warn "Required package '#{package}' is an 'or' string; not attempting to install a package to satisfy"
-          return
-        end
+      def self.package_installed?(package)
+        return unless self.package_suitable?(package)
 
-        # We can't handle >=, <<, >>, ==, <=
-        if package =~ />=|<<|>>|<=/
-          Log.warn "Required package '#{package}' has a version requirement; not attempting to install a package to satisfy"
-          return
-        end
+        # Use Puppet in noop mode to see if the package exists
+        Puppet[:noop] = true
+        resource = Puppet::Resource.new("package", package, :parameters => {
+          :ensure => "present"
+        })
+        result    = Puppet::Resource.indirection.save(resource)[1] 
+        !result.resource_statuses.values.first.out_of_sync
+      end
+
+      def self.install_package(package)
+        return unless self.package_suitable?(package)
 
         # Use Puppet to install a package
         resource = Puppet::Resource.new("package", package, :parameters => {
@@ -53,6 +67,21 @@ module FPM
           Log.info "Processing depends package '#{package}'"
           result.logs.each {|log_line| Log.info log_line}
         end
+      end
+
+      def self.package_suitable?(package)
+        # How can we handle "or" style depends?
+        if package =~ / \| /
+          Log.warn "Required package '#{package}' is an 'or' string; not attempting to find/install a package to satisfy"
+          return false
+        end
+
+        # We can't handle >=, <<, >>, <=
+        if package =~ />=|<<|>>|<=/
+          Log.warn "Required package '#{package}' has a relative version requirement; not attempting to find/install a package to satisfy"
+          return false
+        end
+        true
       end
 
     end
