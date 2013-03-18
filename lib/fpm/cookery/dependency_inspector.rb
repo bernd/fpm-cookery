@@ -22,12 +22,12 @@ module FPM
         if missing.length == 0
           Log.info "All build_depends and depends packages installed"
         else
+          Log.info "Missing/wrong version packages: #{missing.join(', ')}"
           if Process.euid != 0
             Log.error "Not running as root; please run 'sudo fpm-cook install-deps' to install dependencies."
             exit 1
           else
             Log.info "Running as root; installing missing/wrong version build_depends and depends with Puppet"
-            Log.info "Missing/wrong version packages: #{missing.join(', ')}"
             missing.each do |package|
               self.install_package(package)
             end
