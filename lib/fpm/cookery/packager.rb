@@ -34,6 +34,10 @@ module FPM
         FileUtils.rm_rf(recipe.destdir)
       end
 
+      def install_deps
+        DependencyInspector.verify!(recipe.depends, recipe.build_depends) 
+      end
+
       def dispense
         env = ENV.to_hash
         package_name = "#{recipe.name}-#{recipe.version}"
