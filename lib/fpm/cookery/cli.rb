@@ -121,7 +121,7 @@ module FPM
             case action
             when "clean" ; packager.cleanup
             when "package" ; packager.dispense
-            when "install-deps" ; packager.install-deps
+            when "install-deps" ; packager.install_deps
             else
               # TODO(sissel): fail if this happens
               Log.error "Unknown action: #{action}"
