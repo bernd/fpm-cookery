@@ -15,10 +15,8 @@ module FPM
 
         Log.info "Verifying build_depends and depends with Puppet"
 
-        missing = (build_depends + depends).map do |package|
-          unless self.package_installed?(package)
-            package
-          end
+        missing = (build_depends + depends).reject do |package|
+          self.package_installed?(package)
         end
 
         if missing.length == 0
@@ -39,6 +37,7 @@ module FPM
       end
 
       def self.package_installed?(package)
+        Log.info("Verifying package: #{package}")
         return unless self.package_suitable?(package)
 
         # Use Puppet in noop mode to see if the package exists
@@ -51,6 +50,7 @@ module FPM
       end
 
       def self.install_package(package)
+        Log.info("Installing package: #{package}")
         return unless self.package_suitable?(package)
 
         # Use Puppet to install a package
