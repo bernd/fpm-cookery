@@ -158,7 +158,6 @@ module FPM
           else
             vendor_delimiter = "-"
           end
-          version = [ver, vendor_rev].join(vendor_delimiter)
 
           maintainer = recipe.maintainer || begin
             username = git_config('user.name')
@@ -169,7 +168,7 @@ module FPM
 
           input = recipe.input
 
-          input.version = version
+          input.version =  vendor ? [ver, vendor_rev].join(vendor_delimiter) : ver
           input.maintainer = maintainer
           input.vendor = vendor if vendor
           input.epoch = epoch if epoch
