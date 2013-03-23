@@ -1,6 +1,6 @@
 #require 'digest/md5'
 #require 'fpm/cookery/recipe_inspector'
-#require 'fpm/cookery/dependency_inspector'
+require 'fpm/cookery/dependency_inspector'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
@@ -34,6 +34,11 @@ module FPM
         FileUtils.rm_rf(recipe.destdir)
       end
 
+      def install_deps
+        DependencyInspector.verify!(recipe.depends, recipe.build_depends) 
+        Log.info("All dependencies installed!")
+      end
+
       def dispense
         env = ENV.to_hash
         package_name = "#{recipe.name}-#{recipe.version}"
@@ -44,7 +49,7 @@ module FPM
         Log.info ''
 
         # RecipeInspector.verify!(recipe)
-        # DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+        DependencyInspector.verify!(recipe.depends, recipe.build_depends)
 
         recipe.installing = false
 

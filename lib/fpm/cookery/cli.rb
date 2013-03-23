@@ -21,8 +21,9 @@ module FPM
         options.banner = \
           "Usage: #{program} [options] [path/to/recipe.rb] action [...]"
         options.separator "Actions:"
-        options.separator "  package - builds the package"
-        options.separator "  clean - cleans up"
+        options.separator "  package        - builds the package"
+        options.separator "  clean          - cleans up"
+        options.separator "  install-deps   - installs build and runtime dependencies"
         options.separator "Options:"
 
         options.on("-c", "--color",
@@ -120,6 +121,7 @@ module FPM
             case action
             when "clean" ; packager.cleanup
             when "package" ; packager.dispense
+            when "install-deps" ; packager.install_deps
             else
               # TODO(sissel): fail if this happens
               Log.error "Unknown action: #{action}"
