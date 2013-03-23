@@ -50,8 +50,6 @@ __fpm-cookery__ is my attempt to build such a tool.
 
 ## Upcoming Features
 
-* Apply custom patches.
-* Dependency checking.
 * Recipe validation.
 * More source types. (hg, bzr, ...)
 * Progress output and logging.
