@@ -129,7 +129,6 @@ The following is an example recipe. I have some more in my recipe collection
 * No recipe documentation and API documentation yet.
 * No recipe validation yet.
 * No dependency validation yet.
-* No support for patches yet.
 * Pretty new and not well tested.
 
 ## Credits
