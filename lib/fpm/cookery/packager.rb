@@ -52,6 +52,7 @@ module FPM
             self.dispense(omnibus_recipe)
           else
             Log.fatal "Cannot find a recipe for #{omnibus_recipe_name} at #{omnibus_recipe_file}"
+            exit 1
           end
         end
 
