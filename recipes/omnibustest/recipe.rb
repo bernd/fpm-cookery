@@ -9,6 +9,6 @@ class OmnibusTest < FPM::Cookery::Recipe
 
   omnibus_package true
   omnibus_recipes "ruby"
-  destdir '/opt/omnibustest'
+  #destdir '/opt/omnibustest'
 
 end
