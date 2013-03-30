@@ -39,6 +39,27 @@ module FPM
         Log.info("All dependencies installed!")
       end
 
+      def omnibus
+        # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
+        Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
+        recipe.omnibus_recipes.each do |omnibus_recipe_name|
+          # Look for recipes in the same dir as the recipe we loaded
+          omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "#{omnibus_recipe_name}.rb")
+          if File.exists?(omnibus_recipe_file)
+            omnibus_recipe = FPM::Cookery::Book.load_recipe(omnibus_recipe_file)
+            omnibus_recipe.skip_package = true    # Don't package till we've built everything
+            Log.info "Located recipe at #{omnibus_recipe_name} for child recipe #{omnibus_recipe_name}; starting build"
+            self.dispense(omnibus_recipe)
+          else
+            Log.fatal "Cannot find a recipe for #{omnibus_recipe_name} at #{omnibus_recipe_file}"
+          end
+        end
+
+        # Now all child recipes are built; run a package task
+        build_package(recipe, config)
+
+      end
+
       def dispense
         env = ENV.to_hash
         package_name = "#{recipe.name}-#{recipe.version}"
@@ -114,7 +135,11 @@ module FPM
           end
         end
 
-        build_package(recipe, config)
+        if recipe.skip_package == true
+          Log.info "Recipe has skip_package set; not packaging"
+        else
+          build_package(recipe, config)
+        end
       ensure
         # Make sure we reset the environment.
         ENV.replace(env)
