@@ -121,7 +121,7 @@ module FPM
             case action
             when "clean" ; packager.cleanup
             when "package" 
-              if recipe.omnibus_recipe == true
+              if recipe.omnibus_package == true
                 packager.omnibus
               else
                 packager.dispense
