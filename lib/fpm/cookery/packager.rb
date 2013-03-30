@@ -44,7 +44,7 @@ module FPM
         Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
         recipe.omnibus_recipes.each do |omnibus_recipe_name|
           # Look for recipes in the same dir as the recipe we loaded
-          omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "#{omnibus_recipe_name}.rb")
+          omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "/#{omnibus_recipe_name}.rb")
           if File.exists?(omnibus_recipe_file)
             omnibus_recipe = FPM::Cookery::Book.load_recipe(omnibus_recipe_file)
             omnibus_recipe.skip_package = true    # Don't package till we've built everything
