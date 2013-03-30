@@ -1,4 +1,4 @@
-class NodeJS < FPM::Cookery::Recipe
+class OmnibusTest < FPM::Cookery::Recipe
   homepage 'http://test'
 
   section 'interpreters'
