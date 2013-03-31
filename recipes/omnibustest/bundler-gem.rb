@@ -12,7 +12,7 @@ class BundlerGem < FPM::Cookery::Recipe
   section 'interpreters'
 
   def build
-    cleanenv_safesystem "/opt/omnibustest/embedded/bin/gem install bundler"
+    cleanenv_safesystem "/opt/omnibustest/embedded/bin/gem install #{name} -v #{version}"
   end
 
   def install
