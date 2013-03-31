@@ -11,6 +11,15 @@ module FPM
         return success
       end
 
+      def cleanenv_safesystem(*args)
+        bundler_vars = %w(BUNDLE_GEMFILE RUBYOPT BUNDLE_BIN_PATH GEM_HOME GEM_PATH)
+        bundled_env = ENV.to_hash
+        bundler_vars.each {|var| ENV.delete(var)}
+        result = safesystem(*args)
+        ENV.replace(bundled_env.to_hash)
+        result
+      end
+
       # From brew2deb. (lib/debian_formula.rb)
       def configure(*args)
         if args.last.is_a?(Hash)

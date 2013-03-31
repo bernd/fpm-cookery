@@ -47,6 +47,10 @@ __fpm-cookery__ is my attempt to build such a tool.
 * Package creation via __fpm__.
 * Standalone recipe trees/books/you name it. No need to put the recipes into
   the __fpm-cookery__ source tree.
+* Can build [Omnibus](http://wiki.opscode.com/display/chef/Omnibus+Information)
+  style packages (allows you to embed many builds into the same package - 
+  used by the Opscode folks to build an embedded Ruby and the gems for Chef into
+  a single package; also the [Sensu](https://github.com/sensu/sensu) guys do something similar.)
 
 ## Upcoming Features
 
