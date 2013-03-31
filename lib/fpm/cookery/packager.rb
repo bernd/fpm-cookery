@@ -70,7 +70,8 @@ module FPM
 
         # Now all child recipes are built; set depends to combined set of dependencies
         recipe = @original_recipe
-        recipe.depends = combined_depends.flatten.uniq
+        recipe.class.depends(combined_depends.flatten.uniq)
+        Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
         recipe.destdir = recipe.omnibus_dir
         build_package(recipe, config)
 
