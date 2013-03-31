@@ -120,7 +120,12 @@ module FPM
           @actions.each do |action|
             case action
             when "clean" ; packager.cleanup
-            when "package" ; packager.dispense
+            when "package" 
+              if recipe.omnibus_package == true
+                packager.omnibus
+              else
+                packager.dispense
+              end
             when "install-deps" ; packager.install_deps
             else
               # TODO(sissel): fail if this happens

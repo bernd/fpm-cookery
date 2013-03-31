@@ -56,10 +56,10 @@ module FPM
       attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
               :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
               :pre_install, :post_install, :pre_uninstall, :post_uninstall,
-              :license
+              :license, :omnibus_package, :omnibus_dir
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
-                   :exclude, :patches, :provides, :replaces
+                   :exclude, :patches, :provides, :replaces, :omnibus_recipes
 
       class << self
         def source(source = nil, spec = {})
