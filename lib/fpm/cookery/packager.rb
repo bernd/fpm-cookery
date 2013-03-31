@@ -72,7 +72,9 @@ module FPM
         recipe = @original_recipe
         recipe.class.depends(combined_depends.flatten.uniq)
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
-        recipe.destdir = recipe.omnibus_dir
+        unless recipe.omnibus_dir == nil
+          recipe.destdir = recipe.omnibus_dir
+        end
         build_package(recipe, config)
 
       end
