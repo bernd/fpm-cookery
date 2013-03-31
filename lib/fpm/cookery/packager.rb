@@ -46,6 +46,9 @@ module FPM
         # Store original recipe
         @original_recipe = recipe
 
+        # Collect all the 'depends' from child packages to be added to the final package
+        combined_depends = Array.new
+
         recipe.omnibus_recipes.each do |omnibus_recipe_name|
           # Look for recipes in the same dir as the recipe we loaded
           omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "/#{omnibus_recipe_name}.rb")
@@ -57,6 +60,7 @@ module FPM
               @recipe = omnibus_recipe
               self.dispense()
               Log.info "Finished building #{omnibus_recipe_name}, moving on to next recipe"
+              combined_depends += omnibus_recipe.depends
             end
           else
             Log.fatal "Cannot find a recipe for #{omnibus_recipe_name} at #{omnibus_recipe_file}"
@@ -64,8 +68,9 @@ module FPM
           end
         end
 
-        # Now all child recipes are built; run a package task
+        # Now all child recipes are built; set depends to combined set of dependencies
         recipe = @original_recipe
+        recipe.depends = combined_depends.flatten.uniq
         recipe.destdir = recipe.omnibus_dir
         build_package(recipe, config)
 
