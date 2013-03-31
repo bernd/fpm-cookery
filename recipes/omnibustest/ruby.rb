@@ -14,7 +14,7 @@ class Ruby200 < FPM::Cookery::Recipe
   section 'interpreters'
 
   build_depends 'autoconf', 'libreadline6-dev', 'bison', 'zlib1g-dev',
-                'libssl-dev', 'libyaml-dev', 'libffi-dev', 'libgdbm-dev', 'libncurses-dev',
+                'libssl-dev', 'libyaml-dev', 'libffi-dev', 'libgdbm-dev', 'libncurses5-dev',
                 'libreadline6-dev'
 
   depends 'libffi6', 'libncurses5', 'libreadline6', 'libssl1.0.0',

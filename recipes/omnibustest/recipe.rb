@@ -8,7 +8,7 @@ class OmnibusTest < FPM::Cookery::Recipe
   revision 0
 
   omnibus_package true
-  omnibus_recipes "ruby"
-  #destdir '/opt/omnibustest'
+  omnibus_recipes "ruby", "bundler-gem"
+  omnibus_dir     '/opt/omnibustest'
 
 end

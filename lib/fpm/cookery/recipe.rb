@@ -56,7 +56,7 @@ module FPM
       attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
               :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
               :pre_install, :post_install, :pre_uninstall, :post_uninstall,
-              :license, :omnibus_package, :skip_package
+              :license, :omnibus_package, :omnibus_dir
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces, :omnibus_recipes

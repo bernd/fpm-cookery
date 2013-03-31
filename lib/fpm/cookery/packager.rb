@@ -42,14 +42,22 @@ module FPM
       def omnibus
         # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
         Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
+
+        # Store original recipe
+        @original_recipe = recipe
+
         recipe.omnibus_recipes.each do |omnibus_recipe_name|
           # Look for recipes in the same dir as the recipe we loaded
           omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "/#{omnibus_recipe_name}.rb")
           if File.exists?(omnibus_recipe_file)
-            omnibus_recipe = FPM::Cookery::Book.load_recipe(omnibus_recipe_file)
-            omnibus_recipe.skip_package = true    # Don't package till we've built everything
-            Log.info "Located recipe at #{omnibus_recipe_name} for child recipe #{omnibus_recipe_name}; starting build"
-            self.dispense(omnibus_recipe)
+            FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
+            FPM::Cookery::Book.load_recipe(omnibus_recipe_file) do |omnibus_recipe|
+              @skip_package = true    # Don't package till we've built everything
+              Log.info "Located recipe at #{omnibus_recipe_file} for child recipe #{omnibus_recipe_name}; starting build"
+              @recipe = omnibus_recipe
+              self.dispense()
+              Log.info "Finished building #{omnibus_recipe_name}, moving on to next recipe"
+            end
           else
             Log.fatal "Cannot find a recipe for #{omnibus_recipe_name} at #{omnibus_recipe_file}"
             exit 1
@@ -57,6 +65,8 @@ module FPM
         end
 
         # Now all child recipes are built; run a package task
+        recipe = @original_recipe
+        recipe.destdir = recipe.omnibus_dir
         build_package(recipe, config)
 
       end
@@ -136,8 +146,8 @@ module FPM
           end
         end
 
-        if recipe.skip_package == true
-          Log.info "Recipe has skip_package set; not packaging"
+        if @skip_package == true
+          Log.info "Omnibus package, so skip_package set; not packaging"
         else
           build_package(recipe, config)
         end
