@@ -5,7 +5,7 @@ module FPM
   module Cookery
     module Package
       class Dir < SimpleDelegator
-        def initialize(recipe)
+        def initialize(recipe, config = {})
           super(FPM::Package::Dir.new)
 
           self.name = recipe.name
@@ -33,7 +33,9 @@ module FPM
           # TODO replace remove_excluded_files() in packager with this.
           attributes[:excludes] = []
 
-          input('.')
+          Array(config.fetch(:input, '.')).each do |path|
+            input(path)
+          end
 
           # The call to input() overwrites the license and vendor attributes.
           # XXX Needs to be fixed in fpm/package/dir.rb.

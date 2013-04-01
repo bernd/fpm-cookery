@@ -160,7 +160,7 @@ module FPM
             username && useremail ? "#{username} <#{useremail}>" : nil
           end
 
-          input = FPM::Cookery::Package::Dir.new(recipe)
+          input = FPM::Cookery::Package::Dir.new(recipe, :input => config[:input])
 
           input.version = version
           input.maintainer = maintainer

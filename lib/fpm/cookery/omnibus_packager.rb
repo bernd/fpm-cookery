@@ -44,6 +44,7 @@ module FPM
         recipe.class.depends(@depends.flatten.uniq)
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
+        config[:input] = recipe.destdir
 
         packager.build_package(recipe, config)
       end
