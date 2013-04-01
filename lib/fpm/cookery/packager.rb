@@ -154,8 +154,8 @@ module FPM
           version = [ver, vendor_rev].join(vendor_delimiter)
 
           maintainer = recipe.maintainer || begin
-            username = `git config --get user.name`.strip
-            useremail = `git config --get user.email`.strip
+            username = git_config('user.name')
+            useremail = git_config('user.email')
 
             username && useremail ? "#{username} <#{useremail}>" : nil
           end
@@ -234,6 +234,15 @@ module FPM
             end
           end
         end
+      end
+
+      private
+
+      def git_config(key)
+        %x(git config --get #{key}).strip
+      rescue
+        Log.warn "Git config command for key '#{key}' failed."
+        nil
       end
     end
   end
