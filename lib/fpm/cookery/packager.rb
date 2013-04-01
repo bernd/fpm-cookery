@@ -43,46 +43,6 @@ module FPM
         Log.info("All dependencies installed!")
       end
 
-      def omnibus
-        # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
-        Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
-
-        # Store original recipe
-        @original_recipe = recipe
-
-        # Collect all the 'depends' from child packages to be added to the final package
-        combined_depends = Array.new
-
-        recipe.omnibus_recipes.each do |omnibus_recipe_name|
-          # Look for recipes in the same dir as the recipe we loaded
-          omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "/#{omnibus_recipe_name}.rb")
-          if File.exists?(omnibus_recipe_file)
-            FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
-            FPM::Cookery::Book.instance.load_recipe(omnibus_recipe_file) do |omnibus_recipe|
-              @skip_package = true    # Don't package till we've built everything
-              Log.info "Located recipe at #{omnibus_recipe_file} for child recipe #{omnibus_recipe_name}; starting build"
-              @recipe = omnibus_recipe
-              self.dispense()
-              Log.info "Finished building #{omnibus_recipe_name}, moving on to next recipe"
-              combined_depends += omnibus_recipe.depends
-            end
-          else
-            Log.fatal "Cannot find a recipe for #{omnibus_recipe_name} at #{omnibus_recipe_file}"
-            exit 1
-          end
-        end
-
-        # Now all child recipes are built; set depends to combined set of dependencies
-        recipe = @original_recipe
-        recipe.class.depends(combined_depends.flatten.uniq)
-        Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
-        unless recipe.omnibus_dir == nil
-          recipe.destdir = recipe.omnibus_dir
-        end
-        build_package(recipe, config)
-
-      end
-
       def dispense
         env = ENV.to_hash
         package_name = "#{recipe.name}-#{recipe.version}"
