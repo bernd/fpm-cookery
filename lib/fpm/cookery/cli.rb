@@ -121,7 +121,7 @@ module FPM
           @actions.each do |action|
             case action
             when "clean" ; packager.cleanup
-            when "package" 
+            when "package"
               if recipe.omnibus_package == true
                 FPM::Cookery::OmnibusPackager.new(packager).run
               else
