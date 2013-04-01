@@ -113,7 +113,7 @@ module FPM
 
         FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
 
-        FPM::Cookery::Book.load_recipe(@filename) do |recipe|
+        FPM::Cookery::Book.instance.load_recipe(@filename) do |recipe|
           packager = FPM::Cookery::Packager.new(recipe)
           packager.target = FPM::Cookery::Facts.target.to_s
 

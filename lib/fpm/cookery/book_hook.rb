@@ -9,7 +9,7 @@ module FPM
 
       module ClassMethods
         def inherited(klass)
-          FPM::Cookery::Book.loaded_recipe(klass)
+          FPM::Cookery::Book.instance.add_recipe_class(klass)
         end
       end
     end

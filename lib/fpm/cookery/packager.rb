@@ -54,7 +54,7 @@ module FPM
           omnibus_recipe_file = File.expand_path(File.dirname(recipe.filename) + "/#{omnibus_recipe_name}.rb")
           if File.exists?(omnibus_recipe_file)
             FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
-            FPM::Cookery::Book.load_recipe(omnibus_recipe_file) do |omnibus_recipe|
+            FPM::Cookery::Book.instance.load_recipe(omnibus_recipe_file) do |omnibus_recipe|
               @skip_package = true    # Don't package till we've built everything
               Log.info "Located recipe at #{omnibus_recipe_file} for child recipe #{omnibus_recipe_name}; starting build"
               @recipe = omnibus_recipe
