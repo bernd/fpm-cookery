@@ -45,7 +45,7 @@ module FPM
         resource = Puppet::Resource.new("package", package, :parameters => {
           :ensure => "present"
         })
-        result    = Puppet::Resource.indirection.save(resource)[1] 
+        result    = Puppet::Resource.indirection.save(resource)[1]
         !result.resource_statuses.values.first.out_of_sync
       end
 

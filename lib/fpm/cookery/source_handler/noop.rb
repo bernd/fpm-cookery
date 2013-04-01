@@ -10,7 +10,7 @@ module FPM
         def fetch
           Log.info "Noop source_handler; do nothing."
         end
-      
+
         def extract
           Log.info "Not extracting - noop source handler"
           builddir

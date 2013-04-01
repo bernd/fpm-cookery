@@ -39,7 +39,7 @@ module FPM
       end
 
       def install_deps
-        DependencyInspector.verify!(recipe.depends, recipe.build_depends) 
+        DependencyInspector.verify!(recipe.depends, recipe.build_depends)
         Log.info("All dependencies installed!")
       end
 
