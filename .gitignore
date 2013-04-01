@@ -8,3 +8,6 @@ tmp-build/
 tmp-dest/
 .buildpath
 .project
+.vagrant
+Vagrantfile
+/vendor
