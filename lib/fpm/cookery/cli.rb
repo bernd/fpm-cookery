@@ -2,6 +2,7 @@ require 'fpm/cookery/book_hook'
 require 'fpm/cookery/recipe'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/packager'
+require 'fpm/cookery/omnibus_packager'
 require 'fpm/cookery/log'
 require 'fpm/cookery/log/output/console'
 require 'fpm/cookery/log/output/console_color'
@@ -122,7 +123,7 @@ module FPM
             when "clean" ; packager.cleanup
             when "package" 
               if recipe.omnibus_package == true
-                packager.omnibus
+                FPM::Cookery::OmnibusPackager.new(packager).run
               else
                 packager.dispense
               end
