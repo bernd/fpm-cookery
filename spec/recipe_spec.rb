@@ -176,6 +176,18 @@ describe "Recipe" do
     end
   end
 
+  describe "#omnibus_package" do
+    it "can be set" do
+      check_attribute(:omnibus_package, true)
+    end
+  end
+
+  describe "#omnibus_dir" do
+    it "can be set" do
+      check_attribute(:omnibus_dir, '/foo')
+    end
+  end
+
   def self.spec_recipe_attribute_list(name, list)
     class_eval %Q{
       describe "##{name}" do
@@ -203,6 +215,7 @@ describe "Recipe" do
   spec_recipe_attribute_list(:patches, %w{one two})
   spec_recipe_attribute_list(:provides, %w{one two})
   spec_recipe_attribute_list(:replaces, %w{one two})
+  spec_recipe_attribute_list(:omnibus_recipes, %w{one two})
 
   describe ".source" do
     it "sets a source url" do
