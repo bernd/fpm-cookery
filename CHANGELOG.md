@@ -1,6 +1,8 @@
 # v0.xx.x (2013-xx-xx)
 * Install dependencies via Puppet. (andytinycat)
 * Add a `patch` helper method to apply patches. (piavlo)
+* Support for [Omnibus](http://wiki.opscode.com/display/chef/Omnibus+Information)-style
+  packaging. (andytinycat)
 
 # v0.13.0 (2013-01-28)
 * Make local file source behave like the remote url source. (#14)
