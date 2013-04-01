@@ -21,6 +21,10 @@ module FPM
         @config = config
       end
 
+      def skip_package?
+        !!config[:skip_package]
+      end
+
       def target=(target)
         # TODO(sissel): do sanity checking
         @target = target
@@ -154,8 +158,8 @@ module FPM
           end
         end
 
-        if @skip_package == true
-          Log.info "Omnibus package, so skip_package set; not packaging"
+        if skip_package?
+          Log.info "Package building disabled"
         else
           build_package(recipe, config)
         end
