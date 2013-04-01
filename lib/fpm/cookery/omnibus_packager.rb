@@ -28,11 +28,11 @@ module FPM
           end
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe|
-            packager = FPM::Cookery::Packager.new(recipe, :skip_package => true)
-            packager.target = FPM::Cookery::Facts.target.to_s
+            pkg = FPM::Cookery::Packager.new(recipe, :skip_package => true)
+            pkg.target = FPM::Cookery::Facts.target.to_s
 
             Log.info "Located recipe at #{recipe_file} for child recipe #{name}; starting build"
-            packager.dispense
+            pkg.dispense
 
             @depends += recipe.depends
             Log.info "Finished building #{name}, moving on to next recipe"
