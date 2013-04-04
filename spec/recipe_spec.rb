@@ -216,6 +216,7 @@ describe "Recipe" do
   spec_recipe_attribute_list(:provides, %w{one two})
   spec_recipe_attribute_list(:replaces, %w{one two})
   spec_recipe_attribute_list(:omnibus_recipes, %w{one two})
+  spec_recipe_attribute_list(:extra_paths, %w{one two})
 
   describe ".source" do
     it "sets a source url" do

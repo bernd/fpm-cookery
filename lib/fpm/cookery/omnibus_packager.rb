@@ -13,6 +13,7 @@ module FPM
         @recipe = packager.recipe
         @config = config
         @depends = []
+        @package_paths = []
       end
 
       def run
@@ -21,8 +22,6 @@ module FPM
 
         recipe.omnibus_recipes.each do |name|
           recipe_file = build_recipe_file_path(name)
-
-          unless File.exists?(recipe_file)
             Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
             exit 1
           end
@@ -35,6 +34,7 @@ module FPM
             pkg.dispense
 
             @depends += recipe.depends
+            @package_paths =+ recipe.extra_paths
             Log.info "Finished building #{name}, moving on to next recipe"
           end
         end
@@ -44,7 +44,8 @@ module FPM
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
-        config[:input] = recipe.destdir
+        @package_paths += recipe.destdir
+        config[:input] = @package_paths
 
         packager.build_package(recipe, config)
       end
