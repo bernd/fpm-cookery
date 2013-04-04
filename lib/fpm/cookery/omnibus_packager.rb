@@ -34,7 +34,7 @@ module FPM
             pkg.dispense
 
             @depends += recipe.depends
-            @package_paths =+ recipe.extra_paths
+            @package_paths += recipe.extra_paths
             Log.info "Finished building #{name}, moving on to next recipe"
           end
         end
