@@ -40,8 +40,8 @@ module FPM
         end
 
         # Now all child recipes are built; set depends to combined set of dependencies
-        Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
         recipe.class.depends(@depends.flatten.uniq)
+        Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
         config[:input] = recipe.destdir
