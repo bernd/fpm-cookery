@@ -13,6 +13,7 @@ module FPM
         @recipe = packager.recipe
         @config = config
         @depends = []
+        @package_paths = []
       end
 
       def run
@@ -35,6 +36,7 @@ module FPM
             pkg.dispense
 
             @depends += recipe.depends
+            @package_paths += recipe.extra_paths
             Log.info "Finished building #{name}, moving on to next recipe"
           end
         end
@@ -44,7 +46,7 @@ module FPM
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
-        config[:input] = recipe.destdir
+        config[:input] = [ recipe.destdir ] + @package_paths
 
         packager.build_package(recipe, config)
       end
