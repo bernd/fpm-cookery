@@ -6,8 +6,7 @@ require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
 require 'fpm/cookery/log'
 require 'fpm/cookery/package/dir'
-require 'fpm/package/deb'
-require 'fpm/package/rpm'
+require 'fpm'
 
 module FPM
   module Cookery
