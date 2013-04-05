@@ -33,7 +33,9 @@ module FPM
           # TODO replace remove_excluded_files() in packager with this.
           attributes[:excludes] = []
 
-          Array(config.fetch(:input, '.')).each do |path|
+          inputs = config.fetch(:input, nil) || '.'
+
+          Array(inputs).each do |path|
             input(path)
           end
 
