@@ -28,7 +28,7 @@ module FPM
           end
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file) do |dep_recipe|
-            pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true)
+            pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
             pkg.target = FPM::Cookery::Facts.target.to_s
 
             Log.info "Located recipe at #{recipe_file} for child recipe #{name}; starting build"
