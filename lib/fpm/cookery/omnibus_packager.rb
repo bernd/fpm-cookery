@@ -43,7 +43,10 @@ module FPM
         recipe.class.depends(@depends.flatten.uniq)
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
-        recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
+        if recipe.omnibus_dir
+          recipe.destdir = recipe.omnibus_dir
+          recipe.omnibus_installing = true
+        end
         config[:input] = recipe.destdir
 
         packager.build_package(recipe, config)

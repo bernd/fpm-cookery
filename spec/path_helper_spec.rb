@@ -61,6 +61,22 @@ describe "PathHelper" do
             helper.send(name, 'blah').to_s.must_equal "#{helper.destdir}#{path}/blah"
           end
         end
+
+        context "with omnibus_installing set to true" do
+          before { helper.omnibus_installing = true }
+
+          it "does not add anything to the path" do
+            helper.send(name, 'blah').to_s.must_equal "#{path}/blah"
+          end
+        end
+
+        context "with omnibus_installing and installing set to true" do
+          before { helper.omnibus_installing = true ; helper.installing = true }
+
+          it "does not add anything to the path" do
+            helper.send(name, 'blah').to_s.must_equal "#{path}/blah"
+          end
+        end
       end
     end
   end
@@ -79,6 +95,24 @@ describe "PathHelper" do
 
       it "returns true" do
         helper.installing?.must_equal false
+      end
+    end
+  end
+
+  describe "#omnibus_installing?" do
+    context "with omnibus_installing set to true" do
+      before { helper.omnibus_installing = true }
+
+      it "returns true" do
+        helper.omnibus_installing?.must_equal true
+      end
+    end
+
+    context "with omnibus_installing set to false" do
+      before { helper.omnibus_installing = false }
+
+      it "returns false" do
+        helper.omnibus_installing?.must_equal false
       end
     end
   end
