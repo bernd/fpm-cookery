@@ -22,7 +22,7 @@ class Ruby200 < FPM::Cookery::Recipe
           'libreadline6'
 
   def build
-    configure :prefix => "/opt/omnibustest/embedded", 'disable-install-doc' => true
+    configure :prefix => destdir, 'disable-install-doc' => true
     make
   end
 
