@@ -6,12 +6,11 @@ module FPM
     class OmnibusPackager
       include FPM::Cookery::Utils
 
-      attr_reader :packager, :recipe, :config
+      attr_reader :packager, :recipe
 
-      def initialize(packager, config = {})
+      def initialize(packager)
         @packager = packager
         @recipe = packager.recipe
-        @config = config
         @depends = []
       end
 
