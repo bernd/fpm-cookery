@@ -46,9 +46,11 @@ module FPM
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
-        config[:input] = recipe.destdir
 
-        packager.build_package(recipe, config)
+        packager.config[:input] = recipe.destdir
+        packager.config[:keep_destdir] = true
+
+        packager.dispense
       end
 
       private
