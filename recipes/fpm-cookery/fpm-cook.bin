@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Stolen from Vagrant
+
+# Get the directory where this script is. This will also resolve
+# any symlinks in the directory/script, so it will be the fully
+# resolved path.
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# Useful variables
+EMBEDDED_DIR="${DIR}/../embedded"
+
+# Unset some variables that might be set by rvm and friends.
+unset RUBYOPT BUNDLE_GEMFILE BUNDLE_BIN_PATH GEM_HOME GEM_PATH GEMRC
+
+# Call the actual fpm-cook bin with our arguments
+${EMBEDDED_DIR}/bin/fpm-cook "$@"
