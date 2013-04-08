@@ -32,6 +32,7 @@ module FPM
             pkg.target = FPM::Cookery::Facts.target.to_s
 
             Log.info "Located recipe at #{recipe_file} for child recipe #{name}; starting build"
+            recipe.omnibus_installing = true if @recipe.omnibus_dir
             pkg.dispense
 
             @depends += recipe.depends
@@ -43,10 +44,7 @@ module FPM
         recipe.class.depends(@depends.flatten.uniq)
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
-        if recipe.omnibus_dir
-          recipe.destdir = recipe.omnibus_dir
-          recipe.omnibus_installing = true
-        end
+        recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
         config[:input] = recipe.destdir
 
         packager.build_package(recipe, config)
