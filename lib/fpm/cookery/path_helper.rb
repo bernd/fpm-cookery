@@ -3,10 +3,14 @@ require 'fpm/cookery/path'
 module FPM
   module Cookery
     module PathHelper
-      attr_accessor :installing
+      attr_accessor :installing, :omnibus_installing
 
       def installing?
         installing
+      end
+
+      def omnibus_installing?
+        omnibus_installing
       end
 
       # Most of the path helper stuff comes from brew2deb and homebrew.
@@ -61,7 +65,11 @@ module FPM
 
       private
       def current_pathname_for(dir)
-        installing? ? destdir/dir : Path.new("/#{dir}")
+        if omnibus_installing?
+          Path.new("/#{dir}")
+        else
+          installing? ? destdir/dir : Path.new("/#{dir}")
+        end
       end
     end
   end
