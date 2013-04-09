@@ -28,6 +28,7 @@ module FPM
           end
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe|
+            recipe.omnibus_installing = true if recipe.omnibus_dir
             pkg = FPM::Cookery::Packager.new(recipe, :skip_package => true)
             pkg.target = FPM::Cookery::Facts.target.to_s
 
@@ -45,7 +46,12 @@ module FPM
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
-        config[:input] = recipe.destdir
+
+        if recipe.omnibus_additional_paths
+          config[:input] = [ recipe.destdir ] + recipe.omnibus_additional_paths
+        else
+          config[:input] = recipe.destdir
+        end
 
         packager.build_package(recipe, config)
       end
