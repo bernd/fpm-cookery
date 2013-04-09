@@ -24,6 +24,10 @@ module FPM
         !!config[:skip_package]
       end
 
+      def keep_destdir?
+        !!config[:keep_destdir]
+      end
+
       def target=(target)
         # TODO(sissel): do sanity checking
         @target = target
@@ -104,8 +108,8 @@ module FPM
               recipe.build and FileUtils.touch(build_cookie)
             end
 
-            FileUtils.rm_rf(recipe.destdir)
-            recipe.destdir.mkdir
+            FileUtils.rm_rf(recipe.destdir) unless keep_destdir?
+            recipe.destdir.mkdir unless File.exists?(recipe.destdir)
 
             begin
               recipe.installing = true

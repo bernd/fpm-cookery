@@ -6,12 +6,11 @@ module FPM
     class OmnibusPackager
       include FPM::Cookery::Utils
 
-      attr_reader :packager, :recipe, :config
+      attr_reader :packager, :recipe
 
-      def initialize(packager, config = {})
+      def initialize(packager)
         @packager = packager
         @recipe = packager.recipe
-        @config = config
         @depends = []
       end
 
@@ -27,16 +26,17 @@ module FPM
             exit 1
           end
 
-          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe|
-            recipe.omnibus_installing = true if recipe.omnibus_dir
-            pkg = FPM::Cookery::Packager.new(recipe, :skip_package => true)
+          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |dep_recipe|
+            dep_recipe.destdir = "#{recipe.omnibus_dir}/embedded" if recipe.omnibus_dir
+
+            pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
             pkg.target = FPM::Cookery::Facts.target.to_s
 
             Log.info "Located recipe at #{recipe_file} for child recipe #{name}; starting build"
             recipe.omnibus_installing = true if @recipe.omnibus_dir
             pkg.dispense
 
-            @depends += recipe.depends
+            @depends += dep_recipe.depends
             Log.info "Finished building #{name}, moving on to next recipe"
           end
         end
@@ -48,12 +48,14 @@ module FPM
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
 
         if recipe.omnibus_additional_paths
-          config[:input] = [ recipe.destdir ] + recipe.omnibus_additional_paths
+          packager.config[:input] = [ recipe.destdir ] + recipe.omnibus_additional_paths
         else
-          config[:input] = recipe.destdir
+          packager.config[:input] = recipe.destdir
         end
 
-        packager.build_package(recipe, config)
+        packager.config[:keep_destdir] = true
+
+        packager.dispense
       end
 
       private

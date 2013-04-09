@@ -1,16 +1,14 @@
 class Ruby200 < FPM::Cookery::Recipe
   description 'The Ruby virtual machine'
 
-  name 'ruby'
+  name    'ruby'
   version '2.0.0.0'
   revision 0
   homepage 'http://www.ruby-lang.org/'
-  source 'http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p0.tar.bz2'
-  sha256 'c680d392ccc4901c32067576f5b474ee186def2fcd3fcbfa485739168093295f'
+  source   'http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p0.tar.bz2'
+  sha256   'c680d392ccc4901c32067576f5b474ee186def2fcd3fcbfa485739168093295f'
 
-  vendor     'fpm'
-  license    'The Ruby License'
-
+  license 'The Ruby License'
   section 'interpreters'
 
   build_depends 'autoconf', 'libreadline6-dev', 'bison', 'zlib1g-dev',
@@ -28,5 +26,10 @@ class Ruby200 < FPM::Cookery::Recipe
 
   def install
     make :install
+
+    # Shrink package.
+    rm_f "#{destdir}/lib/libruby-static.a"
+    safesystem "strip #{destdir}/bin/ruby"
+    safesystem "find #{destdir} -name '*.so*' | xargs strip"
   end
 end
