@@ -59,7 +59,8 @@ module FPM
               :license, :omnibus_package, :omnibus_dir
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
-                   :exclude, :patches, :provides, :replaces, :omnibus_recipes
+                   :exclude, :patches, :provides, :replaces, :omnibus_recipes,
+                   :omnibus_additional_paths
 
       class << self
         def source(source = nil, spec = {})
