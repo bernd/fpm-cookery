@@ -29,6 +29,8 @@ module FPM
           attributes[:rpm_digest] = 'md5'
           attributes[:rpm_user] = 'root'
           attributes[:rpm_group] = 'root'
+          attributes[:rpm_defattrfile] = '-'
+          attributes[:rpm_defattrdir] = '-'
 
           # TODO replace remove_excluded_files() in packager with this.
           attributes[:excludes] = []
