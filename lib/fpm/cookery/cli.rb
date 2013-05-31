@@ -46,6 +46,14 @@ module FPM
           @platform = o
         end
 
+        options.on("-V", "--version", "Show fpm-cookery and fpm version") do
+          require 'fpm/version'
+          require 'fpm/cookery/version'
+
+          puts "fpm-cookery v#{FPM::Cookery::VERSION} (fpm v#{FPM::VERSION})"
+          exit 0
+        end
+
         # Parse flags and such, remainder is all non-option args.
         remainder = options.parse(argv)
 
