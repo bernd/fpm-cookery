@@ -43,7 +43,7 @@ module FPM
 
         private
         def curl(url, path)
-          args = options[:args] || ['-fL']
+          args = options[:args] || '-fL'
           safesystem('curl', args, '--progress-bar', '-o', path, url)
         end
 
