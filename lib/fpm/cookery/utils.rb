@@ -4,7 +4,7 @@ module FPM
       protected
       # From fpm. (lib/fpm/util.rb)
       def safesystem(*args)
-        success = system(*args)
+        success = system(*args.flatten)
         if !success
           raise "'system(#{args.inspect})' failed with error code: #{$?.exitstatus}"
         end
