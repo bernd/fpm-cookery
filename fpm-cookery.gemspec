@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "fpm", "~> 0.4"
-  s.add_development_dependency "minitest"
+  s.add_development_dependency "minitest", "~> 4.0"
   s.add_development_dependency "rake"
   s.add_development_dependency "puppet"
   s.add_runtime_dependency "fpm", "~> 0.4"
