@@ -1,8 +1,13 @@
-# v0.xx.x (2013-xx-xx)
+# v0.14.0 (2013-05-31)
 * Install dependencies via Puppet. (andytinycat)
+* Add install-deps action to install dependencies. (andytinycat)
+* Fix log message. (ryansch)
 * Add a `patch` helper method to apply patches. (piavlo)
 * Support for [Omnibus](http://wiki.opscode.com/display/chef/Omnibus+Information)-style
   packaging. (andytinycat)
+* Add recipe to build a fat (omnibus-style) package for fpm-cookery.
+* Add `:args` option for the curl handler. (torrancew)
+* Add `-V` command line option to show fpm-cookery and fpm versions.
 
 # v0.13.0 (2013-01-28)
 * Make local file source behave like the remote url source. (#14)
