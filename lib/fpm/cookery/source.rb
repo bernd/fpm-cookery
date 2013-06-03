@@ -1,4 +1,4 @@
-require 'uri'
+require 'addressable/uri'
 
 module FPM
   module Cookery
@@ -7,8 +7,7 @@ module FPM
 
       def initialize(url, options = nil)
         options ||= {}
-
-        @url = URI(url.to_s)
+        @url = Addressable::URI.parse(url.to_s)
         @provider = options[:with]
         @options = options
       end
