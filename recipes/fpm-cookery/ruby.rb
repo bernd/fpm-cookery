@@ -12,12 +12,12 @@ class Ruby200 < FPM::Cookery::Recipe
   section 'interpreters'
 
   build_depends 'autoconf', 'libreadline6-dev', 'bison', 'zlib1g-dev',
-                'libssl-dev', 'libyaml-dev', 'libffi-dev', 'libgdbm-dev', 'libncurses5-dev',
-                'libreadline6-dev'
+                'libssl-dev', 'libyaml-dev', 'libffi-dev', 'libgdbm-dev',
+                'libncurses5-dev', 'libreadline6-dev'
 
   depends 'libffi6', 'libncurses5', 'libreadline6', 'libssl1.0.0',
-          'libtinfo5', 'libyaml-0-2', 'zlib1g', 'libffi6', 'libgdbm3', 'libncurses5',
-          'libreadline6'
+          'libtinfo5', 'libyaml-0-2', 'zlib1g', 'libffi6', 'libgdbm3',
+          'libncurses5', 'libreadline6'
 
   def build
     configure :prefix => destdir, 'disable-install-doc' => true
