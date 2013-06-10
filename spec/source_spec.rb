@@ -45,4 +45,13 @@ describe "Source" do
       source.path.must_equal '/opt/src/foo'
     end
   end
+
+  context "with a private GitHub URL" do
+    it "can handle it" do
+      source = FPM::Cookery::Source.new('git@github.com:foo/bar.git')
+
+      source.url.must_equal 'git@github.com:foo/bar.git'
+      source.path.must_equal 'foo/bar.git'
+    end
+  end
 end
