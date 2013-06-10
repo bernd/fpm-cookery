@@ -2,9 +2,10 @@ class FPMCookery < FPM::Cookery::Recipe
   description 'building packages'
 
   name     'fpm-cookery'
-  version  '0.13.0'
+  version  '0.14.0'
   revision 0
   homepage 'https://github.com/bernd/fpm-cookery'
+  license  'MIT'
 
   source '', :with => :noop
 
@@ -29,7 +30,7 @@ class FPMCookery < FPM::Cookery::Recipe
 
   def gem_install(name, version = nil)
     v = version.nil? ? '' : "-v #{version}"
-    cleanenv_safesystem "#{destdir}/embedded/bin/gem install #{v} #{name}"
+    cleanenv_safesystem "#{destdir}/embedded/bin/gem install --no-ri --no-rdoc #{v} #{name}"
   end
 
   def create_post_install_hook
