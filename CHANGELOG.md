@@ -1,3 +1,7 @@
+# v0.14.1 (2013-06-12)
+* Handle private GitHub URLs. (aussielunix)
+* Fix dependencies in gemspec.
+
 # v0.14.0 (2013-05-31)
 * Install dependencies via Puppet. (andytinycat)
 * Add install-deps action to install dependencies. (andytinycat)
