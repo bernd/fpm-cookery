@@ -1,3 +1,6 @@
+# v0.15.0 (2013-06-13)
+* Add --no-deps option to disable dependency checks.
+
 # v0.14.1 (2013-06-12)
 * Handle private GitHub URLs. (aussielunix)
 * Fix dependencies in gemspec.
