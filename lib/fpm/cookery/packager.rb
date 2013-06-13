@@ -56,7 +56,9 @@ module FPM
         Log.info ''
 
         # RecipeInspector.verify!(recipe)
-        DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+        if config.fetch(:dependency_check, true)
+          DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+        end
 
         recipe.installing = false
 

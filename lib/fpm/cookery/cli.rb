@@ -54,6 +54,10 @@ module FPM
           exit 0
         end
 
+        options.on("--no-deps", "Disable dependency checking") do |o|
+          @nodep = true
+        end
+
         # Parse flags and such, remainder is all non-option args.
         remainder = options.parse(argv)
 
@@ -123,7 +127,7 @@ module FPM
         FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
 
         FPM::Cookery::Book.instance.load_recipe(@filename) do |recipe|
-          packager = FPM::Cookery::Packager.new(recipe)
+          packager = FPM::Cookery::Packager.new(recipe, :dependency_check => !@nodep)
           packager.target = FPM::Cookery::Facts.target.to_s
 
           @actions.each do |action|
