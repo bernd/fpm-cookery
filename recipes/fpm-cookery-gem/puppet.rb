@@ -1,4 +1,7 @@
-class FpmCookeryRubyGem < FPM::Cookery::RubyGemRecipe
+class PuppetRubyGem < FPM::Cookery::RubyGemRecipe
   name    "puppet"
-  version "0.15.0"
+  version "3.2.2"
+
+  chain_package true
+  chain_recipes "hiera", "rgen"
 end
