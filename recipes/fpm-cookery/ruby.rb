@@ -2,11 +2,11 @@ class Ruby200 < FPM::Cookery::Recipe
   description 'The Ruby virtual machine'
 
   name    'ruby'
-  version '2.0.0.195'
+  version '2.0.0.247'
   revision 0
   homepage 'http://www.ruby-lang.org/'
-  source   'http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p195.tar.bz2'
-  sha256   '0be32aef7a7ab6e3708cc1d65cd3e0a99fa801597194bbedd5799c11d652eb5b'
+  source   'http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p247.tar.bz2'
+  sha256   '08e3d4b85b8a1118a8e81261f59dd8b4ddcfd70b6ae554e0ec5ceb99c3185e8a'
 
   license 'The Ruby License'
   section 'interpreters'
