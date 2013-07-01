@@ -2,7 +2,7 @@ class FPMCookery < FPM::Cookery::Recipe
   description 'building packages'
 
   name     'fpm-cookery'
-  version  '0.14.0'
+  version  '0.15.0'
   revision 0
   homepage 'https://github.com/bernd/fpm-cookery'
   license  'MIT'
