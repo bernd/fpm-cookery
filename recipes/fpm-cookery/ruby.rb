@@ -42,6 +42,6 @@ class Ruby200 < FPM::Cookery::Recipe
     # Shrink package.
     rm_f "#{destdir}/lib/libruby-static.a"
     safesystem "strip #{destdir}/bin/ruby"
-    safesystem "find #{destdir} -name '*.so*' | xargs strip"
+    safesystem "find #{destdir} -name '*.so' -or -name '*.so.*' | xargs strip"
   end
 end
