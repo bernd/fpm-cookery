@@ -15,9 +15,7 @@ module FPM
 
         Log.info "Verifying build_depends and depends with Puppet"
 
-        missing = (build_depends + depends).reject do |package|
-          self.package_installed?(package)
-        end
+        missing = missing_packages(build_depends + depends)
 
         if missing.length == 0
           Log.info "All build_depends and depends packages installed"
@@ -34,6 +32,12 @@ module FPM
           end
         end
 
+      end
+
+      def self.missing_packages(*pkgs)
+        pkgs.flatten.reject do |package|
+          self.package_installed?(package)
+        end
       end
 
       def self.package_installed?(package)
