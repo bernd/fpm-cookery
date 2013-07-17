@@ -2,6 +2,7 @@ require 'fpm/cookery/book_hook'
 require 'fpm/cookery/recipe'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/packager'
+require 'fpm/cookery/chain_packager'
 require 'fpm/cookery/omnibus_packager'
 require 'fpm/cookery/log'
 require 'fpm/cookery/log/output/console'
@@ -136,6 +137,8 @@ module FPM
             when "package"
               if recipe.omnibus_package == true
                 FPM::Cookery::OmnibusPackager.new(packager).run
+              elsif recipe.chain_package == true
+                FPM::Cookery::ChainPackager.new(packager, :dependency_check => !@nodep).run
               else
                 packager.dispense
               end
