@@ -1,0 +1,9 @@
+script: rake test
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - ruby-head
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
