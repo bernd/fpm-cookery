@@ -21,6 +21,10 @@ module FPM
         self + (path || '').gsub(%r{^/}, '')
       end
 
+      def =~(regex)
+        @path =~ regex
+      end
+
       def mkdir
         FileUtils.mkdir_p(self.to_s)
       end
