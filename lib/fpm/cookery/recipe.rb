@@ -73,6 +73,10 @@ module FPM
         def platform
           FPM::Cookery::Facts.platform
         end
+
+        def depends_all
+          (depends + build_depends).uniq
+        end
       end
 
       def source
@@ -104,6 +108,21 @@ module FPM
       def builddir(path = nil) (@builddir ||= workdir('tmp-build'))/path   end
       def pkgdir(path = nil)   (@pkgdir   ||= workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir ||= workdir('cache'))/path       end
+
+      # Resolve dependencies from omnibus package.
+      def depends_all
+        pkg_depends = self.class.depends_all        
+        if self.class.omnibus_package
+          self.class.omnibus_recipes.each { |omni_recipe|
+            Book.instance.load_recipe(File.expand_path(omni_recipe + '.rb', File.dirname(filename))) do |recipe|
+              pkg_depends << recipe.depends_all
+            end
+          }
+        end
+
+        pkg_depends.flatten.uniq
+      end
+      
     end
   end
 end

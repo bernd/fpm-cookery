@@ -465,4 +465,15 @@ describe "Recipe" do
       end
     end
   end
+
+  describe "#depends_all" do
+    it "returns build_depends and depends package names" do
+      klass.depends [:pkg1, :pkg2]
+      klass.build_depends [:pkg3, :pkg4]
+
+      [:pkg1, :pkg2, :pkg3, :pkg4].all? { |i|
+        klass.depends_all.member?(i) && recipe.depends_all.member?(i)
+      }.must_equal true
+    end
+  end
 end
