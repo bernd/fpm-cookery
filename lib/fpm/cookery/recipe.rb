@@ -5,10 +5,12 @@ require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
+require 'fpm/cookery/package/dir'
+require 'fpm/cookery/package/gem'
 
 module FPM
   module Cookery
-    class Recipe
+    class BaseRecipe
       include FileUtils
       include FPM::Cookery::Utils
       include FPM::Cookery::PathHelper
@@ -62,14 +64,9 @@ module FPM
                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,
                    :omnibus_additional_paths, :chain_recipes
 
-      class << self
-        def source(source = nil, spec = {})
-          return @source if source.nil?
-          @source = source
-          @spec = spec
-        end
-        alias_method :url, :source
+      attr_reader :filename
 
+      class << self
         def platform
           FPM::Cookery::Facts.platform
         end
@@ -79,23 +76,12 @@ module FPM
         end
       end
 
-      def source
-        self.class.source
-      end
-
       def initialize(filename)
         @filename = Path.new(filename).expand_path
-        @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
 
         # Set some defaults.
-        vendor || self.class.vendor('fpm')
         revision || self.class.revision(0)
       end
-
-      attr_reader :filename, :source_handler
-
-      extend Forwardable
-      def_delegator :@source_handler, :local_path
 
       def workdir=(value)  @workdir  = Path.new(value) end
       def destdir=(value)  @destdir  = Path.new(value) end
@@ -123,6 +109,42 @@ module FPM
         pkg_depends.flatten.uniq
       end
       
+    end
+
+    class Recipe < BaseRecipe
+
+      def input 
+        FPM::Cookery::Package::Dir.new(self)
+      end
+
+      def initialize(filename)
+        super(filename)
+        @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
+      end
+
+      class << self
+        def source(source = nil, spec = {})
+          return @source if source.nil?
+          @source = source
+          @spec = spec
+        end
+        alias_method :url, :source
+      end
+
+      def source
+        self.class.source
+      end
+
+      attr_reader :source_handler
+
+      extend Forwardable
+      def_delegator :@source_handler, :local_path
+    end
+
+    class RubyGemRecipe < BaseRecipe
+      def input
+        FPM::Cookery::Package::Gem.new(self)
+      end
     end
   end
 end

@@ -126,7 +126,7 @@ module FPM
       def run
         validate
 
-        FPM::Cookery::Recipe.send(:include, FPM::Cookery::BookHook)
+        FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
 
         FPM::Cookery::Book.instance.load_recipe(@filename) do |recipe|
           packager = FPM::Cookery::Packager.new(recipe, :dependency_check => !@nodep)
