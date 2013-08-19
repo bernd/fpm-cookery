@@ -76,6 +76,13 @@ describe "Facts" do
       end
     end
 
+    describe "with platform Darwin" do
+      it "returns osxpkg" do
+        FPM::Cookery::Facts.platform = 'Darwin'
+        FPM::Cookery::Facts.target.must_equal :osxpkg
+      end
+    end
+
     describe "with an unknown platform" do
       it "returns nil" do
         FPM::Cookery::Facts.platform = '___X___'

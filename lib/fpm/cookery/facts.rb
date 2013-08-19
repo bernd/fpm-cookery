@@ -19,6 +19,7 @@ module FPM
         @target ||= case platform
                     when :centos, :redhat, :fedora then :rpm
                     when :debian, :ubuntu          then :deb
+                    when :darwin                   then :osxpkg
                     end
       end
 
