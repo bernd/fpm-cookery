@@ -52,13 +52,13 @@ module FPM
 
           case entries.size
           when 0
-	      files = Dir['*'].select {|dir| File.file?(dir) }
-		puts files
-		if files.size > 0 
-		  builddir
-		else
-		  raise "Empty archive! (#{local_path})"
-		end
+            files = Dir['*'].select {|dir| File.file?(dir) }
+
+            if files.size > 0
+              builddir
+            else
+              raise "Empty archive! (#{local_path})"
+            end
           when 1
             entries.first
           else
