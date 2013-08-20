@@ -10,12 +10,13 @@ module FPM
 
           inputs = config.fetch(:input, nil) || '.'
 
+          # Set needed attributes before calling input!
+          attributes[:prefix] = '/'
+          attributes[:chdir] = recipe.destdir.to_s
+
           Array(inputs).each do |path|
             input(path)
           end
-
-          attributes[:prefix] = '/'
-          attributes[:chdir] = recipe.destdir.to_s
 
           # The call to input() overwrites the license and vendor attributes.
           # XXX Needs to be fixed in fpm/package/dir.rb.
