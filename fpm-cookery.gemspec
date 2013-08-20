@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "facter"
   s.add_runtime_dependency "puppet"
   s.add_runtime_dependency "addressable"
+  s.add_runtime_dependency "systemu"
 end
