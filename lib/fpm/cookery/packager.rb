@@ -6,6 +6,8 @@ require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
 require 'fpm/cookery/log'
 require 'fpm/cookery/package/dir'
+require 'fpm/cookery/package/version'
+require 'fpm/cookery/package/maintainer'
 require 'fpm'
 
 module FPM
@@ -142,37 +144,15 @@ module FPM
       def build_package(recipe, config)
         recipe.pkgdir.mkdir
         Dir.chdir(recipe.pkgdir) do
-          epoch, ver = recipe.version.split(':', 2)
-          if ver.nil?
-            ver, epoch = epoch, nil
-          end
-
-          # Build a version including vendor and revision.
-          vendor = config[:vendor] || recipe.vendor
-          vendor_rev = "#{vendor}#{recipe.revision}"
-          case @target
-          when "deb"
-            vendor_delimiter = "+"
-          when "rpm"
-            vendor_delimiter = "."
-          else
-            vendor_delimiter = "-"
-          end
-          version = [ver, vendor_rev].join(vendor_delimiter)
-
-          maintainer = recipe.maintainer || begin
-            username = git_config('user.name')
-            useremail = git_config('user.email')
-
-            username && useremail ? "#{username} <#{useremail}>" : nil
-          end
+          version = FPM::Cookery::Package::Version.new(recipe, @target, config)
+          maintainer = FPM::Cookery::Package::Maintainer.new(recipe, config)
 
           input = recipe.input
 
-          input.version = version
-          input.maintainer = maintainer
-          input.vendor = vendor if vendor
-          input.epoch = epoch if epoch
+          input.version = version.to_s
+          input.maintainer = maintainer.to_s
+          input.vendor = version.vendor if version.vendor
+          input.epoch = version.epoch if version.epoch
 
           add_scripts(recipe, input)
           remove_excluded_files(recipe)
@@ -243,15 +223,6 @@ module FPM
             end
           end
         end
-      end
-
-      private
-
-      def git_config(key)
-        %x(git config --get #{key}).strip
-      rescue
-        Log.warn "Git config command for key '#{key}' failed."
-        nil
       end
     end
   end
