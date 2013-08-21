@@ -98,7 +98,7 @@ module FPM
 
       # Resolve dependencies from omnibus package.
       def depends_all
-        pkg_depends = self.class.depends_all        
+        pkg_depends = self.class.depends_all
         if self.class.omnibus_package
           self.class.omnibus_recipes.each { |omni_recipe|
             Book.instance.load_recipe(File.expand_path(omni_recipe + '.rb', File.dirname(filename))) do |recipe|
@@ -109,12 +109,10 @@ module FPM
 
         pkg_depends.flatten.uniq
       end
-      
     end
 
     class Recipe < BaseRecipe
-
-      def input 
+      def input
         FPM::Cookery::Package::Dir.new(self)
       end
 
