@@ -15,6 +15,7 @@ module FPM
       def initialize
         @colors = true
         @debug = false
+        @use_default_vendor = true
       end
 
       def args(argv)
@@ -58,6 +59,10 @@ module FPM
 
         options.on("--no-deps", "Disable dependency checking") do |o|
           @nodep = true
+        end
+
+        options.on("--no-default-vendor", "Disable default vendor") do |o|
+          @use_default_vendor = false
         end
 
         # Parse flags and such, remainder is all non-option args.
@@ -128,8 +133,10 @@ module FPM
 
         FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
 
+        config = {:dependency_check => !@nodep, :use_default_vendor => @use_default_vendor}
+
         FPM::Cookery::Book.instance.load_recipe(@filename) do |recipe|
-          packager = FPM::Cookery::Packager.new(recipe, :dependency_check => !@nodep)
+          packager = FPM::Cookery::Packager.new(recipe, config)
           packager.target = FPM::Cookery::Facts.target.to_s
 
           @actions.each do |action|
@@ -139,7 +146,7 @@ module FPM
               if recipe.omnibus_package == true
                 FPM::Cookery::OmnibusPackager.new(packager).run
               elsif recipe.chain_package == true
-                FPM::Cookery::ChainPackager.new(packager, :dependency_check => !@nodep).run
+                FPM::Cookery::ChainPackager.new(packager, config).run
               else
                 packager.dispense
               end
