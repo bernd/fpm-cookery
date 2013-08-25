@@ -80,7 +80,6 @@ module FPM
         @filename = Path.new(filename).expand_path
 
         # Set some defaults.
-        vendor || self.class.vendor('fpm')
         revision || self.class.revision(0)
       end
 
