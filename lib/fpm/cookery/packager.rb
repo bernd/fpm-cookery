@@ -147,7 +147,7 @@ module FPM
           version = FPM::Cookery::Package::Version.new(recipe, @target, config)
           maintainer = FPM::Cookery::Package::Maintainer.new(recipe, config)
 
-          input = recipe.input
+          input = recipe.input(config)
 
           input.version = version.to_s
           input.maintainer = maintainer.to_s

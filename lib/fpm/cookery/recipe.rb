@@ -112,8 +112,8 @@ module FPM
     end
 
     class Recipe < BaseRecipe
-      def input
-        FPM::Cookery::Package::Dir.new(self)
+      def input(config)
+        FPM::Cookery::Package::Dir.new(self, config)
       end
 
       def initialize(filename)
@@ -141,8 +141,8 @@ module FPM
     end
 
     class RubyGemRecipe < BaseRecipe
-      def input
-        FPM::Cookery::Package::Gem.new(self)
+      def input(config)
+        FPM::Cookery::Package::Gem.new(self, config)
       end
     end
   end

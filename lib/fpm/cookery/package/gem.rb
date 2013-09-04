@@ -5,18 +5,20 @@ module FPM
   module Cookery
     module Package
       class Gem < FPM::Cookery::Package::Package
-
-        def initialize(recipe)
-          super(recipe, FPM::Package::Gem.new)
-
-          self.version = recipe.version
-
-          attributes[:gem_fix_name?] = true
-          attributes[:gem_fix_dependencies?] = true
-
-          input(self.name)
+        def fpm_object
+          FPM::Package::Gem.new
         end
 
+        def package_setup
+          fpm.version = recipe.version
+
+          fpm.attributes[:gem_fix_name?] = true
+          fpm.attributes[:gem_fix_dependencies?] = true
+        end
+
+        def package_input
+          fpm.input(recipe.name)
+        end
       end
     end
   end
