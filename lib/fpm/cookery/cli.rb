@@ -7,48 +7,70 @@ require 'fpm/cookery/omnibus_packager'
 require 'fpm/cookery/log'
 require 'fpm/cookery/log/output/console'
 require 'fpm/cookery/log/output/console_color'
-require 'optparse'
+require 'fpm/cookery/config'
+require 'clamp'
 
 module FPM
   module Cookery
-    class CLI
-      def initialize
-        @colors = true
-        @debug = false
-      end
+    class CLI < Clamp::Command
+      option ['-c', '--color'], :flag, 'toggle color'
+      option ['-D', '--debug'], :flag, 'enable debug output'
+      option ['-t', '--target'], 'TARGET', 'set desired fpm output target (deb, rpm, etc)'
+      option ['-p', '--platform'], 'PLATFORM', 'set the target platform (centos, ubuntu, debian)'
+      option ['-V', '--version'], :flag, 'show fpm-cookery and fpm version'
+      option '--[no-]deps', :flag, 'enable/disable dependency checking'
 
-      def args(argv)
-        program = File.basename($0)
-        options = OptionParser.new
-        options.banner = \
-          "Usage: #{program} [options] [path/to/recipe.rb] action [...]"
-        options.separator "Actions:"
-        options.separator "  package        - builds the package"
-        options.separator "  clean          - cleans up"
-        options.separator "  install-deps   - installs build and runtime dependencies"
-        options.separator "  show-deps      - show build and runtime dependencies"
-        options.separator "Options:"
+      class Command < self
+        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
 
-        options.on("-c", "--color",
-                   "Toggle color. (default #{@colors.inspect})") do |o|
-          @colors = !@colors
+        def recipe_file
+          file = File.expand_path(recipe)
+
+          # Allow giving the directory containing a recipe.rb
+          if File.directory?(file) && File.exists?(File.join(file, 'recipe.rb'))
+            file = File.join(file, 'recipe.rb')
+          end
+
+          file
         end
 
-        options.on("-D", "--debug", "Enable debug output.") do |o|
-          @debug = true
+        def validate
+          unless File.exists?(recipe_file)
+            Log.error 'No recipe.rb found in the current directory, abort.'
+            exit 1
+          end
+
+          # Override the detected platform.
+          if platform
+            FPM::Cookery::Facts.platform = platform
+          end
+
+          if target
+            FPM::Cookery::Facts.target = target
+          end
+
+          if FPM::Cookery::Facts.target.nil?
+            Log.error "No target given and we're unable to detect your platform"
+            exit 1
+          end
         end
 
-        options.on("-t TARGET", "--target TARGET",
-                  "Set the desired fpm output target (deb, rpm, etc)") do |o|
-          @target = o
+        def execute
+          show_version if version?
+          init_logging
+          validate
+
+          FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
+
+          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe|
+            packager = FPM::Cookery::Packager.new(recipe, :dependency_check => config.dependency_check)
+            packager.target = FPM::Cookery::Facts.target.to_s
+
+            exec(config, recipe, packager)
+          end
         end
 
-        options.on("-p PLATFORM", "--platform PLATFORM",
-                  "Set the target platform. (centos, ubuntu, debian)") do |o|
-          @platform = o
-        end
-
-        options.on("-V", "--version", "Show fpm-cookery and fpm version") do
+        def show_version
           require 'fpm/version'
           require 'fpm/cookery/version'
 
@@ -56,103 +78,57 @@ module FPM
           exit 0
         end
 
-        options.on("--no-deps", "Disable dependency checking") do |o|
-          @nodep = true
+        def config
+          @config ||= FPM::Cookery::Config.from_cli(self)
         end
 
-        # Parse flags and such, remainder is all non-option args.
-        remainder = options.parse(argv)
+        def init_logging
+          FPM::Cookery::Log.enable_debug(config.debug)
 
-        # Initialize logging.
-        FPM::Cookery::Log.enable_debug(@debug)
-        if @colors
-          FPM::Cookery::Log.output(FPM::Cookery::Log::Output::ConsoleColor.new)
-        else
-          FPM::Cookery::Log.output(FPM::Cookery::Log::Output::Console.new)
-        end
-
-        # Default recipe to find is in current directory named 'recipe.rb'
-        @filename = File.expand_path('recipe.rb')
-
-        # See if something that looks like a recipe path is in arguments
-        remainder.each do |arg|
-          # If 'foo.rb' was given, and it exists, use it.
-          if arg =~ /\.rb$/ and File.exists?(arg)
-            remainder.delete(arg)
-            @filename = arg
-            break
-          end
-
-          # Allow giving the directory containing a recipe.rb
-          if File.directory?(arg) and File.exists?(File.join(arg, "recipe.rb"))
-            remainder.delete(arg)
-            @filename = File.join(arg, "recipe.rb")
-            break
-          end
-        end
-
-        # Everything that's not the recipe filename is an action.
-        @actions = remainder
-        return self
-      end
-
-      def validate
-        unless File.exists?(@filename)
-          Log.error 'No recipe.rb found in the current directory, abort.'
-          exit 1
-        end
-
-        # Default action is "package"
-        if @actions.empty?
-          @actions = ["package"]
-        end
-
-        # Override the detected platform.
-        if @platform
-          FPM::Cookery::Facts.platform = @platform
-        end
-
-        if @target
-          FPM::Cookery::Facts.target = @target
-        end
-
-        if FPM::Cookery::Facts.target.nil?
-          Log.error "No target given and we're unable to detect your platform"
-          exit 1
-        end
-
-      end
-
-      def run
-        validate
-
-        FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
-
-        FPM::Cookery::Book.instance.load_recipe(@filename) do |recipe|
-          packager = FPM::Cookery::Packager.new(recipe, :dependency_check => !@nodep)
-          packager.target = FPM::Cookery::Facts.target.to_s
-
-          @actions.each do |action|
-            case action
-            when "clean" ; packager.cleanup
-            when "package"
-              if recipe.omnibus_package == true
-                FPM::Cookery::OmnibusPackager.new(packager).run
-              elsif recipe.chain_package == true
-                FPM::Cookery::ChainPackager.new(packager, :dependency_check => !@nodep).run
-              else
-                packager.dispense
-              end
-            when "install-deps" ; packager.install_deps
-            when "show-deps"
-              puts recipe.depends_all.join(' ')
-            else
-              # TODO(sissel): fail if this happens
-              Log.error "Unknown action: #{action}"
-            end
+          if config.color?
+            FPM::Cookery::Log.output(FPM::Cookery::Log::Output::ConsoleColor.new)
+          else
+            FPM::Cookery::Log.output(FPM::Cookery::Log::Output::Console.new)
           end
         end
       end
+
+      class PackageCmd < Command
+        def exec(config, recipe, packager)
+          if recipe.omnibus_package == true
+            FPM::Cookery::OmnibusPackager.new(packager).run
+          elsif recipe.chain_package == true
+            FPM::Cookery::ChainPackager.new(packager, :dependency_check => config.dependency_check).run
+          else
+            packager.dispense
+          end
+        end
+      end
+
+      class CleanCmd < Command
+        def exec(config, recipe, packager)
+          packager.cleanup
+        end
+      end
+
+      class InstallDepsCmd < Command
+        def exec(config, recipe, packager)
+          packager.install_deps
+        end
+      end
+
+      class ShowDepsCmd < Command
+        def exec(config, recipe, packager)
+          puts recipe.depends_all.join(' ')
+        end
+      end
+
+      self.default_subcommand = 'package'
+
+      subcommand 'package', 'builds the package', PackageCmd
+      subcommand 'clean', 'cleans up', CleanCmd
+      subcommand 'install-deps', 'installs build and runtime dependencies', InstallDepsCmd
+      subcommand 'show-deps', 'show build and runtime dependencies', ShowDepsCmd
     end
   end
 end

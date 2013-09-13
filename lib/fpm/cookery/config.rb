@@ -23,6 +23,22 @@ module FPM
         path ? new(YAML.load_file(path)) : new
       end
 
+      def self.from_cli(cli)
+        new.tap do |config|
+          ATTRIBUTES.each do |name|
+            if cli.respond_to?("#{name}?")
+              value = cli.__send__("#{name}?")
+            elsif cli.respond_to?(name)
+              value = cli.__send__(name)
+            else
+              value = nil
+            end
+
+            config.__send__("#{name}=", value) unless value.nil?
+          end
+        end
+      end
+
       attr_accessor *ATTRIBUTES
 
       ATTRIBUTES.each do |name|

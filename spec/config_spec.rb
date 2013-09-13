@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'fpm/cookery/config'
+require 'fpm/cookery/cli'
 
 describe 'Config' do
   let(:data) { {} }
@@ -149,6 +150,18 @@ describe 'Config' do
       config = FPM::Cookery::Config.load_file(paths)
 
       config.maintainer.must_equal 'John Doe <john@example.com>'
+    end
+  end
+
+  describe '.from_cli' do
+    it 'loads the config from cli options' do
+      cli = FPM::Cookery::CLI.new('path', {})
+      cli.parse(%w(-D -t rpm))
+
+      config = FPM::Cookery::Config.from_cli(cli)
+
+      config.debug.must_equal true
+      config.target.must_equal 'rpm'
     end
   end
 end
