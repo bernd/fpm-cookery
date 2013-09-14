@@ -69,6 +69,19 @@ module FPM
           fpm.cleanup
         end
 
+        def add_script(type, content)
+          case type.to_sym
+          when :pre_install
+            fpm.scripts[:before_install] = content
+          when :post_install
+            fpm.scripts[:after_install] = content
+          when :pre_uninstall
+            fpm.scripts[:before_remove] = content
+          when :post_uninstall
+            fpm.scripts[:after_remove] = content
+          end
+        end
+
         # XXX should go away and set in initializer
         def version=(value)
           fpm.version = value
