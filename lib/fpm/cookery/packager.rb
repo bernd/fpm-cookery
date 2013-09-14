@@ -177,16 +177,9 @@ module FPM
 
       def add_scripts(recipe, input)
         error = false
+        scripts = [:pre_install, :post_install, :pre_uninstall, :post_uninstall]
 
-        # Map script names to fpm method names.
-        script_map = {
-          'pre_install' => :before_install,
-          'post_install' => :after_install,
-          'pre_uninstall' => :before_remove,
-          'post_uninstall' => :after_remove
-        }
-
-        script_map.each do |script, fpm_script|
+        scripts.each do |script|
           unless recipe.send(script).nil?
             script_file = FPM::Cookery::Path.new(recipe.send(script))
 
@@ -197,7 +190,7 @@ module FPM
             end
 
             if File.exists?(script_file)
-              input.scripts[fpm_script] = File.read(script_file.to_s)
+              input.add_script(script, File.read(script_file.to_s))
             else
               Log.error "#{script} script '#{script_file}' is missing"
               error = true
