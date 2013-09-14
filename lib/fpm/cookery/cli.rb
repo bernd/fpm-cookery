@@ -18,7 +18,8 @@ module FPM
       option ['-t', '--target'], 'TARGET', 'set desired fpm output target (deb, rpm, etc)'
       option ['-p', '--platform'], 'PLATFORM', 'set the target platform (centos, ubuntu, debian)'
       option ['-V', '--version'], :flag, 'show fpm-cookery and fpm version'
-      option '--[no-]deps', :flag, 'enable/disable dependency checking'
+      option '--[no-]deps', :flag, 'enable/disable dependency checking',
+        :attribute_name => 'dependency_check'
 
       class Command < self
         parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
