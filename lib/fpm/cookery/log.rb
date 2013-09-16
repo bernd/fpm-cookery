@@ -10,7 +10,7 @@ module FPM
 
       @channel = ::Cabin::Channel.get
       @channel.subscribe(self)
-      @channel.level = :debug
+      @channel.level = :info
 
       class << self
         def enable_debug(value = true)
