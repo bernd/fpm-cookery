@@ -22,8 +22,6 @@ module FPM
         :attribute_name => 'dependency_check'
 
       class Command < self
-        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
-
         def recipe_file
           file = File.expand_path(recipe)
 
@@ -95,6 +93,8 @@ module FPM
       end
 
       class PackageCmd < Command
+        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+
         def exec(config, recipe, packager)
           if recipe.omnibus_package == true
             FPM::Cookery::OmnibusPackager.new(packager).run
@@ -107,18 +107,24 @@ module FPM
       end
 
       class CleanCmd < Command
+        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+
         def exec(config, recipe, packager)
           packager.cleanup
         end
       end
 
       class InstallDepsCmd < Command
+        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+
         def exec(config, recipe, packager)
           packager.install_deps
         end
       end
 
       class ShowDepsCmd < Command
+        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+
         def exec(config, recipe, packager)
           puts recipe.depends_all.join(' ')
         end
