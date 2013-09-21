@@ -44,7 +44,11 @@ module FPM
         private
         def curl(url, path)
           args = options[:args] || '-fL'
-          safesystem('curl', args, '--progress-bar', '-o', path, url)
+          cmd = ['curl', args, '--progress-bar', '-o', path, url]
+          safesystem(*cmd)
+        rescue RuntimeError => e
+          Log.error("Command failed: #{cmd.join(' ')}")
+          raise
         end
 
         def extracted_source
