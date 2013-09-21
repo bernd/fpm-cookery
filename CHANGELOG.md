@@ -1,3 +1,11 @@
+# v0.16.0 (2013-09-21)
+* Chain packager. (smasset)
+* Add show-depends CLI option. (unakatsuo)
+* Add fpm-cookery chain packager gem recipes. (smasset)
+* Compatibility fixes for the latest FPM releases. (skiold)
+* Fix problems with tar files that contain no directories. (narkisr)
+* New CLI options parsing backend. (using clamp)
+
 # v0.15.0 (2013-06-13)
 * Add --no-deps option to disable dependency checks.
 
