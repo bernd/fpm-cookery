@@ -1,3 +1,6 @@
+# TBD
+* Build omnibus packages in the tmp-dest
+
 # v0.16.2 (2013-10-19)
 * Add support for submodules in git provider. (narkisr / #50)
 * Set a default maintainer.
