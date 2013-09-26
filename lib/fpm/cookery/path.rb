@@ -62,6 +62,9 @@ module FPM
         raise "#{src} does not exist" unless File.symlink? src or File.exist? src
 
         mkpath
+
+        # We used to use :preserve => true here, but that broke package
+        # building when the file tree contains broken symlinks.
         FileUtils.cp_r src, dst
 
         # if File.symlink? src
