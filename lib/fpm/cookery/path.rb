@@ -62,7 +62,7 @@ module FPM
         raise "#{src} does not exist" unless File.symlink? src or File.exist? src
 
         mkpath
-        FileUtils.cp_r src, dst, :preserve => true
+        FileUtils.cp_r src, dst
 
         # if File.symlink? src
         #   # we use the BSD mv command because FileUtils copies the target and
