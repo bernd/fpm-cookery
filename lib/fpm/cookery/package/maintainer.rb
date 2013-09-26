@@ -28,6 +28,10 @@ module FPM
           useremail = git_config('user.email')
 
           username && useremail ? "#{username} <#{useremail}>" : nil
+        rescue
+          # This might fail if git is not installed or if the current
+          # dir is not a git repository.
+          nil
         end
 
         def git_config(key)
