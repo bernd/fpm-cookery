@@ -1,3 +1,7 @@
+# v0.16.1 (2013-09-26)
+* Unbreak package building with broken symlinks.
+* Do not fail if git is not installed.
+
 # v0.16.0 (2013-09-21)
 * Chain packager. (smasset)
 * Add show-depends CLI option. (unakatsuo)
