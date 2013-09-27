@@ -14,13 +14,11 @@ module FPM
         @depends = []
       end
 
-      def run
-        # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
-        Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
-
-        recipe.omnibus_recipes.each do |name|
+      def load_omnibus_recipes(_recipe)
+        dep_recipes = []
+        _recipe.omnibus_recipes.each do |name|
           recipe_file = build_recipe_file_path(name)
-
+          Log.info "Loading dependency recipe #{name} from #{recipe_file}"
           unless File.exists?(recipe_file)
             Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
             exit 1
@@ -29,16 +27,29 @@ module FPM
           FPM::Cookery::Book.instance.load_recipe(recipe_file) do |dep_recipe|
             dep_recipe.destdir = "#{recipe.omnibus_dir}/embedded" if recipe.omnibus_dir
             dep_recipe.omnibus_installing = true if recipe.omnibus_dir
-
-            pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
-            pkg.target = FPM::Cookery::Facts.target.to_s
-
-            Log.info "Located recipe at #{recipe_file} for child recipe #{name}; starting build"
-            pkg.dispense
-
-            @depends += dep_recipe.depends
-            Log.info "Finished building #{name}, moving on to next recipe"
+            if dep_recipe.omnibus_recipes.any?
+              dep_recipes += load_omnibus_recipes(dep_recipe)
+            end
+            dep_recipes << dep_recipe
           end
+        end
+        dep_recipes
+      end
+
+      def run
+        # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
+        Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
+
+        dep_recipes = load_omnibus_recipes(recipe)
+        dep_recipes.uniq.each do |dep_recipe|
+          pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
+          pkg.target = FPM::Cookery::Facts.target.to_s
+
+          Log.info "Located recipe for child recipe #{dep_recipe.name}; starting build"
+          pkg.dispense
+
+          @depends += dep_recipe.depends
+          Log.info "Finished building #{dep_recipe.name}, moving on to next recipe"
         end
 
         # Now all child recipes are built; set depends to combined set of dependencies
