@@ -24,6 +24,9 @@ module FPM
             Dir.chdir(cachedir) do
               git('clone', url, local_path)
             end
+		Dir.chdir(local_path) do
+		  git('submodule', 'update', '--init') if options[:submodule]
+		end
           end
 
           local_path
@@ -49,6 +52,8 @@ module FPM
 
             # Trailing '/' is important! (see git-checkout-index(1))
             git('checkout-index', '-a', '-f', "--prefix=#{extracted_source}/")
+
+		git('submodule', 'foreach', "mkdir -p #{extracted_source}/$path && cp -r . #{extracted_source}/$path") if options[:submodule]
           end
 
           extracted_source
