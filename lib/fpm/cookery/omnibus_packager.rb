@@ -29,7 +29,7 @@ module FPM
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file) do |dep_recipe|
             with_destdir(dep_recipe, recipe.destdir) do
-              dep_recipe.with_paths(PathSet.new("#{omnibus_dir}/embedded", "")) do
+              dep_recipe.with_paths(PathSet.new("#{omnibus_dir}/embedded","")) do
                 pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
                 pkg.target = FPM::Cookery::Facts.target.to_s
 

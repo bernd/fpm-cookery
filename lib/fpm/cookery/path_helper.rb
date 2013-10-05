@@ -27,9 +27,9 @@ module FPM
       # Paths inside the temporary destination
       #
       # @example
-      #   recipe.destination.etc #=> "<recipe-dir>/tmp-dst/etc"
-      #   recipe.destination.bin #=> "<recipe-dir>/tmp-dst/usr/bin"
-      #   recipe.destination.var #=> "<recipe-dir>/var"
+      #   recipe.destination.etc #=> "<recipe-dir>/tmp-dest/etc"
+      #   recipe.destination.bin #=> "<recipe-dir>/tmp-dest/usr/bin"
+      #   recipe.destination.var #=> "<recipe-dir>/tmp-dest/var"
       #
       # @return [PathSet]
       def destination
