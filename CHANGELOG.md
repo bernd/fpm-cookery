@@ -1,3 +1,8 @@
+# v0.16.2 (2013-10-19)
+* Add support for submodules in git provider. (narkisr / #50)
+* Set a default maintainer.
+* Fix problems with setting epoch. (#51)
+
 # v0.16.1 (2013-09-26)
 * Unbreak package building with broken symlinks.
 * Do not fail if git is not installed.
