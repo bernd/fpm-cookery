@@ -1,11 +1,12 @@
 require 'fpm/cookery/shellout'
+require 'socket'
 
 module FPM
   module Cookery
     module Package
       class Maintainer < Struct.new(:recipe, :config)
         def maintainer
-          config_maintainer || recipe_maintainer || git_maintainer
+          config_maintainer || recipe_maintainer || git_maintainer || default_maintainer
         end
 
         def to_s
@@ -36,6 +37,10 @@ module FPM
 
         def git_config(key)
           FPM::Cookery::Shellout.git_config_get(key)
+        end
+
+        def default_maintainer
+          "<#{ENV['USER']}@#{Socket.gethostname}>"
         end
       end
     end

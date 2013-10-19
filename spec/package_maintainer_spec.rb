@@ -10,8 +10,10 @@ describe 'Maintainer' do
 
   let(:maintainer) { klass.new(recipe, config) }
 
-  def with_shellout_stub(&spec)
+  def with_shellout_stub(opts = {}, &spec)
     callable = lambda do |key|
+      return if opts[:nil]
+
       case key
       when 'user.name'
         'John Doe'
@@ -23,6 +25,16 @@ describe 'Maintainer' do
     end
 
     FPM::Cookery::Shellout.stub(:git_config_get, callable, &spec)
+  end
+
+  def with_env_stub(env)
+    old_env = ENV.to_hash
+    env.each do |key, value|
+      ENV[key] = value
+    end
+    yield
+  ensure
+    ENV.replace(old_env)
   end
 
   describe '#to_s' do
@@ -63,7 +75,18 @@ describe 'Maintainer' do
           maintainer.to_s.must_equal 'John Doe <john@example.com>'
         end
       end
+    end
 
+    context 'without valid git data' do
+      it 'returns a default maintainer' do
+        Socket.stub(:gethostname, lambda { 'hostname' }) do
+          with_shellout_stub(:nil => true) do
+            with_env_stub('USER' => 'john') do
+              maintainer.to_s.must_equal '<john@hostname>'
+            end
+          end
+        end
+      end
     end
   end
 
