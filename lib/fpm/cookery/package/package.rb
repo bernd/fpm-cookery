@@ -94,6 +94,10 @@ module FPM
         def vendor=(value)
           fpm.vendor = value
         end
+
+        def epoch=(value)
+          fpm.epoch = value
+        end
       end
     end
   end
