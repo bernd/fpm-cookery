@@ -1,3 +1,4 @@
+require 'fpm/cookery/utils/ruby'
 class BundlerGem < FPM::Cookery::Recipe
   description 'Bundler gem'
 
@@ -11,11 +12,12 @@ class BundlerGem < FPM::Cookery::Recipe
 
   section 'interpreters'
 
+  include FPM::Cookery::Utils::Ruby
+
   def build
-    cleanenv_safesystem "#{destdir}/bin/gem install #{name} -v #{version}"
   end
 
   def install
-    # Do nothing!
+    ruby.gem('install','bundler:1.3.4','--no-document')
   end
 end

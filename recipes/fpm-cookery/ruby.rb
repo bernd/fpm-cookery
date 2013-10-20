@@ -30,18 +30,18 @@ class Ruby200 < FPM::Cookery::Recipe
   platforms [:redhat, :centos] do depends.push('openssl') end
 
   def build
-    configure :prefix => destdir,
+    configure :prefix => prefix,
               'enable-shared' => true,
               'disable-install-doc' => true
     make
   end
 
   def install
-    make :install
+    make :install, 'DESTDIR' => destdir
 
     # Shrink package.
     rm_f "#{destdir}/lib/libruby-static.a"
-    safesystem "strip #{destdir}/bin/ruby"
-    safesystem "find #{destdir} -name '*.so' -or -name '*.so.*' | xargs strip"
+    safesystem "strip #{destination.bin / 'ruby' }"
+    safesystem "find #{destination.lib} -name '*.so' -or -name '*.so.*' | xargs strip"
   end
 end
