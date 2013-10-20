@@ -1,8 +1,9 @@
+require 'fpm/cookery/utils/ruby'
 class FPMCookery < FPM::Cookery::Recipe
   description 'building packages'
 
   name     'fpm-cookery'
-  version  '0.15.0'
+  version  '0.16.2'
   revision 0
   homepage 'https://github.com/bernd/fpm-cookery'
   license  'MIT'
@@ -13,11 +14,13 @@ class FPMCookery < FPM::Cookery::Recipe
   omnibus_recipes 'ruby'
   omnibus_dir     '/opt/fpm-cookery'
 
+  include FPM::Cookery::Utils::Ruby
+
   def build
-    gem_install 'fpm-cookery', version
   end
 
   def install
+    ruby.gem('install','fpm-cookery','-v',version,'--no-document')
     destdir('bin').install workdir('fpm-cook.bin'), 'fpm-cook'
 
     with_trueprefix do
@@ -28,18 +31,13 @@ class FPMCookery < FPM::Cookery::Recipe
 
   private
 
-  def gem_install(name, version = nil)
-    v = version.nil? ? '' : "-v #{version}"
-    cleanenv_safesystem "#{destdir}/embedded/bin/gem install --no-ri --no-rdoc #{v} #{name}"
-  end
-
   def create_post_install_hook
     File.open(builddir('post-install'), 'w', 0755) do |f|
       f.write <<-__POSTINST
 #!/bin/sh
 set -e
 
-BIN_PATH="#{destdir}/bin"
+BIN_PATH="#{real.bin}"
 BIN="fpm-cook"
 
 update-alternatives --install /usr/bin/$BIN $BIN $BIN_PATH/$BIN 100
@@ -57,7 +55,7 @@ exit 0
 #!/bin/sh
 set -e
 
-BIN_PATH="#{destdir}/bin"
+BIN_PATH="#{real.bin}"
 BIN="fpm-cook"
 
 if [ "$1" != "upgrade" ]; then

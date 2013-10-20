@@ -22,11 +22,11 @@ class Ruby200 < FPM::Cookery::Recipe
           'libreadline6'
 
   def build
-    configure :prefix => destdir, 'disable-install-doc' => true
+    configure :prefix => prefix, 'disable-install-doc' => true
     make
   end
 
   def install
-    make :install
+    make :install, 'DESTDIR' => destdir
   end
 end
