@@ -36,6 +36,22 @@ module FPM
 
         safesystem './configure', *args
       end
+      
+      def autogen(*args)
+        if args.last.is_a?(Hash)
+          opts = args.pop
+          args += opts.map{ |k,v|
+            option = k.to_s.gsub('_','-')
+            if v == true
+              "--#{option}"
+            else
+              "--#{option}=#{v}"
+            end
+          }
+        end
+
+        safesystem './autogen.sh', *args
+      end
 
       # From brew2deb. (lib/debian_formula.rb)
       def make(*args)
