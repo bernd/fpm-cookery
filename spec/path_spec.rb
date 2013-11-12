@@ -6,13 +6,13 @@ describe "Path" do
   describe ".pwd" do
     it "returns the current dir" do
       Dir.chdir('/tmp') do
-        FPM::Cookery::Path.pwd.to_s.must_equal '/tmp'
+        FPM::Cookery::Path.pwd.to_s.must_match /\/tmp\/|\/private\/tmp/ 
       end
     end
 
     it "adds the given path to the current dir" do
       Dir.chdir('/tmp') do
-        FPM::Cookery::Path.pwd('foo').to_s.must_equal '/tmp/foo'
+        FPM::Cookery::Path.pwd('foo').to_s.must_match /\/tmp/|\/private\/tmp/
       end
     end
   end
