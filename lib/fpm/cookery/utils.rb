@@ -21,7 +21,7 @@ module FPM
       end
 
       # From brew2deb. (lib/debian_formula.rb)
-      def configure(*args)
+      def argument_build(*args)
         if args.last.is_a?(Hash)
           opts = args.pop
           args += opts.map{ |k,v|
@@ -33,9 +33,17 @@ module FPM
             end
           }
         end
+      end
 
+      def configure(*args)
+        args = argument_build(*args)
         safesystem './configure', *args
       end
+
+     def autogen(*args)
+       args =  argument_build(*args)
+       safesystem './autogen.sh', *args
+     end
 
       # From brew2deb. (lib/debian_formula.rb)
       def make(*args)
