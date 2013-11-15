@@ -107,7 +107,8 @@ module FPM
               build_cookie = build_cookie_name(package_name)
 
               if File.exists?(build_cookie)
-                Log.info 'Skipping build (`fpm-cook clean` to rebuild)'
+                Log.warn "Skipping build of #{recipe.name} because build cookie found (#{build_cookie})," \
+                         " use \"fpm-cook clean\" to rebuild!"
               else
                 Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
                 recipe.build and FileUtils.touch(build_cookie)
