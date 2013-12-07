@@ -74,6 +74,14 @@ describe 'Config' do
     common_tests(:vendor)
   end
 
+  describe '#quiet' do
+    it 'defaults to false' do
+      default_config.quiet.must_equal false
+    end
+
+    common_tests(:quiet)
+  end
+
   describe '#skip_package' do
     it 'defaults to false' do
       default_config.skip_package.must_equal false
@@ -109,7 +117,8 @@ describe 'Config' do
         :vendor => nil,
         :skip_package => false,
         :keep_destdir => false,
-        :dependency_check => true
+        :dependency_check => true,
+        :quiet => false
       })
     end
   end
