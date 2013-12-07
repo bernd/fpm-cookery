@@ -62,7 +62,7 @@ module FPM
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,
-                   :omnibus_additional_paths, :chain_recipes
+                   :omnibus_additional_paths, :chain_recipes, :directories
 
       attr_reader :filename
 

@@ -49,6 +49,7 @@ describe 'Package' do
       provides 'foo-package'
       replaces 'foo-old'
       config_files '/etc/foo.conf'
+      directories '/var/lib/foo', '/var/cache/foo'
     end
   end
 
@@ -99,6 +100,10 @@ describe 'Package' do
 
     it 'sets the config_files' do
       package.fpm.config_files.must_equal ['/etc/foo.conf']
+    end
+
+    it 'sets the directories' do
+      package.fpm.directories.must_equal ['/var/lib/foo', '/var/cache/foo']
     end
 
     describe 'attributes' do

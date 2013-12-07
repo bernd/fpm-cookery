@@ -223,6 +223,7 @@ describe "Recipe" do
   spec_recipe_attribute_list(:replaces, %w{one two})
   spec_recipe_attribute_list(:omnibus_recipes, %w{one two})
   spec_recipe_attribute_list(:chain_recipes, %w{one two})
+  spec_recipe_attribute_list(:directories, %w{one two})
 
   describe ".source" do
     it "sets a source url" do

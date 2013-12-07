@@ -22,6 +22,7 @@ module FPM
           @fpm.provides += recipe.provides
           @fpm.replaces += recipe.replaces
           @fpm.config_files += recipe.config_files
+          @fpm.directories += recipe.directories
 
           @fpm.attributes[:deb_compression] = 'gzip'
           @fpm.attributes[:deb_user] = 'root'
