@@ -12,6 +12,8 @@ describe "PathHelper" do
 
   describe "path helper methods" do
     [ ['prefix', '/usr'],
+      ['root_prefix', '/'],
+      ['root', '/'],
       ['etc', '/etc'],
       ['opt', '/opt'],
       ['var', '/var'],
@@ -36,6 +38,8 @@ describe "PathHelper" do
       name, path = m
 
       describe "##{name}" do
+        def c(path); path.gsub(%r{//}, '/'); end
+
         context "without an argument" do
           it "returns #{path}" do
             helper.send(name).to_s.must_equal path
@@ -44,7 +48,7 @@ describe "PathHelper" do
 
         context "with an argument" do
           it "adds the argument to the path" do
-            helper.send(name, 'foo/bar').to_s.must_equal "#{path}/foo/bar"
+            helper.send(name, 'foo/bar').to_s.must_equal c("#{path}/foo/bar")
           end
         end
 
@@ -58,7 +62,7 @@ describe "PathHelper" do
           before { helper.installing = true}
 
           it "adds the destdir as prefix" do
-            helper.send(name, 'blah').to_s.must_equal "#{helper.destdir}#{path}/blah"
+            helper.send(name, 'blah').to_s.must_equal c("#{helper.destdir}#{path}/blah")
           end
         end
 
@@ -66,7 +70,7 @@ describe "PathHelper" do
           before { helper.omnibus_installing = true }
 
           it "does not add anything to the path" do
-            helper.send(name, 'blah').to_s.must_equal "#{path}/blah"
+            helper.send(name, 'blah').to_s.must_equal c("#{path}/blah")
           end
         end
 
@@ -74,7 +78,7 @@ describe "PathHelper" do
           before { helper.omnibus_installing = true ; helper.installing = true }
 
           it "does not add anything to the path" do
-            helper.send(name, 'blah').to_s.must_equal "#{path}/blah"
+            helper.send(name, 'blah').to_s.must_equal c("#{path}/blah")
           end
         end
       end
