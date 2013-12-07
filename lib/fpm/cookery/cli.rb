@@ -63,7 +63,7 @@ module FPM
           FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe|
-            packager = FPM::Cookery::Packager.new(recipe, :dependency_check => config.dependency_check)
+            packager = FPM::Cookery::Packager.new(recipe, config.to_hash)
             packager.target = FPM::Cookery::Facts.target.to_s
 
             exec(config, recipe, packager)
@@ -98,9 +98,9 @@ module FPM
 
         def exec(config, recipe, packager)
           if recipe.omnibus_package == true
-            FPM::Cookery::OmnibusPackager.new(packager).run
+            FPM::Cookery::OmnibusPackager.new(packager, config.to_hash).run
           elsif recipe.chain_package == true
-            FPM::Cookery::ChainPackager.new(packager, :dependency_check => config.dependency_check).run
+            FPM::Cookery::ChainPackager.new(packager, config.to_hash).run
           else
             packager.dispense
           end
