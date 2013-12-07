@@ -8,7 +8,7 @@ module FPM
         CHECKSUM = false
         NAME = :git
 
-        def fetch
+        def fetch(config = {})
           rev = options[:sha] || options[:tag]
 
           if local_path.exist?
@@ -32,7 +32,7 @@ module FPM
           local_path
         end
 
-        def extract
+        def extract(config = {})
           extracted_source = (builddir/local_path.basename('.git').to_s).to_s
 
           Dir.chdir(local_path) do

@@ -8,7 +8,7 @@ module FPM
         CHECKSUM = false
         NAME = :hg
 
-        def fetch
+        def fetch(config = {})
           if local_path.exist?
             Dir.chdir(local_path) do
               hg('pull')
@@ -23,7 +23,7 @@ module FPM
           local_path
         end
 
-        def extract
+        def extract(config = {})
           src = (builddir/local_path.basename('.hg').to_s).to_s
 
           Dir.chdir(local_path) do

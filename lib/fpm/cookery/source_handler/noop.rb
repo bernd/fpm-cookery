@@ -7,11 +7,11 @@ module FPM
         CHECKSUM = false
         NAME = :noop
 
-        def fetch
+        def fetch(config = {})
           Log.info "Noop source_handler; do nothing."
         end
 
-        def extract
+        def extract(config = {})
           Log.info "Not extracting - noop source handler"
           builddir
         end

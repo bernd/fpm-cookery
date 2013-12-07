@@ -9,7 +9,7 @@ module FPM
         CHECKSUM = false
         NAME = :local_path
 
-        def fetch
+        def fetch(config = {})
           if local_path.exist?
             Log.info "Using cached file #{local_path}"
           else

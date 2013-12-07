@@ -8,7 +8,7 @@ module FPM
         CHECKSUM = false
         NAME = :svn
 
-        def fetch
+        def fetch(config = {})
           # TODO(lusis) - implement some caching using 'svn info'?
           Dir.chdir(cachedir) do
             svn(url, local_path)
@@ -16,7 +16,7 @@ module FPM
           local_path
         end
 
-        def extract
+        def extract(config = {})
           Dir.chdir(builddir) do
             safesystem('cp', '-Rp', local_path, '.')
             extracted_source

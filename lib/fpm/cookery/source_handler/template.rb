@@ -24,11 +24,11 @@ module FPM
           @url
         end
 
-        def fetch
+        def fetch(config = {})
           raise "#{self}#fetch not implemented!"
         end
 
-        def extract
+        def extract(config = {})
           raise "#{self}#extract not implemented!"
         end
 
