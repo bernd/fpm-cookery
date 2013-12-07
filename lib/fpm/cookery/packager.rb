@@ -70,7 +70,7 @@ module FPM
           recipe.cachedir.mkdir
           Dir.chdir(recipe.cachedir) do
             Log.info "Fetching source: #{source.source_url}"
-            source.fetch
+            source.fetch(:quiet => config[:quiet])
 
             if source.checksum?
               SourceIntegrityCheck.new(recipe).tap do |check|
