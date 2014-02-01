@@ -3,10 +3,11 @@ require 'fpm/cookery/package/version'
 require 'ostruct'
 
 describe 'Version' do
+  def target; 'deb'; end
+
   let(:klass) { FPM::Cookery::Package::Version }
 
   let(:recipe) { OpenStruct.new(:version => '1.2.0') }
-  let(:target) { 'deb' }
   let(:config) { {} }
 
   let(:version) { klass.new(recipe, target, config) }
@@ -19,7 +20,7 @@ describe 'Version' do
     end
 
     context 'with target rpm' do
-      let(:target) { 'rpm' }
+      def target; 'rpm'; end
 
       it 'returns "."' do
         version.vendor_delimiter.must_equal '.'
@@ -27,7 +28,7 @@ describe 'Version' do
     end
 
     context 'with unknown target' do
-      let(:target) { '_foo_' }
+      def target; '_foo_'; end
 
       it 'returns "-"' do
         version.vendor_delimiter.must_equal '-'
@@ -106,7 +107,7 @@ describe 'Version' do
   end
 
   describe '#to_str' do
-    let(:target) { 'rpm' }
+      def target; 'rpm'; end
 
     it 'returns a string representation of the version' do
       recipe.version = '1.3'
