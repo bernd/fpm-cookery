@@ -26,7 +26,8 @@ module FPM
       end
 
       def mkdir
-        FileUtils.mkdir_p(self.to_s)
+        # FileUtils.mkdir_p in Ruby 1.8.7 does not return an array.
+        Array(FileUtils.mkdir_p(self.to_s))
       end
 
       def install(src, new_basename = nil)

@@ -137,7 +137,8 @@ describe 'Config' do
 
       begin; config; rescue => e; error = e; end
 
-      error.invalid_keys.must_equal [:__foo__, :__bar__]
+      # Sort array for Ruby 1.8.7 compat.
+      error.invalid_keys.sort.must_equal [:__bar__, :__foo__]
     end
 
     it 'works with strings' do
