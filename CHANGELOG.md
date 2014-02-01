@@ -1,3 +1,11 @@
+# v0.17.0 (2014-02-01)
+* Update fpm dependency to 1.0.0. (joschi / #62)
+* Add `-q` command line option to disable progress bars. (#58)
+* Add `directories` recipe attribute. (#53)
+* Add `autogen` build helper. (sepulworld/autogen-support / #54)
+* Add `root_prefix` and `root` path helper. (sepulworld/set-root-prefix / #52)
+* Support recursive omnibus recipes dependencies. (avishai-ish-shalom / #49)
+
 # v0.16.2 (2013-10-19)
 * Add support for submodules in git provider. (narkisr / #50)
 * Set a default maintainer.
