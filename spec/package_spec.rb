@@ -110,7 +110,7 @@ describe 'Package' do
       let(:attributes) { package.fpm.attributes }
 
       it 'sets deb_compression' do
-        attributes[:deb_compression].must_equal 'gzip'
+        attributes[:deb_compression].must_equal 'gz'
       end
 
       it 'sets deb_user' do
