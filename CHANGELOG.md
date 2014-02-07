@@ -1,3 +1,6 @@
+# v0.17.1 (2014-02-07)
+* Unbreak deb package building.
+
 # v0.17.0 (2014-02-01)
 * Update fpm dependency to 1.0.0. (joschi / #62)
 * Add `-q` command line option to disable progress bars. (#58)
