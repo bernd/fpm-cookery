@@ -119,8 +119,8 @@ describe "Recipe" do
       check_attribute(:revision, '12')
     end
 
-    it "sets a default revision" do
-      recipe.revision.must_equal 0
+    it "sets a default revision of 1" do
+      recipe.revision.must_equal 1
     end
   end
 

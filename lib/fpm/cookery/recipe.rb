@@ -81,7 +81,7 @@ module FPM
 
         # Set some defaults.
         vendor || self.class.vendor('fpm')
-        revision || self.class.revision(0)
+        revision || self.class.revision(1)
       end
 
       def workdir=(value)  @workdir  = Path.new(value) end
