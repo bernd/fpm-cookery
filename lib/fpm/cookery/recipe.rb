@@ -7,6 +7,7 @@ require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
+require 'fpm/cookery/package/npm'
 
 module FPM
   module Cookery
@@ -142,6 +143,12 @@ module FPM
     class RubyGemRecipe < BaseRecipe
       def input(config)
         FPM::Cookery::Package::Gem.new(self, config)
+      end
+    end
+
+    class NPMRecipe < BaseRecipe
+      def input(config)
+        FPM::Cookery::Package::NPM.new(self, config)
       end
     end
   end
