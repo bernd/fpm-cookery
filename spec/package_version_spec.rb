@@ -90,10 +90,22 @@ describe 'Version' do
   describe '#to_s' do
     it 'returns a string representation of the version' do
       recipe.version = '2.1.3'
-      recipe.vendor = 'testing'
+      recipe.vendor = 'testing1'
       recipe.revision = 5
 
-      version.to_s.must_equal '2.1.3+testing5'
+      version.to_s.must_equal '2.1.3-5+testing1'
+    end
+
+    context 'with target rpm' do
+      def target; 'rpm'; end
+
+      it 'returns a string representation of the version' do
+        recipe.version = '2.1.3'
+        recipe.vendor = 'testing1'
+        recipe.revision = 5
+
+        version.to_s.must_equal '2.1.3-5.testing1'
+      end
     end
 
     context 'without vendor' do
@@ -102,6 +114,17 @@ describe 'Version' do
         recipe.revision = 5
 
         version.to_s.must_equal '2.1.3-5'
+      end
+
+      context 'with target rpm' do
+        def target; 'rpm'; end
+
+        it 'returns a string representation of the version' do
+          recipe.version = '2.1.3'
+          recipe.revision = 5
+
+          version.to_s.must_equal '2.1.3-5'
+        end
       end
     end
   end
@@ -114,7 +137,7 @@ describe 'Version' do
       recipe.vendor = 'foo'
       recipe.revision = 1
 
-      version.to_str.must_equal '1.3.foo1'
+      version.to_str.must_equal '1.3-1.foo'
     end
   end
 end

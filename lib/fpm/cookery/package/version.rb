@@ -1,6 +1,10 @@
 module FPM
   module Cookery
     module Package
+      # See the following URLs for package naming conventions.
+      #
+      # * https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version
+      # * https://fedoraproject.org/wiki/Packaging:NamingGuidelines?rd=Packaging/NamingGuidelines#Package_Versioning
       class Version
         VENDOR_DELIMITER = {
           :deb     => '+',
@@ -28,7 +32,7 @@ module FPM
 
         def to_s
           if vendor
-            "#{version}#{vendor_delimiter}#{vendor}#{revision}"
+            "#{version}-#{revision}#{vendor_delimiter}#{vendor}"
           else
             "#{version}-#{revision}"
           end
