@@ -1,3 +1,12 @@
+# v0.18.0 (2014-03-01)
+* Do not set a default value for the vendor attribute.
+  __WARNING__: This changes the default package names!
+* Change package name computation regarding version, revision and vendor.
+  __WARNING__: This changes the default package names!
+* Start default revision at 1.
+* Unbreak omnibus packaging. (#64)
+* Add support for npm recipes. (bracki / #65)
+
 # v0.17.1 (2014-02-07)
 * Unbreak deb package building.
 
