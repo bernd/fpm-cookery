@@ -8,8 +8,9 @@ module FPM
 
       attr_reader :packager, :recipe
 
-      def initialize(packager)
+      def initialize(packager, config = {})
         @packager = packager
+        @config = config
         @recipe = packager.recipe
         @depends = []
       end
