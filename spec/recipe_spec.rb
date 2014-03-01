@@ -141,8 +141,8 @@ describe "Recipe" do
       check_attribute(:vendor, 'myvendor')
     end
 
-    it "sets a default vendor" do
-      recipe.vendor.must_equal 'fpm'
+    it "does not set a default vendor" do
+      recipe.vendor.must_equal nil
     end
   end
 
