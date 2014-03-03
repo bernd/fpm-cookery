@@ -1,3 +1,7 @@
+# v0.19.0 (2014-03-03)
+* Correctly set version, iteration and vendor on the FPM object.
+  __WARNING__: This changes the default package names!
+
 # v0.18.0 (2014-03-01)
 * Do not set a default value for the vendor attribute.
   __WARNING__: This changes the default package names!
