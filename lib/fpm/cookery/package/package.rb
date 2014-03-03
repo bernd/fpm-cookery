@@ -84,8 +84,10 @@ module FPM
         end
 
         # XXX should go away and set in initializer
-        def version=(value)
-          fpm.version = value
+        def version=(version)
+          fpm.version = version.version
+          fpm.iteration = version.revision
+          fpm.vendor = version.vendor
         end
 
         def maintainer=(value)

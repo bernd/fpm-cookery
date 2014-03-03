@@ -150,7 +150,7 @@ module FPM
 
           input = recipe.input(config)
 
-          input.version = version.to_s
+          input.version = version
           input.maintainer = maintainer.to_s
           input.vendor = version.vendor if version.vendor
           input.epoch = version.epoch if version.epoch
