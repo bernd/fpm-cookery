@@ -149,7 +149,7 @@ describe 'Package' do
         attributes[:excludes].must_equal []
       end
 
-      it 'sets rpm_compression' do
+      it 'sets rpm_auto_add_directories?' do
         attributes[:rpm_auto_add_directories?].must_equal true
       end
     end
