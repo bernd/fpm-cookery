@@ -1,19 +1,9 @@
 require 'spec_helper'
 require 'fpm/cookery/recipe'
 
-class TestRecipe < FPM::Cookery::Recipe
-  NAME = :test_recipe
-  CHECKSUM = true
-end
-
 describe "Recipe" do
-  let(:klass) { TestRecipe }
-
-  before do
-    # Reset the class level instance variables.
-    klass.instance_variables.each do |v|
-      klass.instance_variable_set(v, nil)
-    end
+  let(:klass) do
+    Class.new(FPM::Cookery::Recipe)
   end
 
   let(:recipe) do
@@ -21,19 +11,19 @@ describe "Recipe" do
   end
 
   it "sets the filename" do
-    recipe.filename.to_s.must_equal __FILE__
+    expect(recipe.filename.to_s).to eq(__FILE__)
   end
 
   describe "#workdir" do
     it "sets the workdir" do
-      recipe.workdir.to_s.must_equal File.dirname(__FILE__)
+      expect(recipe.workdir.to_s).to eq(File.dirname(__FILE__))
     end
 
     describe "with a relative filename path" do
       it "expands the workdir path" do
         filename = "spec/#{File.basename(__FILE__)}"
         r = klass.new(filename)
-        r.workdir.to_s.must_equal File.dirname(__FILE__)
+        expect(r.workdir.to_s).to eq(File.dirname(__FILE__))
       end
     end
   end
@@ -44,7 +34,7 @@ describe "Recipe" do
         source 'http://example.com/foo-1.0.tar.gz', :foo => 'bar'
       end
 
-      recipe.source_handler.must_be_instance_of FPM::Cookery::SourceHandler
+      expect(recipe.source_handler).to be_a(FPM::Cookery::SourceHandler)
     end
   end
 
@@ -56,8 +46,8 @@ describe "Recipe" do
 
     klass.send(attr, value)
 
-    klass.send(attr).must_equal expect
-    recipe.send(attr).must_equal expect
+    expect(klass.send(attr)).to eq(expect)
+    expect(recipe.send(attr)).to eq(expect)
   end
 
   describe "#arch" do
@@ -120,7 +110,7 @@ describe "Recipe" do
     end
 
     it "sets a default revision of 1" do
-      recipe.revision.must_equal 1
+      expect(recipe.revision).to eq(1)
     end
   end
 
@@ -142,7 +132,7 @@ describe "Recipe" do
     end
 
     it "does not set a default vendor" do
-      recipe.vendor.must_equal nil
+      expect(recipe.vendor).to eq(nil)
     end
   end
 
@@ -202,12 +192,12 @@ describe "Recipe" do
             #{name} "#{list[0]}"
             #{name} "#{list[1]}"
           end
-          klass.#{name}.size.must_equal #{list.size}
-          recipe.#{name}.size.must_equal #{list.size}
-          klass.#{name}[0].must_equal "#{list[0]}"
-          klass.#{name}[1].must_equal "#{list[1]}"
-          recipe.#{name}[0].must_equal "#{list[0]}"
-          recipe.#{name}[1].must_equal "#{list[1]}"
+          expect(klass.#{name}.size).to eq(#{list.size})
+          expect(recipe.#{name}.size).to eq(#{list.size})
+          expect(klass.#{name}[0]).to eq("#{list[0]}")
+          expect(klass.#{name}[1]).to eq("#{list[1]}")
+          expect(recipe.#{name}[0]).to eq("#{list[0]}")
+          expect(recipe.#{name}[1]).to eq("#{list[1]}")
         end
       end
     }
@@ -231,8 +221,8 @@ describe "Recipe" do
         source 'http://example.com/foo-1.0.tar.gz'
       end
 
-      klass.source.must_equal 'http://example.com/foo-1.0.tar.gz'
-      klass.new(__FILE__).source.must_equal 'http://example.com/foo-1.0.tar.gz'
+      expect(klass.source).to eq('http://example.com/foo-1.0.tar.gz')
+      expect(klass.new(__FILE__).source).to eq('http://example.com/foo-1.0.tar.gz')
     end
 
     describe "with specs" do
@@ -241,8 +231,8 @@ describe "Recipe" do
           source 'http://example.com/foo-1.0.tar.gz', :foo => 'bar'
         end
 
-        klass.spec.must_equal({:foo => 'bar'})
-        klass.new(__FILE__).spec.must_equal({:foo => 'bar'})
+        expect(klass.spec).to eq({:foo => 'bar'})
+        expect(klass.new(__FILE__).spec).to eq({:foo => 'bar'})
       end
     end
   end
@@ -253,8 +243,8 @@ describe "Recipe" do
         url 'http://example.com/foo-1.0.tar.gz'
       end
 
-      klass.source.must_equal 'http://example.com/foo-1.0.tar.gz'
-      klass.new(__FILE__).source.must_equal 'http://example.com/foo-1.0.tar.gz'
+      expect(klass.source).to eq('http://example.com/foo-1.0.tar.gz')
+      expect(klass.new(__FILE__).source).to eq('http://example.com/foo-1.0.tar.gz')
     end
 
     describe "with specs" do
@@ -263,8 +253,8 @@ describe "Recipe" do
           url 'http://example.com/foo-1.0.tar.gz', :foo => 'bar'
         end
 
-        klass.spec.must_equal({:foo => 'bar'})
-        klass.new(__FILE__).spec.must_equal({:foo => 'bar'})
+        expect(klass.spec).to eq({:foo => 'bar'})
+        expect(klass.new(__FILE__).spec).to eq({:foo => 'bar'})
       end
     end
   end
@@ -275,7 +265,7 @@ describe "Recipe" do
         source 'http://example.com/foo-1.0.tar.gz'
       end
 
-      File.basename(klass.new(__FILE__).local_path.to_s).must_equal 'foo-1.0.tar.gz'
+      expect(File.basename(klass.new(__FILE__).local_path.to_s)).to eq('foo-1.0.tar.gz')
     end
   end
 
@@ -292,7 +282,7 @@ describe "Recipe" do
           end
         end
 
-        klass.new(__FILE__).vendor.must_equal 'b'
+        expect(klass.new(__FILE__).vendor).to eq('b')
       end
     end
 
@@ -308,7 +298,7 @@ describe "Recipe" do
           end
         end
 
-        klass.new(__FILE__).vendor.must_equal 'b'
+        expect(klass.new(__FILE__).vendor).to eq('b')
       end
     end
 
@@ -324,7 +314,7 @@ describe "Recipe" do
           end
         end
 
-        klass.new(__FILE__).vendor.must_equal 'a'
+        expect(klass.new(__FILE__).vendor).to eq('a')
       end
     end
   end
@@ -346,7 +336,7 @@ describe "Recipe" do
           end
         end
 
-        klass.new(__FILE__).vendor.must_equal 'b'
+        expect(klass.new(__FILE__).vendor).to eq('b')
       end
     end
 
@@ -360,7 +350,7 @@ describe "Recipe" do
           end
         end
 
-        klass.new(__FILE__).vendor.must_equal 'b'
+        expect(klass.new(__FILE__).vendor).to eq('b')
       end
     end
 
@@ -374,7 +364,7 @@ describe "Recipe" do
           end
         end
 
-        klass.new(__FILE__).vendor.must_equal 'a'
+        expect(klass.new(__FILE__).vendor).to eq('a')
       end
     end
   end
@@ -386,20 +376,20 @@ describe "Recipe" do
   describe "#destdir" do
     describe "default" do
       it "sets the destdir" do
-        recipe.destdir.must_equal recipe.workdir('tmp-dest')
+        expect(recipe.destdir).to eq(recipe.workdir('tmp-dest'))
       end
     end
 
     describe "set manually" do
       it "sets the destdir" do
         recipe.destdir = '/tmp'
-        recipe.destdir.to_s.must_equal '/tmp'
+        expect(recipe.destdir.to_s).to eq('/tmp')
       end
     end
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        recipe.destdir('test').must_equal recipe.workdir('tmp-dest/test')
+        expect(recipe.destdir('test')).to eq(recipe.workdir('tmp-dest/test'))
       end
     end
   end
@@ -407,20 +397,20 @@ describe "Recipe" do
   describe "#builddir" do
     describe "default" do
       it "sets the builddir" do
-        recipe.builddir.must_equal recipe.workdir('tmp-build')
+        expect(recipe.builddir).to eq(recipe.workdir('tmp-build'))
       end
     end
 
     describe "set manually" do
       it "sets the builddir" do
         recipe.builddir = '/tmp/jojo'
-        recipe.builddir.to_s.must_equal '/tmp/jojo'
+        expect(recipe.builddir.to_s).to eq('/tmp/jojo')
       end
     end
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        recipe.builddir('test').must_equal recipe.workdir('tmp-build/test')
+        expect(recipe.builddir('test')).to eq(recipe.workdir('tmp-build/test'))
       end
     end
   end
@@ -428,20 +418,20 @@ describe "Recipe" do
   describe "#pkgdir" do
     describe "default" do
       it "sets the pkgdir" do
-        recipe.pkgdir.must_equal recipe.workdir('pkg')
+        expect(recipe.pkgdir).to eq(recipe.workdir('pkg'))
       end
     end
 
     describe "set manually" do
       it "sets the pkgdir" do
         recipe.pkgdir = '/tmp/jojo'
-        recipe.pkgdir.to_s.must_equal '/tmp/jojo'
+        expect(recipe.pkgdir.to_s).to eq('/tmp/jojo')
       end
     end
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        recipe.pkgdir('test').must_equal recipe.workdir('pkg/test')
+        expect(recipe.pkgdir('test')).to eq(recipe.workdir('pkg/test'))
       end
     end
   end
@@ -449,20 +439,20 @@ describe "Recipe" do
   describe "#cachedir" do
     describe "default" do
       it "sets the cachedir" do
-        recipe.cachedir.must_equal recipe.workdir('cache')
+        expect(recipe.cachedir).to eq(recipe.workdir('cache'))
       end
     end
 
     describe "set manually" do
       it "sets the cachedir" do
         recipe.cachedir = '/tmp/jojo'
-        recipe.cachedir.to_s.must_equal '/tmp/jojo'
+        expect(recipe.cachedir.to_s).to eq('/tmp/jojo')
       end
     end
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        recipe.cachedir('test').must_equal recipe.workdir('cache/test')
+        expect(recipe.cachedir('test')).to eq(recipe.workdir('cache/test'))
       end
     end
   end
@@ -472,9 +462,9 @@ describe "Recipe" do
       klass.depends [:pkg1, :pkg2]
       klass.build_depends [:pkg3, :pkg4]
 
-      [:pkg1, :pkg2, :pkg3, :pkg4].all? { |i|
+      expect([:pkg1, :pkg2, :pkg3, :pkg4].all? { |i|
         klass.depends_all.member?(i) && recipe.depends_all.member?(i)
-      }.must_equal true
+      }).to eq(true)
     end
   end
 end

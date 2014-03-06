@@ -7,7 +7,7 @@ describe "Source" do
       it "returns true" do
         source = FPM::Cookery::Source.new('http://example.com/', :with => :git)
 
-        source.provider?.must_equal true
+        expect(source.provider?).to eq(true)
       end
     end
 
@@ -15,7 +15,7 @@ describe "Source" do
       it "returns false" do
         source = FPM::Cookery::Source.new('http://example.com/')
 
-        source.provider?.must_equal false
+        expect(source.provider?).to eq(false)
       end
     end
   end
@@ -25,7 +25,7 @@ describe "Source" do
       it "returns true" do
         source = FPM::Cookery::Source.new('file:///tmp')
 
-        source.local?.must_equal true
+        expect(source.local?).to eq(true)
       end
     end
 
@@ -33,7 +33,7 @@ describe "Source" do
       it "returns false" do
         source = FPM::Cookery::Source.new('https://www.example.com/')
 
-        source.local?.must_equal false
+        expect(source.local?).to eq(false)
       end
     end
   end
@@ -42,7 +42,7 @@ describe "Source" do
     it "returns the url path" do
       source = FPM::Cookery::Source.new('file:///opt/src/foo')
 
-      source.path.must_equal '/opt/src/foo'
+      expect(source.path).to eq('/opt/src/foo')
     end
   end
 
@@ -50,8 +50,8 @@ describe "Source" do
     it "can handle it" do
       source = FPM::Cookery::Source.new('git@github.com:foo/bar.git')
 
-      source.url.must_equal 'git@github.com:foo/bar.git'
-      source.path.must_equal 'foo/bar.git'
+      expect(source.url).to eq('git@github.com:foo/bar.git')
+      expect(source.path).to eq('foo/bar.git')
     end
   end
 end

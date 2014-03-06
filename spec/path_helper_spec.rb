@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'fpm/cookery/path_helper'
 
 describe "PathHelper" do
-  class PathTest
-    include FPM::Cookery::PathHelper
+  let(:helper) do
+    Class.new {
+      include FPM::Cookery::PathHelper
 
-    def destdir; FPM::Cookery::Path.new('/tmp/dest') end
+      def destdir; FPM::Cookery::Path.new('/tmp/dest') end
+    }.new
   end
-
-  let(:helper) { PathTest.new }
 
   describe "path helper methods" do
     [ ['prefix', '/usr'],
@@ -42,19 +42,19 @@ describe "PathHelper" do
 
         context "without an argument" do
           it "returns #{path}" do
-            helper.send(name).to_s.must_equal path
+            expect(helper.send(name).to_s).to eq(path)
           end
         end
 
         context "with an argument" do
           it "adds the argument to the path" do
-            helper.send(name, 'foo/bar').to_s.must_equal c("#{path}/foo/bar")
+            expect(helper.send(name, 'foo/bar').to_s).to eq(c("#{path}/foo/bar"))
           end
         end
 
         context "with a nil argument" do
           it "does not add anything to the path" do
-            helper.send(name, nil).to_s.must_equal path
+            expect(helper.send(name, nil).to_s).to eq(path)
           end
         end
 
@@ -62,7 +62,7 @@ describe "PathHelper" do
           before { helper.installing = true}
 
           it "adds the destdir as prefix" do
-            helper.send(name, 'blah').to_s.must_equal c("#{helper.destdir}#{path}/blah")
+            expect(helper.send(name, 'blah').to_s).to eq(c("#{helper.destdir}#{path}/blah"))
           end
         end
 
@@ -70,7 +70,7 @@ describe "PathHelper" do
           before { helper.omnibus_installing = true }
 
           it "does not add anything to the path" do
-            helper.send(name, 'blah').to_s.must_equal c("#{path}/blah")
+            expect(helper.send(name, 'blah').to_s).to eq(c("#{path}/blah"))
           end
         end
 
@@ -78,7 +78,7 @@ describe "PathHelper" do
           before { helper.omnibus_installing = true ; helper.installing = true }
 
           it "does not add anything to the path" do
-            helper.send(name, 'blah').to_s.must_equal c("#{path}/blah")
+            expect(helper.send(name, 'blah').to_s).to eq(c("#{path}/blah"))
           end
         end
       end
@@ -90,7 +90,7 @@ describe "PathHelper" do
       before { helper.installing = true}
 
       it "returns true" do
-        helper.installing?.must_equal true
+        expect(helper.installing?).to eq(true)
       end
     end
 
@@ -98,7 +98,7 @@ describe "PathHelper" do
       before { helper.installing = false }
 
       it "returns true" do
-        helper.installing?.must_equal false
+        expect(helper.installing?).to eq(false)
       end
     end
   end
@@ -108,7 +108,7 @@ describe "PathHelper" do
       before { helper.omnibus_installing = true }
 
       it "returns true" do
-        helper.omnibus_installing?.must_equal true
+        expect(helper.omnibus_installing?).to eq(true)
       end
     end
 
@@ -116,7 +116,7 @@ describe "PathHelper" do
       before { helper.omnibus_installing = false }
 
       it "returns false" do
-        helper.omnibus_installing?.must_equal false
+        expect(helper.omnibus_installing?).to eq(false)
       end
     end
   end
@@ -127,13 +127,13 @@ describe "PathHelper" do
 
       specify "prefix returns /" do
         helper.with_trueprefix do
-          helper.prefix.to_s.must_equal '/usr'
+          expect(helper.prefix.to_s).to eq('/usr')
         end
       end
 
       it "will restore the previous installing value" do
         helper.with_trueprefix {}
-        helper.installing.must_equal true
+        expect(helper.installing).to eq(true)
       end
     end
 
@@ -142,13 +142,13 @@ describe "PathHelper" do
 
       specify "prefix returns /" do
         helper.with_trueprefix do
-          helper.prefix.to_s.must_equal '/usr'
+          expect(helper.prefix.to_s).to eq('/usr')
         end
       end
 
       it "will restore the previous installing value" do
         helper.with_trueprefix {}
-        helper.installing.must_equal false
+        expect(helper.installing).to eq(false)
       end
     end
   end

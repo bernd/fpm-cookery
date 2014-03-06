@@ -17,7 +17,7 @@ describe "Facts" do
     end
 
     it "is returns the current platform" do
-      FPM::Cookery::Facts.arch.must_equal :x86_64
+      expect(FPM::Cookery::Facts.arch).to eq(:x86_64)
     end
   end
 
@@ -31,12 +31,12 @@ describe "Facts" do
     end
 
     it "is using Facter to autodetect the platform" do
-      FPM::Cookery::Facts.platform.must_equal :centos
+      expect(FPM::Cookery::Facts.platform).to eq(:centos)
     end
 
     it "can be set" do
       FPM::Cookery::Facts.platform = 'CentOS'
-      FPM::Cookery::Facts.platform.must_equal :centos
+      expect(FPM::Cookery::Facts.platform).to eq(:centos)
     end
   end
 
@@ -44,55 +44,55 @@ describe "Facts" do
     describe "with platform CentOS" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'CentOS'
-        FPM::Cookery::Facts.target.must_equal :rpm
+        expect(FPM::Cookery::Facts.target).to eq(:rpm)
       end
     end
 
     describe "with platform RedHat" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'RedHat'
-        FPM::Cookery::Facts.target.must_equal :rpm
+        expect(FPM::Cookery::Facts.target).to eq(:rpm)
       end
     end
 
     describe "with platform Fedora" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'Fedora'
-        FPM::Cookery::Facts.target.must_equal :rpm
+        expect(FPM::Cookery::Facts.target).to eq(:rpm)
       end
     end
 
     describe "with platform Debian" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'Debian'
-        FPM::Cookery::Facts.target.must_equal :deb
+        expect(FPM::Cookery::Facts.target).to eq(:deb)
       end
     end
 
     describe "with platform Ubuntu" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'Ubuntu'
-        FPM::Cookery::Facts.target.must_equal :deb
+        expect(FPM::Cookery::Facts.target).to eq(:deb)
       end
     end
 
     describe "with platform Darwin" do
       it "returns osxpkg" do
         FPM::Cookery::Facts.platform = 'Darwin'
-        FPM::Cookery::Facts.target.must_equal :osxpkg
+        expect(FPM::Cookery::Facts.target).to eq(:osxpkg)
       end
     end
 
     describe "with an unknown platform" do
       it "returns nil" do
         FPM::Cookery::Facts.platform = '___X___'
-        FPM::Cookery::Facts.target.must_equal nil
+        expect(FPM::Cookery::Facts.target).to eq(nil)
       end
     end
 
     it "can be set" do
       FPM::Cookery::Facts.target = 'rpm'
-      FPM::Cookery::Facts.target.must_equal :rpm
+      expect(FPM::Cookery::Facts.target).to eq(:rpm)
     end
   end
 end

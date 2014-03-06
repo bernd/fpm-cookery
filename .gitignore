@@ -8,6 +8,7 @@ tmp-build/
 tmp-dest/
 .buildpath
 .project
+.rspec
 .vagrant
 Vagrantfile
 /vendor

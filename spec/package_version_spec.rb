@@ -15,7 +15,7 @@ describe 'Version' do
   describe '#vendor_delimiter' do
     context 'with target deb' do
       it 'returns "+"' do
-        version.vendor_delimiter.must_equal '+'
+        expect(version.vendor_delimiter).to eq('+')
       end
     end
 
@@ -23,7 +23,7 @@ describe 'Version' do
       def target; 'rpm'; end
 
       it 'returns "."' do
-        version.vendor_delimiter.must_equal '.'
+        expect(version.vendor_delimiter).to eq('.')
       end
     end
 
@@ -31,7 +31,7 @@ describe 'Version' do
       def target; '_foo_'; end
 
       it 'returns "-"' do
-        version.vendor_delimiter.must_equal '-'
+        expect(version.vendor_delimiter).to eq('-')
       end
     end
   end
@@ -41,7 +41,7 @@ describe 'Version' do
       it 'returns the config.vendor value' do
         config[:vendor] = 'foo'
 
-        version.vendor.must_equal 'foo'
+        expect(version.vendor).to eq('foo')
       end
     end
 
@@ -49,7 +49,7 @@ describe 'Version' do
       it 'returns the recipe.vendor value' do
         recipe.vendor = 'bar'
 
-        version.vendor.must_equal 'bar'
+        expect(version.vendor).to eq('bar')
       end
     end
 
@@ -58,7 +58,7 @@ describe 'Version' do
         config[:vendor] = 'foo'
         recipe.vendor = 'bar'
 
-        version.vendor.must_equal 'foo'
+        expect(version.vendor).to eq('foo')
       end
     end
   end
@@ -67,7 +67,7 @@ describe 'Version' do
     it 'returns the recipe.revision value' do
       recipe.revision = 24
 
-      version.revision.must_equal 24
+      expect(version.revision).to eq(24)
     end
   end
 
@@ -75,14 +75,14 @@ describe 'Version' do
     it 'returns the version epoch' do
       recipe.version = '4:1.2.3'
 
-      version.epoch.must_equal '4'
+      expect(version.epoch).to eq('4')
     end
 
     context 'without epoch' do
       it 'returns nil' do
         recipe.version = '1.2.3'
 
-        version.epoch.must_equal nil
+        expect(version.epoch).to eq(nil)
       end
     end
   end
@@ -93,7 +93,7 @@ describe 'Version' do
       recipe.vendor = 'testing1'
       recipe.revision = 5
 
-      version.to_s.must_equal '2.1.3-5+testing1'
+      expect(version.to_s).to eq('2.1.3-5+testing1')
     end
 
     context 'with target rpm' do
@@ -104,7 +104,7 @@ describe 'Version' do
         recipe.vendor = 'testing1'
         recipe.revision = 5
 
-        version.to_s.must_equal '2.1.3-5.testing1'
+        expect(version.to_s).to eq('2.1.3-5.testing1')
       end
     end
 
@@ -113,7 +113,7 @@ describe 'Version' do
         recipe.version = '2.1.3'
         recipe.revision = 5
 
-        version.to_s.must_equal '2.1.3-5'
+        expect(version.to_s).to eq('2.1.3-5')
       end
 
       context 'with target rpm' do
@@ -123,7 +123,7 @@ describe 'Version' do
           recipe.version = '2.1.3'
           recipe.revision = 5
 
-          version.to_s.must_equal '2.1.3-5'
+          expect(version.to_s).to eq('2.1.3-5')
         end
       end
     end
@@ -137,7 +137,7 @@ describe 'Version' do
       recipe.vendor = 'foo'
       recipe.revision = 1
 
-      version.to_str.must_equal '1.3-1.foo'
+      expect(version.to_str).to eq('1.3-1.foo')
     end
   end
 end

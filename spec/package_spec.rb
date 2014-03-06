@@ -55,111 +55,111 @@ describe 'Package' do
 
   describe 'fpm package object initialization' do
     it 'sets name' do
-      package.fpm.name.must_equal 'foo'
+      expect(package.fpm.name).to eq('foo')
     end
 
     it 'sets url' do
-      package.fpm.url.must_equal 'http://example.com'
+      expect(package.fpm.url).to eq('http://example.com')
     end
 
     it 'sets category' do
-      package.fpm.category.must_equal 'langs'
+      expect(package.fpm.category).to eq('langs')
     end
 
     context 'without section set' do
       it 'sets category to "optional"' do
         recipe.instance_variable_set(:@section, nil)
 
-        package.fpm.category.must_equal 'optional'
+        expect(package.fpm.category).to eq('optional')
       end
     end
 
     it 'sets the description' do
-      package.fpm.description.must_equal 'a test package'
+      expect(package.fpm.description).to eq('a test package')
     end
 
     it 'sets the architecture' do
-      package.fpm.architecture.must_equal 'all'
+      expect(package.fpm.architecture).to eq('all')
     end
 
     it 'sets the dependencies' do
-      package.fpm.dependencies.must_equal ['ab', 'c']
+      expect(package.fpm.dependencies).to eq(['ab', 'c'])
     end
 
     it 'sets the conflicts' do
-      package.fpm.conflicts.must_equal ['xz', 'y']
+      expect(package.fpm.conflicts).to eq(['xz', 'y'])
     end
 
     it 'sets the provides' do
-      package.fpm.provides.must_equal ['foo-package']
+      expect(package.fpm.provides).to eq(['foo-package'])
     end
 
     it 'sets the replaces' do
-      package.fpm.replaces.must_equal ['foo-old']
+      expect(package.fpm.replaces).to eq(['foo-old'])
     end
 
     it 'sets the config_files' do
-      package.fpm.config_files.must_equal ['/etc/foo.conf']
+      expect(package.fpm.config_files).to eq(['/etc/foo.conf'])
     end
 
     it 'sets the directories' do
-      package.fpm.directories.must_equal ['/var/lib/foo', '/var/cache/foo']
+      expect(package.fpm.directories).to eq(['/var/lib/foo', '/var/cache/foo'])
     end
 
     describe 'attributes' do
       let(:attributes) { package.fpm.attributes }
 
       it 'sets deb_compression' do
-        attributes[:deb_compression].must_equal 'gz'
+        expect(attributes[:deb_compression]).to eq('gz')
       end
 
       it 'sets deb_user' do
-        attributes[:deb_user].must_equal 'root'
+        expect(attributes[:deb_user]).to eq('root')
       end
 
       it 'sets deb_group' do
-        attributes[:deb_group].must_equal 'root'
+        expect(attributes[:deb_group]).to eq('root')
       end
 
       it 'sets rpm_compression' do
-        attributes[:rpm_compression].must_equal 'gzip'
+        expect(attributes[:rpm_compression]).to eq('gzip')
       end
 
       it 'sets rpm_digest' do
-        attributes[:rpm_digest].must_equal 'md5'
+        expect(attributes[:rpm_digest]).to eq('md5')
       end
 
       it 'sets rpm_user' do
-        attributes[:rpm_user].must_equal 'root'
+        expect(attributes[:rpm_user]).to eq('root')
       end
 
       it 'sets rpm_group' do
-        attributes[:rpm_group].must_equal 'root'
+        expect(attributes[:rpm_group]).to eq('root')
       end
 
       it 'sets rpm_defattrfile' do
-        attributes[:rpm_defattrfile].must_equal '-'
+        expect(attributes[:rpm_defattrfile]).to eq('-')
       end
 
       it 'sets rpm_defattrdir' do
-        attributes[:rpm_defattrdir].must_equal '-'
+        expect(attributes[:rpm_defattrdir]).to eq('-')
       end
 
       it 'sets excludes' do
-        attributes[:excludes].must_equal []
+        expect(attributes[:excludes]).to eq([])
       end
 
       it 'sets rpm_auto_add_directories?' do
-        attributes[:rpm_auto_add_directories?].must_equal true
+        expect(attributes[:rpm_auto_add_directories?]).to eq(true)
       end
     end
 
     it 'calls the package_setup method' do
-      package.test_package_setup_run.must_equal true
+      expect(package.test_package_setup_run).to eq(true)
     end
 
     it 'calls the package_input method' do
-      package.test_package_input_run.must_equal true
+      expect(package.test_package_input_run).to eq(true)
     end
 
     context 'without package_input method defined' do
@@ -171,7 +171,9 @@ describe 'Package' do
       end
 
       it 'raises a MethodNotImplemented error' do
-        proc { package_bare }.must_raise FPM::Cookery::Error::MethodNotImplemented
+        expect {
+          package_bare
+        }.to raise_error(FPM::Cookery::Error::MethodNotImplemented)
       end
     end
 
@@ -184,7 +186,9 @@ describe 'Package' do
       end
 
       it 'raises a MethodNotImplemented error' do
-        proc { package_bare }.must_raise FPM::Cookery::Error::MethodNotImplemented
+        expect {
+          package_bare
+        }.to raise_error(FPM::Cookery::Error::MethodNotImplemented)
       end
     end
   end

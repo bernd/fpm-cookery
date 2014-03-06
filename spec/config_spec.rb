@@ -11,24 +11,25 @@ describe 'Config' do
     it 'can be set on init' do
       data[name.to_sym] = '__set__'
 
-      config.__send__(name).must_equal '__set__'
+      expect(config.__send__(name)).to eq('__set__')
     end
 
     it 'can be set' do
       config.__send__("#{name}=", '__SET__')
-      config.__send__(name).must_equal '__SET__'
+
+      expect(config.__send__(name)).to eq('__SET__')
     end
 
     it 'provides a ? method' do
       data[name.to_sym] = false
 
-      config.__send__("#{name}?").must_equal false
+      expect(config.__send__("#{name}?")).to eq(false)
     end
   end
 
   describe '#color' do
     it 'defaults to true' do
-      default_config.color.must_equal true
+      expect(default_config.color).to eq(true)
     end
 
     common_tests(:color)
@@ -36,7 +37,7 @@ describe 'Config' do
 
   describe '#debug' do
     it 'defaults to true' do
-      default_config.debug.must_equal false
+      expect(default_config.debug).to eq(false)
     end
 
     common_tests(:debug)
@@ -44,7 +45,7 @@ describe 'Config' do
 
   describe '#target' do
     it 'defaults to nil' do
-      default_config.target.must_equal nil
+      expect(default_config.target).to eq(nil)
     end
 
     common_tests(:target)
@@ -52,7 +53,7 @@ describe 'Config' do
 
   describe '#platform' do
     it 'defaults to nil' do
-      default_config.platform.must_equal nil
+      expect(default_config.platform).to eq(nil)
     end
 
     common_tests(:platform)
@@ -60,7 +61,7 @@ describe 'Config' do
 
   describe '#maintainer' do
     it 'defaults to nil' do
-      default_config.maintainer.must_equal nil
+      expect(default_config.maintainer).to eq(nil)
     end
 
     common_tests(:maintainer)
@@ -68,7 +69,7 @@ describe 'Config' do
 
   describe '#vendor' do
     it 'defaults to nil' do
-      default_config.vendor.must_equal nil
+      expect(default_config.vendor).to eq(nil)
     end
 
     common_tests(:vendor)
@@ -76,7 +77,7 @@ describe 'Config' do
 
   describe '#quiet' do
     it 'defaults to false' do
-      default_config.quiet.must_equal false
+      expect(default_config.quiet).to eq(false)
     end
 
     common_tests(:quiet)
@@ -84,7 +85,7 @@ describe 'Config' do
 
   describe '#skip_package' do
     it 'defaults to false' do
-      default_config.skip_package.must_equal false
+      expect(default_config.skip_package).to eq(false)
     end
 
     common_tests(:skip_package)
@@ -92,7 +93,7 @@ describe 'Config' do
 
   describe '#keep_destdir' do
     it 'defaults to false' do
-      default_config.keep_destdir.must_equal false
+      expect(default_config.keep_destdir).to eq(false)
     end
 
     common_tests(:keep_destdir)
@@ -100,7 +101,7 @@ describe 'Config' do
 
   describe '#dependency_check' do
     it 'defaults to false' do
-      default_config.dependency_check.must_equal true
+      expect(default_config.dependency_check).to eq(true)
     end
 
     common_tests(:dependency_check)
@@ -108,7 +109,7 @@ describe 'Config' do
 
   describe '#to_hash' do
     it 'returns a hash representation of the object' do
-      default_config.to_hash.must_equal({
+      expect(default_config.to_hash).to eq({
         :color => true,
         :debug => false,
         :target => nil,
@@ -127,7 +128,7 @@ describe 'Config' do
     it 'raises an error' do
       data[:__foo__] = true
 
-      proc { config }.must_raise FPM::Cookery::Error::InvalidConfigKey
+      expect { config }.to raise_error(FPM::Cookery::Error::InvalidConfigKey)
     end
 
     it 'adds the invalid keys' do
@@ -138,13 +139,13 @@ describe 'Config' do
       begin; config; rescue => e; error = e; end
 
       # Sort array for Ruby 1.8.7 compat.
-      error.invalid_keys.sort.must_equal [:__bar__, :__foo__]
+      expect(error.invalid_keys.sort).to eq([:__bar__, :__foo__])
     end
 
     it 'works with strings' do
       data['maintainer'] = 'John'
 
-      config.maintainer.must_equal 'John'
+      expect(config.maintainer).to eq('John')
     end
   end
 
@@ -159,7 +160,7 @@ describe 'Config' do
     it 'loads first found file' do
       config = FPM::Cookery::Config.load_file(paths)
 
-      config.maintainer.must_equal 'John Doe <john@example.com>'
+      expect(config.maintainer).to eq('John Doe <john@example.com>')
     end
   end
 
@@ -170,8 +171,8 @@ describe 'Config' do
 
       config = FPM::Cookery::Config.from_cli(cli)
 
-      config.debug.must_equal true
-      config.target.must_equal 'rpm'
+      expect(config.debug).to eq(true)
+      expect(config.target).to eq('rpm')
     end
   end
 end
