@@ -9,4 +9,3 @@ rvm:
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: 2.1.1 # Problem with puppet monkey patch... waiting for >3.4.2
