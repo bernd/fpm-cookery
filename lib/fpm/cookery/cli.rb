@@ -21,6 +21,12 @@ module FPM
       option ['-V', '--version'], :flag, 'show fpm-cookery and fpm version'
       option '--[no-]deps', :flag, 'enable/disable dependency checking',
         :attribute_name => 'dependency_check'
+      option '--tmp-root', 'DIR', 'directory root for temporary files',
+        :attribute_name => 'tmp_root'
+      option '--pkg-dir', 'DIR', 'directory for built packages',
+        :attribute_name => 'pkg_dir'
+      option '--cache-dir', 'DIR', 'directory for downloaded sources',
+        :attribute_name => 'cache_dir'
 
       class Command < self
         def recipe_file

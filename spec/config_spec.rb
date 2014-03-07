@@ -107,6 +107,30 @@ describe 'Config' do
     common_tests(:dependency_check)
   end
 
+  describe '#tmp_root' do
+    it 'defaults to nil' do
+      expect(default_config.tmp_root).to be_nil
+    end
+
+    common_tests(:tmp_root)
+  end
+
+  describe '#pkg_dir' do
+    it 'defaults to nil' do
+      expect(default_config.pkg_dir).to be_nil
+    end
+
+    common_tests(:pkg_dir)
+  end
+
+  describe '#cache_dir' do
+    it 'defaults to nil' do
+      expect(default_config.cache_dir).to be_nil
+    end
+
+    common_tests(:cache_dir)
+  end
+
   describe '#to_hash' do
     it 'returns a hash representation of the object' do
       expect(default_config.to_hash).to eq({
@@ -115,6 +139,9 @@ describe 'Config' do
         :target => nil,
         :platform => nil,
         :maintainer => nil,
+        :tmp_root => nil,
+        :pkg_dir => nil,
+        :cache_dir => nil,
         :vendor => nil,
         :skip_package => false,
         :keep_destdir => false,

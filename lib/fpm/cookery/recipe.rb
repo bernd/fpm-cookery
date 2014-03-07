@@ -81,21 +81,28 @@ module FPM
         @filename = Path.new(filename).expand_path
         @config = config
 
+        @workdir = @filename.dirname
+        @tmp_root = @config.tmp_root ? Path.new(@config.tmp_root) : @workdir
+        @pkgdir = @config.pkg_dir && Path.new(@config.pkg_dir)
+        @cachedir = @config.cache_dir && Path.new(@config.cache_dir)
+
         # Set some defaults.
         revision || self.class.revision(1)
       end
 
       def workdir=(value)  @workdir  = Path.new(value) end
+      def tmp_root=(value) @tmp_root = Path.new(value) end
       def destdir=(value)  @destdir  = Path.new(value) end
       def builddir=(value) @builddir = Path.new(value) end
       def pkgdir=(value)   @pkgdir   = Path.new(value) end
       def cachedir=(value) @cachedir = Path.new(value) end
 
-      def workdir(path = nil)  (@workdir  ||= filename.dirname)/path       end
-      def destdir(path = nil)  (@destdir  ||= workdir('tmp-dest'))/path    end
-      def builddir(path = nil) (@builddir ||= workdir('tmp-build'))/path   end
-      def pkgdir(path = nil)   (@pkgdir   ||= workdir('pkg'))/path         end
-      def cachedir(path = nil) (@cachedir ||= workdir('cache'))/path       end
+      def workdir(path = nil)  @workdir/path                               end
+      def tmp_root(path = nil) @tmp_root/path                              end
+      def destdir(path = nil)  (@destdir  || tmp_root('tmp-dest'))/path    end
+      def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path   end
+      def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
+      def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
 
       # Resolve dependencies from omnibus package.
       def depends_all

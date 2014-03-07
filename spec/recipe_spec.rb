@@ -2,6 +2,11 @@ require 'spec_helper'
 require 'fpm/cookery/recipe'
 
 describe "Recipe" do
+  def stub_dir(dir, path)
+    value = path.nil? ? nil : FPM::Cookery::Path.new(path)
+    allow(config).to receive(dir).and_return(value)
+  end
+
   let(:klass) do
     Class.new(FPM::Cookery::Recipe)
   end
@@ -377,10 +382,36 @@ describe "Recipe" do
   #############################################################################
   # Directories
   #############################################################################
+
+  describe "#tmp_root" do
+    describe "default" do
+      it "defaults to the workdir" do
+        expect(recipe.tmp_root).to eq(recipe.workdir)
+      end
+    end
+
+    describe "set manually" do
+      it "sets the tmp_root" do
+        stub_dir(:tmp_root, '/tmp')
+        expect(recipe.tmp_root.to_s).to eq('/tmp')
+      end
+    end
+
+    describe "with an argument" do
+      it "returns a concatenated path" do
+        expect(recipe.tmp_root('test')).to eq(recipe.workdir('test'))
+      end
+    end
+  end
+
   describe "#destdir" do
+    before do
+      stub_dir(:tmp_root, '/tmp')
+    end
+
     describe "default" do
       it "sets the destdir" do
-        expect(recipe.destdir).to eq(recipe.workdir('tmp-dest'))
+        expect(recipe.destdir).to eq(recipe.tmp_root('tmp-dest'))
       end
     end
 
@@ -393,15 +424,19 @@ describe "Recipe" do
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        expect(recipe.destdir('test')).to eq(recipe.workdir('tmp-dest/test'))
+        expect(recipe.destdir('test')).to eq(recipe.tmp_root('tmp-dest/test'))
       end
     end
   end
 
   describe "#builddir" do
+    before do
+      stub_dir(:tmp_root, '/tmp')
+    end
+
     describe "default" do
       it "sets the builddir" do
-        expect(recipe.builddir).to eq(recipe.workdir('tmp-build'))
+        expect(recipe.builddir).to eq(recipe.tmp_root('tmp-build'))
       end
     end
 
@@ -414,14 +449,19 @@ describe "Recipe" do
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        expect(recipe.builddir('test')).to eq(recipe.workdir('tmp-build/test'))
+        expect(recipe.builddir('test')).to eq(recipe.tmp_root('tmp-build/test'))
       end
     end
   end
 
   describe "#pkgdir" do
+    before do
+      stub_dir(:pkg_dir, '/tmp/pkg')
+    end
+
     describe "default" do
       it "sets the pkgdir" do
+        stub_dir(:pkg_dir, nil)
         expect(recipe.pkgdir).to eq(recipe.workdir('pkg'))
       end
     end
@@ -435,14 +475,19 @@ describe "Recipe" do
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        expect(recipe.pkgdir('test')).to eq(recipe.workdir('pkg/test'))
+        expect(recipe.pkgdir('test').to_s).to eq('/tmp/pkg/test')
       end
     end
   end
 
   describe "#cachedir" do
+    before do
+      stub_dir(:cache_dir, '/tmp/cache')
+    end
+
     describe "default" do
       it "sets the cachedir" do
+        stub_dir(:cache_dir, nil)
         expect(recipe.cachedir).to eq(recipe.workdir('cache'))
       end
     end
@@ -456,7 +501,7 @@ describe "Recipe" do
 
     describe "with an argument" do
       it "returns a concatenated path" do
-        expect(recipe.cachedir('test')).to eq(recipe.workdir('cache/test'))
+        expect(recipe.cachedir('test').to_s).to eq('/tmp/cache/test')
       end
     end
   end
