@@ -121,6 +121,11 @@ module FPM
                 recipe.installing = true
                 Log.info "Installing into #{recipe.destdir}"
                 recipe.install
+
+                # Write startup scripts.
+                recipe.startup_scripts.each do |script|
+                  script.write_to(recipe.destdir)
+                end
               ensure
                 recipe.installing = false
               end
