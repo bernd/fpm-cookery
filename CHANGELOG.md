@@ -1,3 +1,9 @@
+# v0.20.0 (2014-03-07)
+* Add `--tmp-root` command line option.
+* Add `--pkg-dir` command line option.
+* Add `--cache-dir` command line option.
+* Fix `%files` section in rpms. (unakatsuo / #67)
+
 # v0.19.0 (2014-03-03)
 * Correctly set version, iteration and vendor on the FPM object.
   __WARNING__: This changes the default package names!
