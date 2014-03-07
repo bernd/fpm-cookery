@@ -9,7 +9,8 @@ describe "SourceIntegrityCheck" do
     }
   end
 
-  let(:recipe) { recipe_class.new(__FILE__) }
+  let(:config) { double('Config').as_null_object }
+  let(:recipe) { recipe_class.new(__FILE__, config) }
   let(:check) { FPM::Cookery::SourceIntegrityCheck.new(recipe) }
 
   before do

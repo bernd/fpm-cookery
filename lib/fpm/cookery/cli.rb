@@ -62,7 +62,8 @@ module FPM
 
           FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
 
-          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe|
+          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |recipe_class|
+            recipe = recipe_class.new(recipe_file, config)
             packager = FPM::Cookery::Packager.new(recipe, config.to_hash)
             packager.target = FPM::Cookery::Facts.target.to_s
 

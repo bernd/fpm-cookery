@@ -6,8 +6,12 @@ describe "Recipe" do
     Class.new(FPM::Cookery::Recipe)
   end
 
+  let(:config) do
+    double('Config', :tmp_root => nil, :pkg_dir => nil, :cache_dir => nil).as_null_object
+  end
+
   let(:recipe) do
-    klass.new(__FILE__)
+    klass.new(__FILE__, config)
   end
 
   it "sets the filename" do
@@ -22,7 +26,7 @@ describe "Recipe" do
     describe "with a relative filename path" do
       it "expands the workdir path" do
         filename = "spec/#{File.basename(__FILE__)}"
-        r = klass.new(filename)
+        r = klass.new(filename, config)
         expect(r.workdir.to_s).to eq(File.dirname(__FILE__))
       end
     end
@@ -222,7 +226,7 @@ describe "Recipe" do
       end
 
       expect(klass.source).to eq('http://example.com/foo-1.0.tar.gz')
-      expect(klass.new(__FILE__).source).to eq('http://example.com/foo-1.0.tar.gz')
+      expect(klass.new(__FILE__, config).source).to eq('http://example.com/foo-1.0.tar.gz')
     end
 
     describe "with specs" do
@@ -232,7 +236,7 @@ describe "Recipe" do
         end
 
         expect(klass.spec).to eq({:foo => 'bar'})
-        expect(klass.new(__FILE__).spec).to eq({:foo => 'bar'})
+        expect(klass.new(__FILE__, config).spec).to eq({:foo => 'bar'})
       end
     end
   end
@@ -244,7 +248,7 @@ describe "Recipe" do
       end
 
       expect(klass.source).to eq('http://example.com/foo-1.0.tar.gz')
-      expect(klass.new(__FILE__).source).to eq('http://example.com/foo-1.0.tar.gz')
+      expect(klass.new(__FILE__, config).source).to eq('http://example.com/foo-1.0.tar.gz')
     end
 
     describe "with specs" do
@@ -254,7 +258,7 @@ describe "Recipe" do
         end
 
         expect(klass.spec).to eq({:foo => 'bar'})
-        expect(klass.new(__FILE__).spec).to eq({:foo => 'bar'})
+        expect(klass.new(__FILE__, config).spec).to eq({:foo => 'bar'})
       end
     end
   end
@@ -265,7 +269,7 @@ describe "Recipe" do
         source 'http://example.com/foo-1.0.tar.gz'
       end
 
-      expect(File.basename(klass.new(__FILE__).local_path.to_s)).to eq('foo-1.0.tar.gz')
+      expect(File.basename(klass.new(__FILE__, config).local_path.to_s)).to eq('foo-1.0.tar.gz')
     end
   end
 
@@ -282,7 +286,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__).vendor).to eq('b')
+        expect(klass.new(__FILE__, config).vendor).to eq('b')
       end
     end
 
@@ -298,7 +302,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__).vendor).to eq('b')
+        expect(klass.new(__FILE__, config).vendor).to eq('b')
       end
     end
 
@@ -314,7 +318,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__).vendor).to eq('a')
+        expect(klass.new(__FILE__, config).vendor).to eq('a')
       end
     end
   end
@@ -336,7 +340,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__).vendor).to eq('b')
+        expect(klass.new(__FILE__, config).vendor).to eq('b')
       end
     end
 
@@ -350,7 +354,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__).vendor).to eq('b')
+        expect(klass.new(__FILE__, config).vendor).to eq('b')
       end
     end
 
@@ -364,7 +368,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__).vendor).to eq('a')
+        expect(klass.new(__FILE__, config).vendor).to eq('a')
       end
     end
   end

@@ -77,8 +77,9 @@ module FPM
         end
       end
 
-      def initialize(filename)
+      def initialize(filename, config)
         @filename = Path.new(filename).expand_path
+        @config = config
 
         # Set some defaults.
         revision || self.class.revision(1)
@@ -116,8 +117,8 @@ module FPM
         FPM::Cookery::Package::Dir.new(self, config)
       end
 
-      def initialize(filename)
-        super(filename)
+      def initialize(filename, config)
+        super(filename, config)
         @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
       end
 

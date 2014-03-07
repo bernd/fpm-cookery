@@ -13,7 +13,7 @@ module FPM
       # anonymous module to avoid namespace cluttering. (see Kernel.load)
       def load_recipe(filename, &callback)
         Kernel.load(filename, true)
-        callback.call(@recipe.new(filename))
+        callback.call(@recipe)
       end
 
       def add_recipe_class(klass)
