@@ -8,7 +8,7 @@ module FPM
 
       attr_reader :packager, :recipe, :config
 
-      def initialize(packager, config = {})
+      def initialize(packager, config)
         @packager = packager
         @recipe = packager.recipe
         @config = config
@@ -27,8 +27,8 @@ module FPM
 
           Log.info "Located recipe at #{recipe_file} for child recipe #{name}; starting build"
 
-          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |dep_recipe|
-            depPackager = FPM::Cookery::Packager.new(dep_recipe, config)
+          FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |dep_recipe|
+            depPackager = FPM::Cookery::Packager.new(dep_recipe, config.to_hash)
             depPackager.target = FPM::Cookery::Facts.target.to_s
 
             #Chain, chain, chain ...

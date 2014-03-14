@@ -6,9 +6,9 @@ module FPM
     class OmnibusPackager
       include FPM::Cookery::Utils
 
-      attr_reader :packager, :recipe
+      attr_reader :packager, :recipe, :config
 
-      def initialize(packager, config = {})
+      def initialize(packager, config)
         @packager = packager
         @config = config
         @recipe = packager.recipe
@@ -25,7 +25,7 @@ module FPM
             exit 1
           end
 
-          FPM::Cookery::Book.instance.load_recipe(recipe_file) do |dep_recipe|
+          FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |dep_recipe|
             dep_recipe.destdir = "#{recipe.omnibus_dir}/embedded" if recipe.omnibus_dir
             dep_recipe.omnibus_installing = true if recipe.omnibus_dir
             if dep_recipe.omnibus_recipes.any?

@@ -109,7 +109,9 @@ module FPM
         pkg_depends = self.class.depends_all
         if self.class.omnibus_package
           self.class.omnibus_recipes.each { |omni_recipe|
-            Book.instance.load_recipe(File.expand_path(omni_recipe + '.rb', File.dirname(filename))) do |recipe|
+            recipe_file = File.expand_path(omni_recipe + '.rb', File.dirname(filename))
+
+            Book.instance.load_recipe(recipe_file, config) do |recipe|
               pkg_depends << recipe.depends_all
             end
           }
