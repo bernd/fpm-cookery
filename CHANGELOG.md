@@ -1,3 +1,6 @@
+# v0.20.1 (2014-03-14)
+* Unbreak omnibus and chain packagers. (#69)
+
 # v0.20.0 (2014-03-07)
 * Add `--tmp-root` command line option.
 * Add `--pkg-dir` command line option.
