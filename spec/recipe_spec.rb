@@ -378,6 +378,25 @@ describe "Recipe" do
     end
   end
 
+  describe "#input_package" do
+    it "creates a Package object" do
+      expect(recipe.input_package({:input=>[]})).to be_a(FPM::Cookery::Package::Package)
+    end
+  end
+
+  describe ".fpm_hook" do
+    it "allows to modify fpm attributes" do
+      klass.fpm_hook { |fpm|
+        fpm.attributes[:rpm_user] = 'httpd'
+      }
+
+      # Hack for skipping real directory check in
+      # Package::Dir#package_input
+      config = {:input=>[]}
+      input_pkg = recipe.input_package(config)
+      expect(input_pkg.fpm.attributes[:rpm_user]).to eq('httpd')
+    end
+  end
 
   #############################################################################
   # Directories
