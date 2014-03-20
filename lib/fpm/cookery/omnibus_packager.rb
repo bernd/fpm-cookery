@@ -26,7 +26,7 @@ module FPM
           end
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |dep_recipe|
-            dep_recipe.destdir = "#{recipe.omnibus_dir}/embedded" if recipe.omnibus_dir
+            dep_recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
             dep_recipe.omnibus_installing = true if recipe.omnibus_dir
             if dep_recipe.omnibus_recipes.any?
               dep_recipes += load_omnibus_recipes(dep_recipe)
