@@ -8,6 +8,8 @@ require 'fpm/cookery/path_helper'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
 require 'fpm/cookery/package/npm'
+require 'fpm/cookery/startup_script'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -36,6 +38,31 @@ module FPM
 
       def self.architectures(archs)
         Array(archs).member?(FPM::Cookery::Facts.arch) and block_given? ? yield : false
+      end
+
+      def self.startup_script(program, options = {})
+        script = FPM::Cookery::StartupScript.new
+
+        options.merge(:program => program).each do |key, value|
+          next if value.to_s.empty?
+
+          begin
+            script.__send__("#{key}=", value)
+          rescue NoMethodError
+            Log.warn(%(Invalid startup script option "#{key}"!))
+          end
+        end
+
+        @startup_scripts ||= []
+        @startup_scripts << script
+      end
+
+      def self.startup_scripts
+        @startup_scripts
+      end
+
+      def startup_scripts
+        self.class.startup_scripts
       end
 
       def self.attr_rw_list(*attrs)
