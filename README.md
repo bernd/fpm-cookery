@@ -1,5 +1,7 @@
 # fpm-cookery - For building software
 
+![Build Status](https://travis-ci.org/bernd/fpm-cookery.svg)
+
 A tool for building software packages with
 [fpm](https://github.com/jordansissel/fpm).
 
