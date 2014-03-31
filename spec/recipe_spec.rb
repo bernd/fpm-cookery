@@ -118,8 +118,8 @@ describe "Recipe" do
       check_attribute(:revision, '12')
     end
 
-    it "sets a default revision of 1" do
-      expect(recipe.revision).to eq(1)
+    it "does not set a default revision" do
+      expect(recipe.revision).to eq(nil)
     end
   end
 

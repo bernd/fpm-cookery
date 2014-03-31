@@ -85,9 +85,6 @@ module FPM
         @tmp_root = @config.tmp_root ? Path.new(@config.tmp_root) : @workdir
         @pkgdir = @config.pkg_dir && Path.new(@config.pkg_dir)
         @cachedir = @config.cache_dir && Path.new(@config.cache_dir)
-
-        # Set some defaults.
-        revision || self.class.revision(1)
       end
 
       def workdir=(value)  @workdir  = Path.new(value) end
