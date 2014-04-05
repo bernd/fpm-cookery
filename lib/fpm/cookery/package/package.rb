@@ -33,7 +33,6 @@ module FPM
           @fpm.attributes[:rpm_group] = 'root'
           @fpm.attributes[:rpm_defattrfile] = '-'
           @fpm.attributes[:rpm_defattrdir] = '-'
-          @fpm.attributes[:rpm_auto_add_directories?] = true
 
           # TODO replace remove_excluded_files() in packager with this.
           @fpm.attributes[:excludes] = []

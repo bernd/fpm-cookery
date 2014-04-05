@@ -148,10 +148,6 @@ describe 'Package' do
       it 'sets excludes' do
         expect(attributes[:excludes]).to eq([])
       end
-
-      it 'sets rpm_auto_add_directories?' do
-        expect(attributes[:rpm_auto_add_directories?]).to eq(true)
-      end
     end
 
     it 'calls the package_setup method' do
