@@ -8,6 +8,7 @@ require 'fpm/cookery/path_helper'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
 require 'fpm/cookery/package/npm'
+require 'fpm/cookery/package/python'
 
 module FPM
   module Cookery
@@ -159,6 +160,13 @@ module FPM
     class NPMRecipe < BaseRecipe
       def input(config)
         FPM::Cookery::Package::NPM.new(self, config)
+      end
+    end
+
+    class PythonRecipe < BaseRecipe
+      attr_rw :pypi_name
+      def input(config)
+        FPM::Cookery::Package::Python.new(self, config)
       end
     end
   end
