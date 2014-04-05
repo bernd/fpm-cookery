@@ -1,6 +1,5 @@
 class PythonRequests < FPM::Cookery::PythonRecipe
   homepage "http://python-requests.org"
-  pypi_name "requests"
   name "python-requests"
   build_depends ["python-setuptools"]
   depends ["python"]

@@ -11,10 +11,13 @@ module FPM
 
         def package_setup
           fpm.version = recipe.version
+
+          fpm.attributes[:python_fix_name?] = true
+          fpm.attributes[:python_fix_dependencies?] = true
         end
 
         def package_input
-          fpm.input(recipe.pypi_name || recipe.name)
+          fpm.input(recipe.name)
         end
       end
     end

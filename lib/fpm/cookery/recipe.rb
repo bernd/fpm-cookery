@@ -161,7 +161,6 @@ module FPM
     end
 
     class PythonRecipe < BaseRecipe
-      attr_rw :pypi_name
       def input(config)
         FPM::Cookery::Package::Python.new(self, config)
       end
