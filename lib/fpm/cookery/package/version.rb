@@ -6,6 +6,10 @@ module FPM
       # * https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version
       # * https://fedoraproject.org/wiki/Packaging:NamingGuidelines?rd=Packaging/NamingGuidelines#Package_Versioning
       class Version
+        REVISION_DELIMITER = {
+          :default => '-'
+        }
+
         VENDOR_DELIMITER = {
           :deb     => '+',
           :rpm     => '.',
@@ -26,16 +30,19 @@ module FPM
           @config[:vendor] || @recipe.vendor
         end
 
+        def revision_delimiter
+          REVISION_DELIMITER[:default]
+        end
+
         def vendor_delimiter
           VENDOR_DELIMITER[@target.to_sym] || VENDOR_DELIMITER[:default]
         end
 
         def to_s
-          if vendor
-            "#{version}-#{revision}#{vendor_delimiter}#{vendor}"
-          else
-            "#{version}-#{revision}"
-          end
+          s_revision = revision ? "#{revision_delimiter}#{revision}" : ""
+          s_vendor = vendor ? "#{vendor_delimiter}#{vendor}" : ""
+
+          "#{version}#{s_revision}#{s_vendor}"
         end
         alias_method :to_str, :to_s
 
