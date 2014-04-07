@@ -1,3 +1,9 @@
+# v0.21.0 (2014-04-07)
+* Unbreak rpm packages by reverting the `%files` change from #67.
+* Remove default revision. (smasset / #76)
+  __WARNING__: This changes the default package names and metadata!
+* Add support for python/pypi packages. (Mic92 / #73, smasset / #78)
+
 # v0.20.1 (2014-03-14)
 * Unbreak omnibus and chain packagers. (#69)
 
