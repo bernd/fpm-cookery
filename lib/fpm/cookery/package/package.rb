@@ -40,6 +40,10 @@ module FPM
           # Package type specific code should be called in package_setup.
           package_setup
 
+          # combine recipe specific fpm attributes. here allows to
+          # overwrite the values from package_setup().
+          @fpm.attributes.merge!(recipe.fpm_attributes)
+
           # The input for the FPM package will be set here.
           package_input
 

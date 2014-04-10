@@ -76,6 +76,10 @@ module FPM
         def depends_all
           (depends + build_depends).uniq
         end
+
+        def fpm_attributes
+          @fpm_attributes ||= {}
+        end
       end
 
       def initialize(filename, config)
@@ -101,6 +105,7 @@ module FPM
       def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path   end
       def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
+      def fpm_attributes() self.class.fpm_attributes end
 
       # Resolve dependencies from omnibus package.
       def depends_all
