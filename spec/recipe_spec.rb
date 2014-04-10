@@ -522,9 +522,19 @@ describe "Recipe" do
       expect(klass.fpm_attributes).to be_a(Hash)
     end
 
-    it "returns same value from instance method" do
+    it "returns same value from instance method with hash assignment" do
+      expect(recipe.fpm_attributes).to include({})
+
       klass.fpm_attributes[:rpm_user] = 'httpd'
       klass.fpm_attributes[:deb_user] = 'apache'
+
+      expect(recipe.fpm_attributes).to include({:rpm_user=>'httpd', :deb_user=>'apache'})
+    end
+
+    it "returns same value from instance method with argument assignment" do
+      expect(recipe.fpm_attributes).to include({})
+
+      klass.fpm_attributes :rpm_user => 'httpd', :deb_user => 'apache'
 
       expect(recipe.fpm_attributes).to include({:rpm_user=>'httpd', :deb_user=>'apache'})
     end

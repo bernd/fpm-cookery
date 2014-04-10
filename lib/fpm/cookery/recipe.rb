@@ -84,7 +84,13 @@ module FPM
           (depends + build_depends).uniq
         end
 
-        def fpm_attributes
+        # Supports both hash and argument assignment
+        #   fpm_attributes[:attr1] = xxxx
+        #   fpm_attributes :xxxx=>1, :yyyy=>2
+        def fpm_attributes(args=nil)
+          if args.is_a?(Hash)
+            @fpm_attributes.merge!(args)
+          end
           @fpm_attributes
         end
       end
