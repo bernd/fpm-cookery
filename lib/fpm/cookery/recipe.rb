@@ -31,6 +31,13 @@ module FPM
         end
       end
 
+      def self.inherited(klass)
+        super
+        # Apply class data inheritable pattern to @fpm_attributes
+        # class variable.
+        klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
+      end
+
       def self.platforms(valid_platforms)
         Array(valid_platforms).member?(self.platform) and block_given? ? yield : false
       end
@@ -78,9 +85,10 @@ module FPM
         end
 
         def fpm_attributes
-          @fpm_attributes ||= {}
+          @fpm_attributes
         end
       end
+      @fpm_attributes = {}
 
       def initialize(filename, config)
         @filename = Path.new(filename).expand_path

@@ -518,15 +518,15 @@ describe "Recipe" do
   end
 
   describe ".fpm_attributes" do
-    it "returns empty hash as default" do
-      expect(klass.fpm_attributes).to eq({})
+    it "returns hash object as default" do
+      expect(klass.fpm_attributes).to be_a(Hash)
     end
 
     it "returns same value from instance method" do
       klass.fpm_attributes[:rpm_user] = 'httpd'
       klass.fpm_attributes[:deb_user] = 'apache'
 
-      expect(recipe.fpm_attributes).to eq({:rpm_user=>'httpd', :deb_user=>'apache'})
+      expect(recipe.fpm_attributes).to include({:rpm_user=>'httpd', :deb_user=>'apache'})
     end
   end
 end
