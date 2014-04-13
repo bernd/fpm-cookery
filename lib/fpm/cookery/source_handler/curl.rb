@@ -48,7 +48,7 @@ module FPM
           cmd << (config[:quiet] ? '-s' : '--progress-bar')
           cmd += ['-o', path, url]
           safesystem(*cmd)
-        rescue RuntimeError => e
+        rescue RuntimeError
           Log.error("Command failed: #{cmd.join(' ')}")
           raise
         end
@@ -68,14 +68,7 @@ module FPM
           when 1
             entries.first
           else
-            ext = Path.new(url).extname
-            dir = local_path.basename(ext)
-
-            if File.exist?(dir)
-              dir
-            else
-              raise "Could not find source directory for #{local_path.basename}"
-            end
+            builddir
           end
         end
       end
