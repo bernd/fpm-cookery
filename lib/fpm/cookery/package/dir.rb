@@ -12,7 +12,7 @@ module FPM
         def package_setup
           fpm.attributes[:prefix] = '/'
           fpm.attributes[:chdir] = recipe.destdir.to_s
-          fpm.attributes[:rpm_sign] = recipe.rpm_sign if recipe.rpm_sign
+          fpm.attributes[:rpm_sign?] = recipe.rpm_sign if recipe.rpm_sign
         end
 
         def package_input
