@@ -64,7 +64,8 @@ module FPM
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,
-                   :omnibus_additional_paths, :chain_recipes, :directories
+                   :omnibus_additional_paths, :chain_recipes, :directories,
+                   :fpm_hooks
 
       attr_reader :filename
 
@@ -75,6 +76,10 @@ module FPM
 
         def depends_all
           (depends + build_depends).uniq
+        end
+
+        def fpm_hook(&blk)
+          fpm_hooks << blk
         end
       end
 
@@ -116,6 +121,22 @@ module FPM
         end
 
         pkg_depends.flatten.uniq
+      end
+
+      def input(config)
+        raise Error::MethodNotImplemented, "The #input method has not been implemented in #{self.class}"
+      end
+
+      # public interface to create FPM::Cookery::Package object.
+      def input_package(config)
+        pkg_input = input(config)
+
+        # Apply hooks for further fpm object modification.
+        self.class.fpm_hooks.each { |blk|
+          blk.call(pkg_input.fpm)
+        }
+
+        pkg_input
       end
     end
 
