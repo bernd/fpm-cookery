@@ -152,9 +152,12 @@ describe 'Package' do
 
     describe '.fpm_attributes' do
       let(:recipe) do
-          Class.new(FPM::Cookery::Recipe) do
+        # Ensure Recipe.inherited() to be called before handling fpm_attributes.
+        recipe_class = Class.new(FPM::Cookery::Recipe)
+        recipe_class.instance_eval do
           fpm_attributes :deb_user=>'deb_user', :rpm_user=>'rpm_user'
         end
+        recipe_class
       end
 
       it 'overwrites default fpm attributes in Package class' do
