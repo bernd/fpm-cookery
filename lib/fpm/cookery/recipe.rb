@@ -8,6 +8,7 @@ require 'fpm/cookery/path_helper'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
 require 'fpm/cookery/package/npm'
+require 'fpm/cookery/package/pear'
 require 'fpm/cookery/package/python'
 
 module FPM
@@ -182,6 +183,16 @@ module FPM
     class PythonRecipe < BaseRecipe
       def input(config)
         FPM::Cookery::Package::Python.new(self, config)
+      end
+    end
+
+    class PEARRecipe < BaseRecipe
+      attr_rw :prefix, :pear_package_name_prefix
+      attr_rw :pear_channel, :pear_channel_update
+      attr_rw :pear_bin_dir, :pear_data_dir, :pear_php_bin, :pear_php_dir
+
+      def input(config)
+        FPM::Cookery::Package::PEAR.new(self, config)
       end
     end
   end
