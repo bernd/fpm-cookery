@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec", "~> 2.14"
   s.add_development_dependency "rake"
-  s.add_runtime_dependency "fpm", "~> 1.0.0"
+  s.add_runtime_dependency "fpm", "~> 1.1.0"
   s.add_runtime_dependency "facter"
   s.add_runtime_dependency "puppet", ">= 3.4.3"
   s.add_runtime_dependency "addressable"
