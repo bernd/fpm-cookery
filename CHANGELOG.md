@@ -1,3 +1,8 @@
+# v0.22.0 (2014-05-26)
+* Add support to set arbitrary fpm attributes via `fpm_attributes`.
+  (unakatsuo / #75, #80)
+* Require fpm `~> 1.1.0`. (ryansch / #84)
+
 # v0.21.0 (2014-04-07)
 * Unbreak rpm packages by reverting the `%files` change from #67.
 * Remove default revision. (smasset / #76)
