@@ -31,6 +31,13 @@ module FPM
         end
       end
 
+      def self.inherited(klass)
+        super
+        # Apply class data inheritable pattern to @fpm_attributes
+        # class variable.
+        klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
+      end
+
       def self.platforms(valid_platforms)
         Array(valid_platforms).member?(self.platform) and block_given? ? yield : false
       end
@@ -76,7 +83,18 @@ module FPM
         def depends_all
           (depends + build_depends).uniq
         end
+
+        # Supports both hash and argument assignment
+        #   fpm_attributes[:attr1] = xxxx
+        #   fpm_attributes :xxxx=>1, :yyyy=>2
+        def fpm_attributes(args=nil)
+          if args.is_a?(Hash)
+            @fpm_attributes.merge!(args)
+          end
+          @fpm_attributes
+        end
       end
+      @fpm_attributes = {}
 
       def initialize(filename, config)
         @filename = Path.new(filename).expand_path
@@ -101,6 +119,7 @@ module FPM
       def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path   end
       def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
+      def fpm_attributes() self.class.fpm_attributes end
 
       # Resolve dependencies from omnibus package.
       def depends_all

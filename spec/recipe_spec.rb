@@ -516,4 +516,27 @@ describe "Recipe" do
       }).to eq(true)
     end
   end
+
+  describe ".fpm_attributes" do
+    it "returns hash object as default" do
+      expect(klass.fpm_attributes).to be_a(Hash)
+    end
+
+    it "returns same value from instance method with hash assignment" do
+      expect(recipe.fpm_attributes).to include({})
+
+      klass.fpm_attributes[:rpm_user] = 'httpd'
+      klass.fpm_attributes[:deb_user] = 'apache'
+
+      expect(recipe.fpm_attributes).to include({:rpm_user=>'httpd', :deb_user=>'apache'})
+    end
+
+    it "returns same value from instance method with argument assignment" do
+      expect(recipe.fpm_attributes).to include({})
+
+      klass.fpm_attributes :rpm_user => 'httpd', :deb_user => 'apache'
+
+      expect(recipe.fpm_attributes).to include({:rpm_user=>'httpd', :deb_user=>'apache'})
+    end
+  end
 end
