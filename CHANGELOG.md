@@ -1,3 +1,6 @@
+# v0.23.0 (2014-05-29)
+* Add `--skip-package` command line flag. (#86)
+
 # v0.22.0 (2014-05-26)
 * Add support to set arbitrary fpm attributes via `fpm_attributes`.
   (unakatsuo / #75, #80)
