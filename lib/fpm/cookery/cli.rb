@@ -27,6 +27,8 @@ module FPM
         :attribute_name => 'pkg_dir'
       option '--cache-dir', 'DIR', 'directory for downloaded sources',
         :attribute_name => 'cache_dir'
+      option '--skip-package', :flag, 'do not call FPM to build the package',
+        :attribute_name => 'skip_package'
 
       class Command < self
         def recipe_file
