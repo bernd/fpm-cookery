@@ -5,6 +5,7 @@ require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
+require 'fpm/cookery/package/cpan'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
 require 'fpm/cookery/package/npm'
@@ -182,6 +183,12 @@ module FPM
     class PythonRecipe < BaseRecipe
       def input(config)
         FPM::Cookery::Package::Python.new(self, config)
+      end
+    end
+
+    class CPANRecipe < BaseRecipe
+      def input(config)
+        FPM::Cookery::Package::CPAN.new(self, config)
       end
     end
   end
