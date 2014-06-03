@@ -1,3 +1,8 @@
+# v0.24.0 (2014-06-03)
+* Add amazon linux to the list of RPM-based distros. (skottler / #88)
+* Add support for PEAR packages. (mlafeldt / #85)
+* Add support for CPAN packages. (mlafeldt / #87)
+
 # v0.23.0 (2014-05-29)
 * Add `--skip-package` command line flag. (#86)
 
