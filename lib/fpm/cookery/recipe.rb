@@ -9,6 +9,7 @@ require 'fpm/cookery/package/cpan'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
 require 'fpm/cookery/package/npm'
+require 'fpm/cookery/package/pear'
 require 'fpm/cookery/package/python'
 
 module FPM
@@ -189,6 +190,14 @@ module FPM
     class CPANRecipe < BaseRecipe
       def input(config)
         FPM::Cookery::Package::CPAN.new(self, config)
+      end
+    end
+
+    class PEARRecipe < BaseRecipe
+      attr_rw :pear_package_name_prefix, :pear_channel, :pear_php_dir
+
+      def input(config)
+        FPM::Cookery::Package::PEAR.new(self, config)
       end
     end
   end
