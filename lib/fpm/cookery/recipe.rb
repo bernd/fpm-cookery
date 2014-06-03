@@ -187,9 +187,7 @@ module FPM
     end
 
     class PEARRecipe < BaseRecipe
-      attr_rw :prefix, :pear_package_name_prefix
-      attr_rw :pear_channel, :pear_channel_update
-      attr_rw :pear_bin_dir, :pear_data_dir, :pear_php_bin, :pear_php_dir
+      attr_rw :pear_package_name_prefix, :pear_channel, :pear_php_dir
 
       def input(config)
         FPM::Cookery::Package::PEAR.new(self, config)
