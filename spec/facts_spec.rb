@@ -41,6 +41,13 @@ describe "Facts" do
   end
 
   describe "target" do
+
+    describe "with platform Scientific" do
+      it "returns rpm" do
+        FPM::Cookery::Facts.platform = 'Scientific'
+        expect(FPM::Cookery::Facts.target).to eq(:rpm)
+      end
+    end
     describe "with platform CentOS" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'CentOS'
