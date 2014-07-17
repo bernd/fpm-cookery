@@ -18,7 +18,7 @@ module FPM
           inputs = config.fetch(:input, nil) || '.'
 
           Array(inputs).each do |path|
-            fpm.input(path)
+            fpm.input(path.to_s)
           end
         end
       end
