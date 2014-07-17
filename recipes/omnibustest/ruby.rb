@@ -1,12 +1,12 @@
-class Ruby200 < FPM::Cookery::Recipe
+class Ruby210 < FPM::Cookery::Recipe
   description 'The Ruby virtual machine'
 
   name 'ruby'
-  version '2.0.0.0'
+  version '2.1.2'
   revision 0
   homepage 'http://www.ruby-lang.org/'
-  source 'http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p0.tar.bz2'
-  sha256 'c680d392ccc4901c32067576f5b474ee186def2fcd3fcbfa485739168093295f'
+  source 'http://ftp.ruby-lang.org/pub/ruby/2.1/ruby-2.1.2.tar.bz2'
+  sha256 '6948b02570cdfb89a8313675d4aa665405900e27423db408401473f30fc6e901'
 
   vendor     'fpm'
   license    'The Ruby License'

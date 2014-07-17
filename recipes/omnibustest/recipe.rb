@@ -6,9 +6,15 @@ class OmnibusTest < FPM::Cookery::Recipe
   version '1.0.0'
   description 'Testing Omnibus package'
   revision 0
+  source '', :with => :noop
 
   omnibus_package true
   omnibus_recipes "ruby", "bundler-gem"
   omnibus_dir     '/opt/omnibustest'
 
+  def build
+  end
+
+  def install
+  end
 end
