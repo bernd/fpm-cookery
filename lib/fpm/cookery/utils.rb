@@ -13,10 +13,14 @@ module FPM
       end
 
       def cleanenv_safesystem(*args)
+        with_cleanenv { safesystem(*args) }
+      end
+
+      def with_cleanenv
         bundler_vars = %w(BUNDLE_GEMFILE RUBYOPT BUNDLE_BIN_PATH GEM_HOME GEM_PATH)
         bundled_env = ENV.to_hash
         bundler_vars.each {|var| ENV.delete(var)}
-        result = safesystem(*args)
+        result = yield
         ENV.replace(bundled_env.to_hash)
         result
       end
