@@ -4,7 +4,8 @@ module FPM
       protected
       # From fpm. (lib/fpm/util.rb)
       def safesystem(*args)
-        success = system(*args.flatten)
+        # Make sure to avoid nil elements in args. This might happen on 1.8.
+        success = system(*args.compact.flatten)
         if !success
           raise "'system(#{args.inspect})' failed with error code: #{$?.exitstatus}"
         end
