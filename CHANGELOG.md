@@ -1,3 +1,10 @@
+# v0.25.0 (2014-08-03)
+* Add `environment` method to recipe to handle environment settings.
+* Allow newer FPM versions than 1.1.
+* Unbreak `configure` call without arguments on Ruby 1.8. (#92)
+* Basic Scientific Linux support. (jjuarez / #93)
+* Update internal recipes. (smasset / #89)
+
 # v0.24.0 (2014-06-03)
 * Add amazon linux to the list of RPM-based distros. (skottler / #88)
 * Add support for PEAR packages. (mlafeldt / #85)
