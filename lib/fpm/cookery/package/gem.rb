@@ -6,8 +6,6 @@ module FPM
   module Cookery
     module Package
       class Gem < FPM::Cookery::Package::Package
-        include FPM::Cookery::Utils
-
         def fpm_object
           FPM::Package::Gem.new
         end
@@ -20,7 +18,7 @@ module FPM
         end
 
         def package_input
-          with_cleanenv do
+          recipe.environment.with_clean do
             fpm.input(recipe.name)
           end
         end

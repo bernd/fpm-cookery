@@ -1,3 +1,5 @@
+require 'fpm/cookery/log'
+
 module FPM
   module Cookery
     module Utils
@@ -13,16 +15,8 @@ module FPM
       end
 
       def cleanenv_safesystem(*args)
-        with_cleanenv { safesystem(*args) }
-      end
-
-      def with_cleanenv
-        bundler_vars = %w(BUNDLE_GEMFILE RUBYOPT BUNDLE_BIN_PATH GEM_HOME GEM_PATH)
-        bundled_env = ENV.to_hash
-        bundler_vars.each {|var| ENV.delete(var)}
-        result = yield
-        ENV.replace(bundled_env.to_hash)
-        result
+        Log.warn("[DEPRECATED] Use `environment.with_clean { safesystem(...) }` instead of `cleanenv_safesystem(...)` in the recipe")
+        environment.with_clean { safesystem(*args) }
       end
 
       # From brew2deb. (lib/debian_formula.rb)

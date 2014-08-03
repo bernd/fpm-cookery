@@ -5,6 +5,7 @@ require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
+require 'fpm/cookery/environment'
 require 'fpm/cookery/package/cpan'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
@@ -38,6 +39,7 @@ module FPM
         # Apply class data inheritable pattern to @fpm_attributes
         # class variable.
         klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
+        klass.instance_variable_set(:@environment, self.environment.dup)
       end
 
       def self.platforms(valid_platforms)
@@ -95,8 +97,13 @@ module FPM
           end
           @fpm_attributes
         end
+
+        def environment
+          @environment
+        end
       end
       @fpm_attributes = {}
+      @environment = FPM::Cookery::Environment.new
 
       def initialize(filename, config)
         @filename = Path.new(filename).expand_path
@@ -122,6 +129,7 @@ module FPM
       def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
       def fpm_attributes() self.class.fpm_attributes end
+      def environment()        self.class.environment                      end
 
       # Resolve dependencies from omnibus package.
       def depends_all
