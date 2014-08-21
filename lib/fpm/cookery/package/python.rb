@@ -12,6 +12,7 @@ module FPM
         def package_setup
           fpm.version = recipe.version
 
+          fpm.attributes[:python_package_prefix] = recipe.python_package_prefix
           fpm.attributes[:python_fix_name?] = true
           fpm.attributes[:python_fix_dependencies?] = true
         end
