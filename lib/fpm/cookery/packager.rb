@@ -160,6 +160,7 @@ module FPM
 
           output_class = FPM::Package.types[@target]
 
+          input.fpm.attributes[:excludes] = recipe.exclude
           output = input.convert(output_class)
 
           begin
