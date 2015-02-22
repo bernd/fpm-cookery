@@ -33,9 +33,7 @@ module FPM
           @fpm.attributes[:rpm_group] = 'root'
           @fpm.attributes[:rpm_defattrfile] = '-'
           @fpm.attributes[:rpm_defattrdir] = '-'
-
-          # TODO replace remove_excluded_files() in packager with this.
-          @fpm.attributes[:excludes] = []
+          @fpm.attributes[:excludes] = recipe.exclude
 
           # Package type specific code should be called in package_setup.
           package_setup
