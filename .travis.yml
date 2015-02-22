@@ -1,3 +1,4 @@
+sudo: false
 script: bundle exec rake spec
 rvm:
   - 1.8.7
