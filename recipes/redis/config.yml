@@ -1,0 +1,20 @@
+:directories:
+    - that
+    - the other
+
+:patches:
+    - 'patches/test.patch'
+    - 'patches/other.patch'
+
+:md5: 'c4b0b5e4953a11a503cb54cf6b09670e'
+
+:name: 'redis-server'
+:version: '2.4.2'
+
+:version: '2.4.2'
+:archive: "redis-<%= version %>.tar.gz"
+:source: 'http://redis.googlecode.com/files/<%= archive %>'
+
+:description: 'An advanced key-value store.'
+:conflicts: 'redis-server'
+:config_files: '/etc/redis/redis.conf'
