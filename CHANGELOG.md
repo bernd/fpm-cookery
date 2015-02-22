@@ -1,3 +1,6 @@
+# v0.26.1 (2015-02-22)
+* Revert "Avoid using git ls-files in gemspec".
+
 # v0.26.0 (2015-02-22)
 * Use FPM exclude code. (#102)
 * Add `osrelease` and `osmajorrelease` facts. (#98)
