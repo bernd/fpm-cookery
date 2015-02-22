@@ -11,9 +11,9 @@ module FPM
 
       # Load the given file and instantiate an object. Wrap the class in an
       # anonymous module to avoid namespace cluttering. (see Kernel.load)
-      def load_recipe(filename, config, &callback)
+      def load_recipe(filename, config, recipe_config, &callback)
         Kernel.load(filename, true)
-        callback.call(@recipe.new(filename, config))
+        callback.call(@recipe.new(filename, config, recipe_config))
       end
 
       def add_recipe_class(klass)

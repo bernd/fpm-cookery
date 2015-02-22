@@ -17,9 +17,10 @@ module FPM
 
       attr_reader :recipe, :config
 
-      def initialize(recipe, config = {})
+      def initialize(recipe, config = {}, recipe_config={})
         @recipe = recipe
         @config = config
+        @recipe_config = config
       end
 
       def skip_package?

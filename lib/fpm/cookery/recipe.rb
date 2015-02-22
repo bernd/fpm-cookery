@@ -98,6 +98,25 @@ module FPM
           @fpm_attributes
         end
 
+        def recipe_data(recipe_config=nil)
+          if recipe_config.is_a?(Hash)
+            @recipe_config.merge!(recipe_config)
+          end
+          @recipe_config
+        end
+
+        def apply_recipe_data(recipe_config=recipe_data)
+          recipe_config.each_pair do |k, v|
+            if self.respond_to?(k)
+              current = self.send(k)
+
+              if !defined? current or current.nil?
+                self.send(k, v)
+              end
+            end
+          end
+        end
+
         def environment
           @environment
         end
@@ -105,9 +124,10 @@ module FPM
       @fpm_attributes = {}
       @environment = FPM::Cookery::Environment.new
 
-      def initialize(filename, config)
+      def initialize(filename, config, recipe_config)
         @filename = Path.new(filename).expand_path
         @config = config
+        @recipe_config = recipe_config
 
         @workdir = @filename.dirname
         @tmp_root = @config.tmp_root ? Path.new(@config.tmp_root) : @workdir
@@ -122,14 +142,18 @@ module FPM
       def pkgdir=(value)   @pkgdir   = Path.new(value) end
       def cachedir=(value) @cachedir = Path.new(value) end
 
-      def workdir(path = nil)  @workdir/path                               end
-      def tmp_root(path = nil) @tmp_root/path                              end
-      def destdir(path = nil)  (@destdir  || tmp_root('tmp-dest'))/path    end
-      def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path   end
+      def workdir(path = nil)  @workdir/path                              end
+      def tmp_root(path = nil) @tmp_root/path                             end
+      def destdir(path = nil)  (@destdir  || tmp_root('tmp-dest'))/path   end
+      def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path  end
       def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
-      def fpm_attributes() self.class.fpm_attributes end
-      def environment()        self.class.environment                      end
+      def fpm_attributes() self.class.fpm_attributes                      end
+      def recipe_data() self.class.recipe_data end
+      def environment()        self.class.environment                     end
+      def apply_recipe_data(recipe_config=recipe_data)
+        self.class.apply_recipe_data(recipe_config)
+      end
 
       # Resolve dependencies from omnibus package.
       def depends_all
@@ -153,8 +177,10 @@ module FPM
         FPM::Cookery::Package::Dir.new(self, config)
       end
 
-      def initialize(filename, config)
-        super(filename, config)
+      def initialize(filename, config, recipe_config)
+        super(filename, config, recipe_config)
+        self.apply_recipe_data(recipe_config)
+
         @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
       end
 
