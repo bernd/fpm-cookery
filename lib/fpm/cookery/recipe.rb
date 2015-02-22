@@ -107,11 +107,19 @@ module FPM
 
         def apply_recipe_data(recipe_config=recipe_data)
           recipe_config.each_pair do |k, v|
-            if self.respond_to?(k)
-              current = self.send(k)
+            meth_sym = k.to_sym
+
+            if self.respond_to?(meth_sym, true)
+              current = self.send(meth_sym)
 
               if !defined? current or current.nil?
-                self.send(k, v)
+                self.send(meth_sym, v)
+              end
+
+              if current.is_a?(Hash) or current.is_a?(Array)
+                if current.empty?
+                  self.send(meth_sym, v)
+                end
               end
             end
           end
@@ -180,6 +188,7 @@ module FPM
       def initialize(filename, config, recipe_config)
         super(filename, config, recipe_config)
         self.apply_recipe_data(recipe_config)
+FPM::Cookery::Log.warn(self.inspect)
 
         @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
       end
