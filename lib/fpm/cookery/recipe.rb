@@ -68,14 +68,25 @@ module FPM
         end
       end
 
-      attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
-              :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
-              :pre_install, :post_install, :pre_uninstall, :post_uninstall,
-              :license, :omnibus_package, :omnibus_dir, :chain_package
+      ATTR_RW_MEMBERS = [
+        :arch, :description, :homepage, :maintainer, :md5, :name, :revision,
+        :section, :sha1, :sha256, :spec, :vendor, :version, :pre_install,
+        :post_install, :pre_uninstall, :post_uninstall, :license,
+        :omnibus_package, :omnibus_dir, :chain_package
+      ]
 
-      attr_rw_list :build_depends, :config_files, :conflicts, :depends,
-                   :exclude, :patches, :provides, :replaces, :omnibus_recipes,
-                   :omnibus_additional_paths, :chain_recipes, :directories
+
+      ATTR_RW_LIST_MEMBERS = [
+        :build_depends, :config_files, :conflicts, :depends, :exclude,
+        :patches, :provides, :replaces, :omnibus_recipes,
+        :omnibus_additional_paths, :chain_recipes, :directories
+      ]
+
+      ATTR_RW_MEMBER_MAP = Hash[ ATTR_RW_MEMBERS.map { |elem| [elem, true] } ]
+      ATTR_RW_LIST_MEMBER_MAP = Hash[ ATTR_RW_LIST_MEMBERS.map { |elem| [elem, true] } ]
+
+      attr_rw *ATTR_RW_MEMBERS
+      attr_rw_list *ATTR_RW_LIST_MEMBERS
 
       attr_reader :filename
 
@@ -105,6 +116,10 @@ module FPM
           @recipe_config
         end
 
+        # This method iterates over a hash; for any hash key which corresponds
+        # to a recipe attribute that is either (1) an empty array or hash, (2)
+        # nil, or (3) undefined, the method attempts to set the attribute to
+        # the value corresponding to the given key.
         def apply_recipe_data(recipe_config=recipe_data)
           recipe_config.each_pair do |k, v|
             meth_sym = k.to_sym
@@ -112,13 +127,22 @@ module FPM
             if self.respond_to?(meth_sym, true)
               current = self.send(meth_sym)
 
-              if !defined? current or current.nil?
-                self.send(meth_sym, v)
-              end
-
-              if current.is_a?(Hash) or current.is_a?(Array)
-                if current.empty?
+              # Special case: 'source' is declared in Recipe, not BaseRecipe.
+              if meth_sym == :source
+                if !defined? current or current.nil?
+                  self.send(meth_sym, *v)
+                end
+              elsif ATTR_RW_MEMBER_MAP[meth_sym]
+                if !defined? current or current.nil?
                   self.send(meth_sym, v)
+                end
+              elsif ATTR_RW_LIST_MEMBER_MAP[meth_sym]
+                if current.is_a?(Array)
+                  if current.empty?
+                    self.send(meth_sym, *v)
+                  end
+                elsif !defined? current or current.nil?
+                  self.send(meth_sym, *v)
                 end
               end
             end
@@ -130,6 +154,7 @@ module FPM
         end
       end
       @fpm_attributes = {}
+      @recipe_config = {}
       @environment = FPM::Cookery::Environment.new
 
       def initialize(filename, config, recipe_config)
@@ -156,9 +181,12 @@ module FPM
       def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path  end
       def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
-      def fpm_attributes() self.class.fpm_attributes                      end
-      def recipe_data() self.class.recipe_data end
+      def fpm_attributes()     self.class.fpm_attributes                  end
       def environment()        self.class.environment                     end
+      def recipe_data()        self.class.recipe_data                     end
+      def recipe_data_at(*keys)
+        @recipe_config.values_at(*keys)
+      end
       def apply_recipe_data(recipe_config=recipe_data)
         self.class.apply_recipe_data(recipe_config)
       end
@@ -187,8 +215,7 @@ module FPM
 
       def initialize(filename, config, recipe_config)
         super(filename, config, recipe_config)
-        self.apply_recipe_data(recipe_config)
-FPM::Cookery::Log.warn(self.inspect)
+        apply_recipe_data(recipe_config)
 
         @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
       end
