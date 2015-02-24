@@ -1,3 +1,4 @@
+require 'fpm/cookery/log'
 class Redis < FPM::Cookery::Recipe
   homepage 'http://redis.io'
 
@@ -10,18 +11,18 @@ class Redis < FPM::Cookery::Recipe
   #source   'https://github.com/antirez/redis', :with => :git, :branch => '2.4'
   #source   'https://github.com/antirez/redis', :with => :git, :sha => '072a905'
 
-  source    'http://redis.googlecode.com/files/redis-2.4.2.tar.gz'
-  md5      'c4b0b5e4953a11a503cb54cf6b09670e'
+  #source    'http://redis.googlecode.com/files/redis-2.4.2.tar.gz'
+  #md5      'c4b0b5e4953a11a503cb54cf6b09670e'
 
-  name     'redis-server'
-  version  '2.4.2'
-#  revision '0' # => redis-server-2.2.5+fpm1
+  #name     'redis-server'
+  #version  '2.4.2'
+  #revision '0' # => redis-server-2.2.5+fpm1
 
-  description 'An advanced key-value store.'
+  #description 'An advanced key-value store.'
 
-  conflicts 'redis-server'
+  #conflicts 'redis-server'
 
-  config_files '/etc/redis/redis.conf'
+  #config_files '/etc/redis/redis.conf'
 
   patches 'patches/test.patch'
 

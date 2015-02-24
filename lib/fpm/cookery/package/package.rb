@@ -1,4 +1,5 @@
 require 'fpm/cookery/exceptions'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -6,9 +7,10 @@ module FPM
       class Package
         attr_reader :recipe, :config, :fpm
 
-        def initialize(recipe, config = {})
+        def initialize(recipe, config = {}, recipe_config = {})
           @recipe = recipe
           @config = config
+          @recipe_config = recipe_config
           @fpm = fpm_object
 
           @fpm.name = recipe.name

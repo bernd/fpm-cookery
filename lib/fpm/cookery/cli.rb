@@ -8,11 +8,14 @@ require 'fpm/cookery/log'
 require 'fpm/cookery/log/output/console'
 require 'fpm/cookery/log/output/console_color'
 require 'fpm/cookery/config'
+require 'fpm/cookery/recipe_config'
 require 'clamp'
 
 module FPM
   module Cookery
     class CLI < Clamp::Command
+      DEFAULT_RECIPE_CONFIG_FILE = 'config.yml'
+
       option ['-c', '--color'], :flag, 'toggle color'
       option ['-D', '--debug'], :flag, 'enable debug output'
       option ['-t', '--target'], 'TARGET', 'set desired fpm output target (deb, rpm, etc)'
@@ -29,6 +32,8 @@ module FPM
         :attribute_name => 'cache_dir'
       option '--skip-package', :flag, 'do not call FPM to build the package',
         :attribute_name => 'skip_package'
+      option '--recipe-config', 'FILE', 'YAML file (ERB optional) with recipe configuration data',
+        :attribute_name => 'recipe_data', :default => DEFAULT_RECIPE_CONFIG_FILE
 
       class Command < self
         def recipe_file
@@ -37,6 +42,17 @@ module FPM
           # Allow giving the directory containing a recipe.rb
           if File.directory?(file) && File.exists?(File.join(file, 'recipe.rb'))
             file = File.join(file, 'recipe.rb')
+          end
+
+          file
+        end
+
+        def recipe_config_file
+          file = File.expand_path(recipe_data)
+
+          # Allow giving the directory containing a config.yml
+          if File.directory?(file) && File.exists?(File.join(file, DEFAULT_RECIPE_CONFIG_FILE))
+            file = File.join(file, DEFAULT_RECIPE_CONFIG_FILE)
           end
 
           file
@@ -70,8 +86,8 @@ module FPM
 
           FPM::Cookery::BaseRecipe.send(:include, FPM::Cookery::BookHook)
 
-          FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |recipe|
-            packager = FPM::Cookery::Packager.new(recipe, config.to_hash)
+          FPM::Cookery::Book.instance.load_recipe(recipe_file, config, recipe_config) do |recipe|
+            packager = FPM::Cookery::Packager.new(recipe, config.to_hash, recipe_config)
             packager.target = FPM::Cookery::Facts.target.to_s
 
             exec(config, recipe, packager)
@@ -88,6 +104,10 @@ module FPM
 
         def config
           @config ||= FPM::Cookery::Config.from_cli(self)
+        end
+
+        def recipe_config
+          @recipe_config ||= FPM::Cookery::RecipeConfig.load_file(recipe_config_file)
         end
 
         def init_logging
