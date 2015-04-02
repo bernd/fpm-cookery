@@ -1,3 +1,8 @@
+# v0.27.0 (2015-04-02)
+* Make default prefix configurable. (#104)
+* Unbreak running on Ruby 2.2. (#105)
+* Fix Puppet dependecy. (#105)
+
 # v0.26.1 (2015-02-22)
 * Revert "Avoid using git ls-files in gemspec".
 
