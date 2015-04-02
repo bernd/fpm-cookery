@@ -1,17 +1,24 @@
-require 'puppet'
-require 'puppet/resource'
-require 'puppet/transaction/report'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/log'
 
-# Init Puppet before using it
-Puppet.initialize_settings
+begin
+  require 'puppet'
+  require 'puppet/resource'
+  require 'puppet/transaction/report'
+
+  # Init Puppet before using it
+  Puppet.initialize_settings
+rescue Exception
+end
 
 module FPM
   module Cookery
     class DependencyInspector
-
       def self.verify!(depends, build_depends)
+        unless defined?(Puppet::Resource)
+          Log.warn "Unable to load Puppet. Automatic dependency installation disabled."
+          return
+        end
 
         Log.info "Verifying build_depends and depends with Puppet"
 
