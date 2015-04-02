@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "facter"
-  s.add_runtime_dependency "puppet", ">= 3.4.3"
+  s.add_runtime_dependency "puppet", "~> 3.4"
   s.add_runtime_dependency "addressable"
   s.add_runtime_dependency "systemu"
 end
