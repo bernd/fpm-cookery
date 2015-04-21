@@ -25,9 +25,9 @@ module FPM
           opts = args.pop
           args += opts.map{ |k,v|
             if v == true
-              "--#{option}"
+              "--#{k}"
             else
-              "--#{option}=#{v}"
+              "--#{k}=#{v}"
             end
           }
         end
