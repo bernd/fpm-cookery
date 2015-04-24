@@ -40,6 +40,34 @@ describe "Facts" do
     end
   end
 
+  describe "osrelease" do
+    before do
+      Facter.class_eval do
+        def self.fact(v)
+          v == :operatingsystemrelease ? OpenStruct.new(:value => '6.5') : nil
+        end
+      end
+    end
+
+    it "returns the operating system release version" do
+      expect(FPM::Cookery::Facts.osrelease).to eq('6.5')
+    end
+  end
+
+  describe "osmajorrelease" do
+    before do
+      Facter.class_eval do
+        def self.fact(v)
+          v == :operatingsystemmajrelease ? OpenStruct.new(:value => '6') : nil
+        end
+      end
+    end
+
+    it "returns the operating system major release version" do
+      expect(FPM::Cookery::Facts.osmajorrelease).to eq('6')
+    end
+  end
+
   describe "target" do
 
     describe "with platform Scientific" do

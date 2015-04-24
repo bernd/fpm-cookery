@@ -15,7 +15,7 @@ module FPM
 
       # Most of the path helper stuff comes from brew2deb and homebrew.
       def prefix(path = nil)
-        current_pathname_for('usr')/path
+        current_pathname_for(default_prefix || '/usr')/path
       end
 
       def etc(path = nil)
@@ -70,6 +70,8 @@ module FPM
 
       private
       def current_pathname_for(dir)
+        dir.gsub!(%r{^/}, '') if dir
+
         if omnibus_installing?
           Path.new("/#{dir}")
         else

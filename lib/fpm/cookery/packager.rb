@@ -156,7 +156,6 @@ module FPM
           input.epoch = version.epoch if version.epoch
 
           add_scripts(recipe, input)
-          remove_excluded_files(recipe)
 
           output_class = FPM::Package.types[@target]
 
@@ -200,23 +199,6 @@ module FPM
         end
 
         exit(1) if error
-      end
-
-      # Remove all excluded files from the destdir so they do not end up in the
-      # package.
-      def remove_excluded_files(recipe)
-        if File.directory?(recipe.destdir)
-          Dir.chdir(recipe.destdir.to_s) do
-            Dir['**/*'].each do |file|
-              recipe.exclude.each do |ex|
-                if File.fnmatch(ex, file)
-                  Log.info "Exclude file: #{file}"
-                  FileUtils.rm_f(file)
-                end
-              end
-            end
-          end
-        end
       end
     end
   end

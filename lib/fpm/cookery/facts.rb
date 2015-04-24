@@ -15,6 +15,14 @@ module FPM
         @platform = value.downcase.to_sym
       end
 
+      def self.osrelease
+        @osrelease ||= Facter.fact(:operatingsystemrelease).value
+      end
+
+      def self.osmajorrelease
+        @osmajorrelease ||= Facter.fact(:operatingsystemmajrelease).value
+      end
+
       def self.target
         @target ||= case platform
                     when :centos, :redhat, :fedora, :amazon, :scientific then :rpm

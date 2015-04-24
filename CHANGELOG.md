@@ -1,3 +1,16 @@
+# v0.27.0 (2015-04-02)
+* Make default prefix configurable. (#104)
+* Unbreak running on Ruby 2.2. (#105)
+* Fix Puppet dependecy. (#105)
+
+# v0.26.1 (2015-02-22)
+* Revert "Avoid using git ls-files in gemspec".
+
+# v0.26.0 (2015-02-22)
+* Use FPM exclude code. (#102)
+* Add `osrelease` and `osmajorrelease` facts. (#98)
+* Avoid using `git ls-files` in gemspec. (beddari / #96)
+
 # v0.25.0 (2014-08-03)
 * Add `environment` method to recipe to handle environment settings.
 * Allow newer FPM versions than 1.1.

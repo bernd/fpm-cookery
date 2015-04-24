@@ -13,16 +13,16 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "fpm-cookery"
 
-  s.files         = Dir['**/*']
-  s.test_files    = Dir['{test,spec,features}/**/*']
-  s.executables   = Dir['bin/*'].map{ |f| File.basename(f) }
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rspec", "~> 3.0"
   s.add_development_dependency "rake"
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "facter"
-  s.add_runtime_dependency "puppet", ">= 3.4.3"
+  s.add_runtime_dependency "puppet", "~> 3.4"
   s.add_runtime_dependency "addressable"
   s.add_runtime_dependency "systemu"
 end

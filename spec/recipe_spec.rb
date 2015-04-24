@@ -193,6 +193,12 @@ describe "Recipe" do
     end
   end
 
+  describe "#default_prefix" do
+    it "can be set" do
+      check_attribute(:default_prefix, '/usr/local')
+    end
+  end
+
   def self.spec_recipe_attribute_list(name, list)
     class_eval %Q{
       describe "##{name}" do

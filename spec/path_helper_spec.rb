@@ -6,6 +6,7 @@ describe "PathHelper" do
     Class.new {
       include FPM::Cookery::PathHelper
 
+      def default_prefix; '/usr' end
       def destdir; FPM::Cookery::Path.new('/tmp/dest') end
     }.new
   end
