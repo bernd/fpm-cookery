@@ -87,8 +87,8 @@ module FPM
           return false
         end
 
-        # We can't handle >=, <<, >>, <=
-        if package =~ />=|<<|>>|<=/
+        # We can't handle >=, <<, >>, <=, <, >
+        if package =~ />=|<<|>>|<=|<|>/
           Log.warn "Required package '#{package}' has a relative version requirement; not attempting to find/install a package to satisfy"
           return false
         end
