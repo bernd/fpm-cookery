@@ -1,3 +1,10 @@
+# v0.28.0 (2015-07-10)
+* Add :extract option to git source handler.
+  Using ":extract => :clone" with a :git source handler will clone the
+  repository into the build directory.
+* Ignore more relative dependencies in dependency inspector. (sewhyte / #111)
+* Add support for extracting tar.xz files. (djhaskin987 / #109)
+
 # v0.27.0 (2015-04-02)
 * Make default prefix configurable. (#104)
 * Unbreak running on Ruby 2.2. (#105)
