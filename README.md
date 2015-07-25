@@ -24,6 +24,8 @@ It is using __fpm__ to create the actual packages.
 
 Please find the documentation page here: https://fpm-cookery.readthedocs.org/
 
+The documentation source is located in the `docs/` folder. Pull requests welcome! :)
+
 Hosting and building of the documentation is provided by the great [Read the Docs project](https://readthedocs.org/)!
 
 ## Why?
