@@ -25,6 +25,7 @@ Documentation Contents
 .. toctree::
    :maxdepth: 2
 
+   pages/getting-started
 
 
 Indices and tables
