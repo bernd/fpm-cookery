@@ -6,6 +6,7 @@ require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
 require 'fpm/cookery/environment'
+require 'fpm/cookery/lifecycle_hooks'
 require 'fpm/cookery/package/cpan'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
@@ -19,6 +20,7 @@ module FPM
       include FileUtils
       include FPM::Cookery::Utils
       include FPM::Cookery::PathHelper
+      include FPM::Cookery::LifecycleHooks
 
       def self.attr_rw(*attrs)
         attrs.each do |attr|

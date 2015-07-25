@@ -44,7 +44,9 @@ module FPM
       end
 
       def install_deps
+        recipe.run_lifecycle_hook(:before_dependency_installation)
         DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+        recipe.run_lifecycle_hook(:after_dependency_installation)
         Log.info("All dependencies installed!")
       end
 
@@ -59,7 +61,9 @@ module FPM
 
         # RecipeInspector.verify!(recipe)
         if config.fetch(:dependency_check, true)
+          recipe.run_lifecycle_hook(:before_dependency_installation)
           DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+          recipe.run_lifecycle_hook(:after_dependency_installation)
         end
 
         recipe.installing = false
