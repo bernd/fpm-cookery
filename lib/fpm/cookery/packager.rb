@@ -101,6 +101,11 @@ module FPM
           Dir.chdir(recipe.builddir) do
             extracted_source = source.extract
 
+            if recipe.extracted_source
+              Log.debug "Using custom extracted source dir: #{recipe.builddir(recipe.extracted_source)}"
+              extracted_source = recipe.extracted_source
+            end
+
             Dir.chdir(extracted_source) do
               #Source::Patches.new(recipe.patches).apply!
 

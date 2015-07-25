@@ -166,10 +166,19 @@ module FPM
           @spec = spec
         end
         alias_method :url, :source
+
+        def extracted_source(path = nil)
+          return @extracted_source if path.nil?
+          @extracted_source = path
+        end
       end
 
       def source
         self.class.source
+      end
+
+      def extracted_source
+        self.class.extracted_source
       end
 
       attr_reader :source_handler
