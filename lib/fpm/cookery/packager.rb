@@ -44,6 +44,9 @@ module FPM
       end
 
       def install_deps
+        if recipe.respond_to?('bootstrap')
+          recipe.bootstrap
+        end
         DependencyInspector.verify!(recipe.depends, recipe.build_depends)
         Log.info("All dependencies installed!")
       end
