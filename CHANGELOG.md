@@ -1,3 +1,11 @@
+# v0.29.0 (2015-07-25)
+* Start documentation at https://fpm-cookery.readthedocs.org/.
+  The documentation is now included in the source code (`docs/` directory) and
+  is written in sphinx/rst.
+* Add lifecycle hooks to the recipe class. (#113)
+  __WARNING__: This is an experimental feature and the hook names might change!
+* Add `extraced_source` attribute to the recipe class. (#112)
+
 # v0.28.0 (2015-07-10)
 * Add :extract option to git source handler.
   Using ":extract => :clone" with a :git source handler will clone the
