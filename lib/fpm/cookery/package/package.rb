@@ -18,6 +18,7 @@ module FPM
           @fpm.architecture = recipe.arch.to_s if recipe.arch
 
           @fpm.dependencies += recipe.depends
+          @fpm.dependencies += recipe.package_depends
           @fpm.conflicts += recipe.conflicts
           @fpm.provides += recipe.provides
           @fpm.replaces += recipe.replaces
