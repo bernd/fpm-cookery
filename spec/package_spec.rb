@@ -45,6 +45,7 @@ describe 'Package' do
       section 'langs'
       arch 'all'
       depends 'ab', 'c'
+      package_depends 'de', 'f'
       conflicts 'xz', 'y'
       provides 'foo-package'
       replaces 'foo-old'
@@ -83,7 +84,11 @@ describe 'Package' do
     end
 
     it 'sets the dependencies' do
-      expect(package.fpm.dependencies).to eq(['ab', 'c'])
+      expect(package.fpm.dependencies).to include('ab', 'c')
+    end
+
+    it 'includes the package only dependencies' do
+      expect(package.fpm.dependencies).to include('de', 'f')
     end
 
     it 'sets the conflicts' do
