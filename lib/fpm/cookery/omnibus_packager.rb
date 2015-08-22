@@ -50,6 +50,7 @@ module FPM
           pkg.dispense
 
           @depends += dep_recipe.depends
+          @depends += dep_recipe.package_depends
           Log.info "Finished building #{dep_recipe.name}, moving on to next recipe"
         end
 
