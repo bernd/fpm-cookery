@@ -74,7 +74,7 @@ module FPM
               :license, :omnibus_package, :omnibus_dir, :chain_package,
               :default_prefix
 
-      attr_rw_list :build_depends, :config_files, :conflicts, :depends,
+      attr_rw_list :build_depends, :config_files, :conflicts, :depends, :package_depends,
                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,
                    :omnibus_additional_paths, :chain_recipes, :directories
 
