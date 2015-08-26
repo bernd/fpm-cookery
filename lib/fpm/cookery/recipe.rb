@@ -42,6 +42,7 @@ module FPM
         # class variable.
         klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
         klass.instance_variable_set(:@environment, self.environment.dup)
+        klass.instance_variable_set(:@rpm_attributes, self.rpm_attributes.dup)
       end
 
       def self.platforms(valid_platforms)
@@ -101,11 +102,23 @@ module FPM
           @fpm_attributes
         end
 
+        # record attributes[foo] = bar
+        # Supports both hash and argument assignment
+        #   rpm_attributes[:attr1] = xxxx
+        #   rpm_attributes :xxxx=>1, :yyyy=>2
+        def rpm_attributes(args=nil)
+          if args.is_a?(Hash)
+            @rpm_attributes.merge!(args)
+          end
+          @rpm_attributes
+        end
+
         def environment
           @environment
         end
       end
       @fpm_attributes = {}
+      @rpm_attributes = {}
       @environment = FPM::Cookery::Environment.new
 
       def initialize(filename, config)
@@ -132,6 +145,7 @@ module FPM
       def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
       def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
       def fpm_attributes() self.class.fpm_attributes end
+      def rpm_attributes() self.class.rpm_attributes end
       def environment()        self.class.environment                      end
 
       # Resolve dependencies from omnibus package.

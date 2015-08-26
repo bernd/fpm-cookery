@@ -42,6 +42,9 @@ module FPM
           # overwrite the values from package_setup().
           @fpm.attributes.merge!(recipe.fpm_attributes)
 
+          # also merge fpm.attrs (for %attr flags, rpm specific)
+          @fpm.attrs.merge!(recipe.rpm_attributes)
+
           # The input for the FPM package will be set here.
           package_input
 
