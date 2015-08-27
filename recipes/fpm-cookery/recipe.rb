@@ -21,8 +21,29 @@ class FPMCookery < FPM::Cookery::Recipe
     destdir('bin').install workdir('fpm-cook.bin'), 'fpm-cook'
 
     with_trueprefix do
-      create_post_install_hook
-      create_pre_uninstall_hook
+      create_post_install_hook <<-EOF
+        set -e
+
+        BIN_PATH="#{destdir}/bin"
+        BIN="fpm-cook"
+
+        update-alternatives --install /usr/bin/$BIN $BIN $BIN_PATH/$BIN 100
+
+        exit 0
+      EOF
+
+      create_pre_uninstall_hook <<-EOF
+        set -e
+
+        BIN_PATH="#{destdir}/bin"
+        BIN="fpm-cook"
+
+        if [ "$1" != "upgrade" ]; then
+          update-alternatives --remove $BIN $BIN_PATH/$BIN
+        fi
+
+        exit 0
+      EOF
     end
   end
 
@@ -33,40 +54,16 @@ class FPMCookery < FPM::Cookery::Recipe
     cleanenv_safesystem "#{destdir}/embedded/bin/gem install --no-ri --no-rdoc #{v} #{name}"
   end
 
-  def create_post_install_hook
+  def create_post_install_hook(script, interpreter = "/bin/sh")
     File.open(builddir('post-install'), 'w', 0755) do |f|
-      f.write <<-__POSTINST
-#!/bin/sh
-set -e
-
-BIN_PATH="#{destdir}/bin"
-BIN="fpm-cook"
-
-update-alternatives --install /usr/bin/$BIN $BIN $BIN_PATH/$BIN 100
-
-exit 0
-      __POSTINST
-
+      f.write "#!#{interpreter}\n" + script.gsub(/^\s+/, '')
       self.class.post_install(File.expand_path(f.path))
     end
   end
 
-  def create_pre_uninstall_hook
+  def create_pre_uninstall_hook(script, interpreter = "/bin/sh")
     File.open(builddir('pre-uninstall'), 'w', 0755) do |f|
-      f.write <<-__PRERM
-#!/bin/sh
-set -e
-
-BIN_PATH="#{destdir}/bin"
-BIN="fpm-cook"
-
-if [ "$1" != "upgrade" ]; then
-  update-alternatives --remove $BIN $BIN_PATH/$BIN
-fi
-
-exit 0
-        __PRERM
-
+      f.write "#!#{interpreter}\n" + script.gsub(/^\s+/, '')
       self.class.pre_uninstall(File.expand_path(f.path))
     end
   end
