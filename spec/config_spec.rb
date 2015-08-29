@@ -99,14 +99,6 @@ describe 'Config' do
     common_tests(:keep_destdir)
   end
 
-  describe '#dependency_check' do
-    it 'defaults to false' do
-      expect(default_config.dependency_check).to eq(true)
-    end
-
-    common_tests(:dependency_check)
-  end
-
   describe '#tmp_root' do
     it 'defaults to nil' do
       expect(default_config.tmp_root).to be_nil
@@ -145,7 +137,6 @@ describe 'Config' do
         :vendor => nil,
         :skip_package => false,
         :keep_destdir => false,
-        :dependency_check => true,
         :quiet => false
       })
     end
