@@ -73,8 +73,10 @@ module FPM
 
           recipe.cachedir.mkdir
           Dir.chdir(recipe.cachedir) do
+            recipe.run_lifecycle_hook(:before_source_download)
             Log.info "Fetching source: #{source.source_url}"
             source.fetch(:quiet => config[:quiet])
+            recipe.run_lifecycle_hook(:after_source_download)
 
             if source.checksum?
               SourceIntegrityCheck.new(recipe).tap do |check|
@@ -103,12 +105,15 @@ module FPM
 
           recipe.builddir.mkdir
           Dir.chdir(recipe.builddir) do
+            recipe.run_lifecycle_hook(:before_source_extraction)
             extracted_source = source.extract
 
             if recipe.extracted_source
               Log.debug "Using custom extracted source dir: #{recipe.builddir(recipe.extracted_source)}"
               extracted_source = recipe.extracted_source
             end
+
+            recipe.run_lifecycle_hook(:after_source_extraction, recipe.builddir(extracted_source))
 
             Dir.chdir(extracted_source) do
               #Source::Patches.new(recipe.patches).apply!
@@ -119,8 +124,10 @@ module FPM
                 Log.warn "Skipping build of #{recipe.name} because build cookie found (#{build_cookie})," \
                          " use \"fpm-cook clean\" to rebuild!"
               else
+                recipe.run_lifecycle_hook(:before_build)
                 Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
                 recipe.build and FileUtils.touch(build_cookie)
+                recipe.run_lifecycle_hook(:after_build)
               end
 
               FileUtils.rm_rf(recipe.destdir) unless keep_destdir?
@@ -129,7 +136,9 @@ module FPM
               begin
                 recipe.installing = true
                 Log.info "Installing into #{recipe.destdir}"
+                recipe.run_lifecycle_hook(:before_install)
                 recipe.install
+                recipe.run_lifecycle_hook(:after_install)
               ensure
                 recipe.installing = false
               end
