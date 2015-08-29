@@ -15,7 +15,7 @@ module FPM
       end
 
       def cleanenv_safesystem(*args)
-        Log.warn("[DEPRECATED] Use `environment.with_clean { safesystem(...) }` instead of `cleanenv_safesystem(...)` in the recipe")
+        Log.deprecated("Use `environment.with_clean { safesystem(...) }` instead of `cleanenv_safesystem(...)` in the recipe")
         environment.with_clean { safesystem(*args) }
       end
 

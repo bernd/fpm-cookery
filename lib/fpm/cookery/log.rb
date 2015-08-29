@@ -45,6 +45,10 @@ module FPM
           @output.puts(message)
         end
 
+        def deprecated(message)
+          warn("[DEPRECATED] #{message}")
+        end
+
         def <<(event)
           level = event.fetch(:level, :info).downcase.to_sym
 
