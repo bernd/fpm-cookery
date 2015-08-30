@@ -6,14 +6,13 @@ module FPM
     class Config
       ATTRIBUTES = [
         :color, :debug, :target, :platform, :maintainer, :vendor,
-        :skip_package, :keep_destdir, :dependency_check, :quiet,
+        :skip_package, :keep_destdir, :quiet,
         :tmp_root, :pkg_dir, :cache_dir
       ].freeze
 
       DEFAULTS = {
         :color => true,
         :debug => false,
-        :dependency_check => true,
         :skip_package => false,
         :keep_destdir => false,
         :quiet => false

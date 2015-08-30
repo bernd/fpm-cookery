@@ -93,34 +93,6 @@ The following commands require the ``recipe.rb`` recipe file created above.
   $ fpm-cook
   ===> Starting package creation for tmux-1.9a (ubuntu, deb)
   ===>
-  ===> Verifying build_depends and depends with Puppet
-  ===> Verifying package: libevent-dev
-  ===> Verifying package: libevent-2.0-5
-  ===> Missing/wrong version packages: libevent-dev
-  ERROR: Not running as root; please run 'sudo fpm-cook install-deps' to install dependencies.
-
-.. code-block:: none
-
-  $ sudo fpm-cook install-deps
-  ===> Verifying build_depends and depends with Puppet
-  ===> Verifying package: libevent-dev
-  ===> Verifying package: libevent-2.0-5
-  ===> Missing/wrong version packages: libevent-dev
-  ===> Running as root; installing missing/wrong version build_depends and depends with Puppet
-  ===> Installing package: libevent-dev
-  ===> ensure changed 'purged' to 'present'
-  ===> All dependencies installed!
-
-.. code-block:: none
-
-  $ fpm-cook
-  ===> Starting package creation for tmux-1.9a (ubuntu, deb)
-  ===>
-  ===> Verifying build_depends and depends with Puppet
-  ===> Verifying package: libevent-dev
-  ===> Verifying package: libncurses5-dev
-  ===> Verifying package: libevent-2.0-5
-  ===> All build_depends and depends packages installed
   ===> Fetching source:
   ######################################################################## 100.0%
   ===> Building in /home/vagrant/recipes/tmux/tmp-build/tmux-1.9a

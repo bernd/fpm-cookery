@@ -19,7 +19,7 @@ module FPM
       option ['-p', '--platform'], 'PLATFORM', 'set the target platform (centos, ubuntu, debian)'
       option ['-q', '--quiet'], :flag, 'Disable verbose output like progress bars'
       option ['-V', '--version'], :flag, 'show fpm-cookery and fpm version'
-      option '--[no-]deps', :flag, 'enable/disable dependency checking',
+      option '--[no-]deps', :flag, 'enable/disable dependency checking (DEPRECATED, no-op)',
         :attribute_name => 'dependency_check'
       option '--tmp-root', 'DIR', 'directory root for temporary files',
         :attribute_name => 'tmp_root'
@@ -127,7 +127,7 @@ module FPM
         parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
 
         def exec(config, recipe, packager)
-          packager.install_deps
+          Log.deprecated('The install-deps command is deprecated and does not do anything anymore!')
         end
       end
 

@@ -8,12 +8,6 @@ module FPM
         self.__send__(hook_name, *args)
       end
 
-      def before_dependency_installation
-      end
-
-      def after_dependency_installation
-      end
-
       def before_source_download
       end
 
