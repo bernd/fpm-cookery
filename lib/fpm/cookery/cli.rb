@@ -131,6 +131,16 @@ module FPM
         end
       end
 
+      class InstallBuildDepsCmd < Command
+        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+
+        def exec(config, recipe, packager)
+          # Clear runtime dependencies from being installed.
+          recipe.depends = []
+          packager.install_deps
+        end
+      end
+
       class ShowDepsCmd < Command
         parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
 
@@ -144,6 +154,7 @@ module FPM
       subcommand 'package', 'builds the package', PackageCmd
       subcommand 'clean', 'cleans up', CleanCmd
       subcommand 'install-deps', 'installs build and runtime dependencies', InstallDepsCmd
+      subcommand 'install-build-deps', 'installs build and runtime dependencies', InstallBuildDepsCmd
       subcommand 'show-deps', 'show build and runtime dependencies', ShowDepsCmd
     end
   end
