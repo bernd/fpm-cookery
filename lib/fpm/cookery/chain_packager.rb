@@ -36,8 +36,9 @@ module FPM
               depPackager.install_build_depends
             end
           end
-        recipe.run_lifecycle_hook(:after_dependency_installation)
-        Log.info("Build dependencies installed!")
+          recipe.run_lifecycle_hook(:after_dependency_installation)
+          Log.info("Build dependencies installed!")
+        end
       end
 
       def run
