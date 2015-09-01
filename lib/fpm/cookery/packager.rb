@@ -43,12 +43,20 @@ module FPM
         FileUtils.rm_rf(recipe.destdir)
       end
 
+      def install_build_deps
+        recipe.run_lifecycle_hook(:before_dependency_installation)
+        DependencyInspector.verify!([], recipe.build_depends)
+        recipe.run_lifecycle_hook(:after_dependency_installation)
+        Log.info("Build dependencies installed!")
+      end
+
       def install_deps
         recipe.run_lifecycle_hook(:before_dependency_installation)
         DependencyInspector.verify!(recipe.depends, recipe.build_depends)
         recipe.run_lifecycle_hook(:after_dependency_installation)
         Log.info("All dependencies installed!")
       end
+
 
       def dispense
         env = ENV.to_hash

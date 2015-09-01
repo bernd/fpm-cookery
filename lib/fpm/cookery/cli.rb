@@ -10,6 +10,8 @@ require 'fpm/cookery/log/output/console_color'
 require 'fpm/cookery/config'
 require 'clamp'
 
+require 'pry'
+
 module FPM
   module Cookery
     class CLI < Clamp::Command
@@ -135,9 +137,7 @@ module FPM
         parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
 
         def exec(config, recipe, packager)
-          # Clear runtime dependencies from being installed.
-          recipe.depends = []
-          packager.install_deps
+          packager.install_build_deps
         end
       end
 
