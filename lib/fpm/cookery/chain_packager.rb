@@ -16,7 +16,7 @@ module FPM
 
       def install_build_deps
         recipe.run_lifecycle_hook(:before_dependency_installation)
-        DependencyInspector.verify!([], recipe.build_deps)
+        DependencyInspector.verify!([], recipe.build_depends)
         recipe.chain_recipes.each do |name|
           recipe_file = build_recipe_file_path(name)
             Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
