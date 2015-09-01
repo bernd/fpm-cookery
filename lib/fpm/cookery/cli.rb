@@ -10,8 +10,6 @@ require 'fpm/cookery/log/output/console_color'
 require 'fpm/cookery/config'
 require 'clamp'
 
-require 'pry'
-
 module FPM
   module Cookery
     class CLI < Clamp::Command
