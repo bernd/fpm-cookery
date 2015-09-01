@@ -29,11 +29,11 @@ module FPM
 
             #Chain, chain, chain ...
             if dep_recipe.omnibus_package == true
-              FPM::Cookery::OmnibusPackager.new(depPackager, config).install_build_depends
+              FPM::Cookery::OmnibusPackager.new(depPackager, config).install_build_deps
             elsif dep_recipe.chain_package == true
-              FPM::Cookery::ChainPackager.new(depPackager, config).install_build_depends
+              FPM::Cookery::ChainPackager.new(depPackager, config).install_build_deps
             else
-              depPackager.install_build_depends
+              depPackager.install_build_deps
             end
           end
           recipe.run_lifecycle_hook(:after_dependency_installation)
