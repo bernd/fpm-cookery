@@ -1,5 +1,6 @@
 require 'fpm/cookery/packager'
 require 'fpm/cookery/facts'
+
 module FPM
   module Cookery
     class OmnibusPackager
