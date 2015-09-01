@@ -19,6 +19,7 @@ module FPM
         DependencyInspector.verify!([], recipe.build_depends)
         recipe.chain_recipes.each do |name|
           recipe_file = build_recipe_file_path(name)
+          unless File.exists?(recipe_file)
             Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
             exit 1
           end
