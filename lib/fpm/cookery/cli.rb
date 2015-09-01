@@ -137,7 +137,13 @@ module FPM
         parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
 
         def exec(config, recipe, packager)
-          packager.install_build_deps
+          if recipe.omnibus_package == true
+            FPM::Cookery::OmnibusPackager.new(packager, config).install_build_deps
+          elsif recipe.chain_package == true
+            FPM::Cookery::ChainPackager.new(packager, config).install_build_deps
+          else
+            packager.install_build_deps
+          end
         end
       end
 

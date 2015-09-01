@@ -37,6 +37,15 @@ module FPM
         dep_recipes
       end
 
+
+      def install_build_deps
+        build_deps = load_omnibus_recipes(recipe).map(&:build_depends).flatten.uniq
+        recipe.run_lifecycle_hook(:before_dependency_installation)
+        DependencyInspector.verify!([], build_deps)
+        recipe.run_lifecycle_hook(:after_dependency_installation)
+        Log.info("Build dependencies installed!")
+      end
+
       def run
         # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
         Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"

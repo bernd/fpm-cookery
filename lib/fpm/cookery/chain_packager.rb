@@ -14,6 +14,31 @@ module FPM
         @config = config
       end
 
+      def install_build_deps
+        recipe.run_lifecycle_hook(:before_dependency_installation)
+        DependencyInspector.verify!([], recipe.build_deps)
+        recipe.chain_recipes.each do |name|
+          recipe_file = build_recipe_file_path(name)
+            Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
+            exit 1
+          end
+          FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |dep_recipe|
+            depPackager = FPM::Cookery::Packager.new(dep_recipe, config.to_hash)
+            depPackager.target = FPM::Cookery::Facts.target.to_s
+
+            #Chain, chain, chain ...
+            if dep_recipe.omnibus_package == true
+              FPM::Cookery::OmnibusPackager.new(depPackager, config).install_build_depends
+            elsif dep_recipe.chain_package == true
+              FPM::Cookery::ChainPackager.new(depPackager, config).install_build_depends
+            else
+              depPackager.install_build_depends
+            end
+          end
+        recipe.run_lifecycle_hook(:after_dependency_installation)
+        Log.info("Build dependencies installed!")
+      end
+
       def run
         Log.info "Recipe #{recipe.name} is a chain package; looking for child recipes to build"
 
