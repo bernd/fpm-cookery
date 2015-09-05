@@ -43,7 +43,8 @@ module FPM
 
         dep_recipes = load_omnibus_recipes(recipe)
         dep_recipes.uniq.each do |dep_recipe|
-          pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
+          pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true,
+                                          :keep_destdir => true, :dependency_check => config.dependency_check )
           pkg.target = FPM::Cookery::Facts.target.to_s
 
           Log.info "Located recipe for child recipe #{dep_recipe.name}; starting build"
