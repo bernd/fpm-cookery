@@ -1,3 +1,22 @@
+# v0.30.0 (2015-09-10)
+* Add more lifecylce hooks:
+  * `before_package_create`
+  * `after_package_create`
+  * `before_source_download`
+  * `after_source_download`
+  * `before_source_extraction`
+  * `after_source_extraction`
+  * `before_build`
+  * `after_build`
+  * `before_install`
+  * `after_install`
+* Remove some duplication in dependency handling. (glensc / #114)
+* Add `:externals` option to SVN source handler. (glensc / #117)
+* Use heredoc when calling hook script in fpm-cookery recipe. (glensc / #121)
+* Add `sh()` method as an alias for `safesystem()`.
+* Add `install-build-deps` CLI command to install all build dependencies. (cas-ei / #126)
+* Fix no-deps CLI flags for omnibus style builds. (cas-ei / #124 / #125)
+
 # v0.29.0 (2015-07-25)
 * Start documentation at https://fpm-cookery.readthedocs.org/.
   The documentation is now included in the source code (`docs/` directory) and
