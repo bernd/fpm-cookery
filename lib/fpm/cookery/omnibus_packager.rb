@@ -13,6 +13,7 @@ module FPM
         @config = config
         @recipe = packager.recipe
         @depends = []
+        @package_depends = []
       end
 
       def load_omnibus_recipes(_recipe)
@@ -60,11 +61,13 @@ module FPM
           pkg.dispense
 
           @depends += dep_recipe.depends
+          @package_depends += dep_recipe.package_depends
           Log.info "Finished building #{dep_recipe.name}, moving on to next recipe"
         end
 
         # Now all child recipes are built; set depends to combined set of dependencies
         recipe.class.depends(@depends.flatten.uniq)
+        recipe.class.package_depends(@package_depends.flatten.uniq)
         Log.info "Combined dependencies: #{recipe.depends.join(', ')}"
 
         recipe.destdir = recipe.omnibus_dir if recipe.omnibus_dir
