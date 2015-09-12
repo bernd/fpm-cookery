@@ -114,7 +114,17 @@ module FPM
           recipe.builddir.mkdir
           Dir.chdir(recipe.builddir) do
             recipe.run_lifecycle_hook(:before_source_extraction)
-            extracted_source = source.extract
+            extract_cookie = extract_cookie_name(package_name)
+
+            # Do not extract source again because it might destroy changes
+            # that have been made to the source. (like patches)
+            if File.exists?(extract_cookie)
+              extracted_source = File.read(extract_cookie).chomp
+              Log.debug "Extract cookie exists, using existing source directory: #{extracted_source}"
+            else
+              extracted_source = source.extract
+              File.open(extract_cookie, 'w', 0644) {|f| f.puts(extracted_source) }
+            end
 
             if recipe.extracted_source
               Log.debug "Using custom extracted source dir: #{recipe.builddir(recipe.extracted_source)}"
@@ -122,6 +132,8 @@ module FPM
             end
 
             recipe.run_lifecycle_hook(:after_source_extraction, recipe.builddir(extracted_source))
+
+            Log.info "Using source directory: #{extracted_source}"
 
             Dir.chdir(extracted_source) do
               #Source::Patches.new(recipe.patches).apply!
@@ -162,6 +174,10 @@ module FPM
       ensure
         # Make sure we reset the environment.
         ENV.replace(env)
+      end
+
+      def extract_cookie_name(name)
+        (recipe.builddir/".extract-cookie-#{name.gsub(/[^\w]/,'_')}").to_s
       end
 
       def build_cookie_name(name)
