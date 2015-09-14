@@ -19,8 +19,10 @@ module FPM
       option ['-p', '--platform'], 'PLATFORM', 'set the target platform (centos, ubuntu, debian)'
       option ['-q', '--quiet'], :flag, 'Disable verbose output like progress bars'
       option ['-V', '--version'], :flag, 'show fpm-cookery and fpm version'
-      option '--[no-]deps', :flag, 'enable/disable dependency checking',
-        :attribute_name => 'dependency_check'
+      option '--[no-]install-build-depends', :flag, 'enable/disable installation of build dependencies',
+        :attribute_name => 'install_build_depends'
+      option '--[no-]install-depends', :flag, 'enable/disable installation of dependencies',
+        :attribute_name => 'install_depends'
       option '--tmp-root', 'DIR', 'directory root for temporary files',
         :attribute_name => 'tmp_root'
       option '--pkg-dir', 'DIR', 'directory for built packages',
@@ -128,6 +130,7 @@ module FPM
 
         def exec(config, recipe, packager)
           packager.install_deps
+          Log.info('All dependencies installed!')
         end
       end
 
@@ -142,6 +145,7 @@ module FPM
           else
             packager.install_build_deps
           end
+          Log.info('Build dependencies installed!')
         end
       end
 

@@ -44,19 +44,18 @@ module FPM
       end
 
       def install_build_deps
-        recipe.run_lifecycle_hook(:before_dependency_installation)
-        DependencyInspector.verify!([], recipe.build_depends)
-        recipe.run_lifecycle_hook(:after_dependency_installation)
-        Log.info("Build dependencies installed!")
+        install_dependencies([], recipe.build_depends)
       end
 
       def install_deps
-        recipe.run_lifecycle_hook(:before_dependency_installation)
-        DependencyInspector.verify!(recipe.depends, recipe.build_depends)
-        recipe.run_lifecycle_hook(:after_dependency_installation)
-        Log.info("All dependencies installed!")
+        install_dependencies(recipe.depends, recipe.build_depends)
       end
 
+      def install_dependencies(dependencies, build_dependencies)
+        recipe.run_lifecycle_hook(:before_dependency_installation)
+        DependencyInspector.verify!(Array(dependencies), Array(build_dependencies))
+        recipe.run_lifecycle_hook(:after_dependency_installation)
+      end
 
       def dispense
         env = ENV.to_hash
@@ -67,11 +66,12 @@ module FPM
         Log.info "Starting package creation for #{package_name} (#{platform}, #{target})"
         Log.info ''
 
-        # RecipeInspector.verify!(recipe)
-        if config.fetch(:dependency_check, true)
-          recipe.run_lifecycle_hook(:before_dependency_installation)
-          DependencyInspector.verify!(recipe.depends, recipe.build_depends)
-          recipe.run_lifecycle_hook(:after_dependency_installation)
+        if config.fetch(:install_build_depends, false)
+          install_build_deps
+        elsif config.fetch(:install_depends, false)
+          install_deps
+        else
+          Log.debug 'Not installing any dependencies automatically'
         end
 
         recipe.installing = false
