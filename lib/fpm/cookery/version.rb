@@ -1,5 +1,5 @@
 module FPM
   module Cookery
-    VERSION = '0.27.0'
+    VERSION = '0.30.0'
   end
 end

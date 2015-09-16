@@ -50,11 +50,21 @@ module FPM
               extracted_source << '-HEAD'
             end
 
-            # Trailing '/' is important! (see git-checkout-index(1))
-            git('checkout-index', '-a', '-f', "--prefix=#{extracted_source}/")
 
-            if options[:submodule]
-              git('submodule', 'foreach', "mkdir -p #{extracted_source}/$path && cp -r . #{extracted_source}/$path")
+            case options.fetch(:extract, :default).to_s.to_sym
+            when :clone
+              if File.exist?(extracted_source)
+                Log.info("Source directory has already been cloned into #{extracted_source}")
+              else
+                git('clone', '-l', '--recurse-submodules', Dir.pwd, extracted_source)
+              end
+            else
+              # Trailing '/' is important! (see git-checkout-index(1))
+              git('checkout-index', '-a', '-f', "--prefix=#{extracted_source}/")
+
+              if options[:submodule]
+                git('submodule', 'foreach', "mkdir -p #{extracted_source}/$path && cp -r . #{extracted_source}/$path")
+              end
             end
           end
 

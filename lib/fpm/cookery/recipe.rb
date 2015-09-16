@@ -6,6 +6,7 @@ require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
 require 'fpm/cookery/environment'
+require 'fpm/cookery/lifecycle_hooks'
 require 'fpm/cookery/package/cpan'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
@@ -19,6 +20,7 @@ module FPM
       include FileUtils
       include FPM::Cookery::Utils
       include FPM::Cookery::PathHelper
+      include FPM::Cookery::LifecycleHooks
 
       def self.attr_rw(*attrs)
         attrs.each do |attr|
@@ -166,10 +168,19 @@ module FPM
           @spec = spec
         end
         alias_method :url, :source
+
+        def extracted_source(path = nil)
+          return @extracted_source if path.nil?
+          @extracted_source = path
+        end
       end
 
       def source
         self.class.source
+      end
+
+      def extracted_source
+        self.class.extracted_source
       end
 
       attr_reader :source_handler

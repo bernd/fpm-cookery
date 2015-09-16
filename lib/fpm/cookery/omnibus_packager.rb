@@ -37,13 +37,23 @@ module FPM
         dep_recipes
       end
 
+
+      def install_build_deps
+        build_deps = load_omnibus_recipes(recipe).map(&:build_depends).flatten.uniq
+        recipe.run_lifecycle_hook(:before_dependency_installation)
+        DependencyInspector.verify!([], build_deps)
+        recipe.run_lifecycle_hook(:after_dependency_installation)
+        Log.info("Build dependencies installed!")
+      end
+
       def run
         # Omnibus packages are many builds in one package; e.g. Ruby + Puppet together.
         Log.info "Recipe #{recipe.name} is an Omnibus package; looking for child recipes to build"
 
         dep_recipes = load_omnibus_recipes(recipe)
         dep_recipes.uniq.each do |dep_recipe|
-          pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true, :keep_destdir => true)
+          pkg = FPM::Cookery::Packager.new(dep_recipe, :skip_package => true,
+                                          :keep_destdir => true, :dependency_check => config.dependency_check )
           pkg.target = FPM::Cookery::Facts.target.to_s
 
           Log.info "Located recipe for child recipe #{dep_recipe.name}; starting build"

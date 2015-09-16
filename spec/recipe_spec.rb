@@ -199,6 +199,12 @@ describe "Recipe" do
     end
   end
 
+  describe "#extracted_source" do
+    it "can be set" do
+      check_attribute(:extracted_source, 'test-1.0.0')
+    end
+  end
+
   def self.spec_recipe_attribute_list(name, list)
     class_eval %Q{
       describe "##{name}" do

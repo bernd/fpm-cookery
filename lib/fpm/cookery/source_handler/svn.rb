@@ -26,7 +26,8 @@ module FPM
         private
         def svn(url, path)
           revision = options[:revision] || 'HEAD'
-          safesystem('svn', 'export', '--force', '-q', '-r', revision, url, path)
+          externals = '--ignore-externals' if !options[:externals]
+          safesystem('svn', 'export', '--force', externals, '-q', '-r', revision, url, path)
         end
 
         def extracted_source

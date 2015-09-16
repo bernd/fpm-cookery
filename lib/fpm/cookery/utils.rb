@@ -14,8 +14,13 @@ module FPM
         return success
       end
 
+      # Alias for safesystem.
+      def sh(*args)
+        safesystem(*args)
+      end
+
       def cleanenv_safesystem(*args)
-        Log.warn("[DEPRECATED] Use `environment.with_clean { safesystem(...) }` instead of `cleanenv_safesystem(...)` in the recipe")
+        Log.deprecated("Use `environment.with_clean { safesystem(...) }` instead of `cleanenv_safesystem(...)` in the recipe")
         environment.with_clean { safesystem(*args) }
       end
 

@@ -70,7 +70,7 @@ module FPM
           :ensure => "present"
         })
         result = Puppet::Resource.indirection.save(resource)[1]
-        failed = Puppet::Resource.indirection.save(resource)[1].resource_statuses.values.first.failed
+        failed = result.resource_statuses.values.first.failed
         if failed
           Log.fatal "While processing depends package '#{package}':"
           result.logs.each {|log_line| Log.fatal log_line}
@@ -87,8 +87,8 @@ module FPM
           return false
         end
 
-        # We can't handle >=, <<, >>, <=
-        if package =~ />=|<<|>>|<=/
+        # We can't handle >=, <<, >>, <=, <, >
+        if package =~ />=|<<|>>|<=|<|>/
           Log.warn "Required package '#{package}' has a relative version requirement; not attempting to find/install a package to satisfy"
           return false
         end

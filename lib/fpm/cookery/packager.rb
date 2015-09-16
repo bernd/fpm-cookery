@@ -43,10 +43,20 @@ module FPM
         FileUtils.rm_rf(recipe.destdir)
       end
 
+      def install_build_deps
+        recipe.run_lifecycle_hook(:before_dependency_installation)
+        DependencyInspector.verify!([], recipe.build_depends)
+        recipe.run_lifecycle_hook(:after_dependency_installation)
+        Log.info("Build dependencies installed!")
+      end
+
       def install_deps
+        recipe.run_lifecycle_hook(:before_dependency_installation)
         DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+        recipe.run_lifecycle_hook(:after_dependency_installation)
         Log.info("All dependencies installed!")
       end
+
 
       def dispense
         env = ENV.to_hash
@@ -59,7 +69,9 @@ module FPM
 
         # RecipeInspector.verify!(recipe)
         if config.fetch(:dependency_check, true)
+          recipe.run_lifecycle_hook(:before_dependency_installation)
           DependencyInspector.verify!(recipe.depends, recipe.build_depends)
+          recipe.run_lifecycle_hook(:after_dependency_installation)
         end
 
         recipe.installing = false
@@ -69,8 +81,10 @@ module FPM
 
           recipe.cachedir.mkdir
           Dir.chdir(recipe.cachedir) do
+            recipe.run_lifecycle_hook(:before_source_download)
             Log.info "Fetching source: #{source.source_url}"
             source.fetch(:quiet => config[:quiet])
+            recipe.run_lifecycle_hook(:after_source_download)
 
             if source.checksum?
               SourceIntegrityCheck.new(recipe).tap do |check|
@@ -99,7 +113,27 @@ module FPM
 
           recipe.builddir.mkdir
           Dir.chdir(recipe.builddir) do
-            extracted_source = source.extract
+            recipe.run_lifecycle_hook(:before_source_extraction)
+            extract_cookie = extract_cookie_name(package_name)
+
+            # Do not extract source again because it might destroy changes
+            # that have been made to the source. (like patches)
+            if File.exists?(extract_cookie)
+              extracted_source = File.read(extract_cookie).chomp
+              Log.debug "Extract cookie exists, using existing source directory: #{extracted_source}"
+            else
+              extracted_source = source.extract
+              File.open(extract_cookie, 'w', 0644) {|f| f.puts(extracted_source) }
+            end
+
+            if recipe.extracted_source
+              Log.debug "Using custom extracted source dir: #{recipe.builddir(recipe.extracted_source)}"
+              extracted_source = recipe.extracted_source
+            end
+
+            recipe.run_lifecycle_hook(:after_source_extraction, recipe.builddir(extracted_source))
+
+            Log.info "Using source directory: #{extracted_source}"
 
             Dir.chdir(extracted_source) do
               #Source::Patches.new(recipe.patches).apply!
@@ -110,8 +144,10 @@ module FPM
                 Log.warn "Skipping build of #{recipe.name} because build cookie found (#{build_cookie})," \
                          " use \"fpm-cook clean\" to rebuild!"
               else
+                recipe.run_lifecycle_hook(:before_build)
                 Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
                 recipe.build and FileUtils.touch(build_cookie)
+                recipe.run_lifecycle_hook(:after_build)
               end
 
               FileUtils.rm_rf(recipe.destdir) unless keep_destdir?
@@ -120,7 +156,9 @@ module FPM
               begin
                 recipe.installing = true
                 Log.info "Installing into #{recipe.destdir}"
+                recipe.run_lifecycle_hook(:before_install)
                 recipe.install
+                recipe.run_lifecycle_hook(:after_install)
               ensure
                 recipe.installing = false
               end
@@ -136,6 +174,10 @@ module FPM
       ensure
         # Make sure we reset the environment.
         ENV.replace(env)
+      end
+
+      def extract_cookie_name(name)
+        (recipe.builddir/".extract-cookie-#{name.gsub(/[^\w]/,'_')}").to_s
       end
 
       def build_cookie_name(name)
@@ -161,8 +203,10 @@ module FPM
 
           output = input.convert(output_class)
 
+          recipe.run_lifecycle_hook(:before_package_create, output)
           begin
             output.output(output.to_s)
+            recipe.run_lifecycle_hook(:after_package_create, output)
           rescue FPM::Package::FileAlreadyExists
             Log.info "Removing existing package file: #{output.to_s}"
             FileUtils.rm_f(output.to_s)
