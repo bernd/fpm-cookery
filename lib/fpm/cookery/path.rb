@@ -18,7 +18,7 @@ module FPM
       end
 
       def /(path)
-        self + (path || '').gsub(%r{^/}, '')
+        self + (path || '').to_s.gsub(%r{^/}, '')
       end
 
       def =~(regex)
