@@ -23,7 +23,7 @@ module FPM
         def extract(config = {})
           Dir.chdir(builddir) do
             case local_path.extname
-            when '.bz2', '.gz', '.tgz', '.xz'
+            when '.bz2', '.gz', '.tgz', '.xz', '.tar'
               safesystem('tar', 'xf', local_path)
             when '.shar', '.bin'
               File.chmod(0755, local_path)
