@@ -54,6 +54,12 @@ describe "Path" do
       end
     end
 
+    describe "with a Path argument" do
+      it "returns a new concatenated path object" do
+        expect((path/path).to_s).to eq('/foo/foo')
+      end
+    end
+
     describe "with a nil argument" do
       it "does not modify the path" do
         expect((path/nil).to_s).to eq('/foo')

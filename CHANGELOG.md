@@ -1,3 +1,7 @@
+# v0.30.1 (2015-09-17)
+* Do not extract the source again if it has been extraced in a previous run. (#100)
+* Allow passing a `Path` object to the `Path#/` method. (#127)
+
 # v0.30.0 (2015-09-10)
 * Add more lifecylce hooks:
   * `before_package_create`
