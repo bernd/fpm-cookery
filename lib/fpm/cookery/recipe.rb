@@ -75,7 +75,7 @@ module FPM
               :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
               :pre_install, :post_install, :pre_uninstall, :post_uninstall,
               :license, :omnibus_package, :omnibus_dir, :chain_package,
-              :default_prefix
+              :default_prefix, :rpm_os
 
       attr_rw_list :build_depends, :config_files, :conflicts, :depends,
                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,

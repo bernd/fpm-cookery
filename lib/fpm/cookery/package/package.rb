@@ -34,6 +34,7 @@ module FPM
           @fpm.attributes[:rpm_defattrfile] = '-'
           @fpm.attributes[:rpm_defattrdir] = '-'
           @fpm.attributes[:excludes] = recipe.exclude
+          @fpm.attributes[:rpm_os] = recipe.rpm_os     # specify the os type of package on RPM
 
           # Package type specific code should be called in package_setup.
           package_setup
