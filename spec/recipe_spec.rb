@@ -280,6 +280,17 @@ describe "Recipe" do
     end
   end
 
+  describe ".sourcedir" do
+    it "is not set by default" do
+      expect(recipe.sourcedir).to be_nil
+    end
+
+    it "can be set" do
+      recipe.sourcedir = '/tmp/foo/bar'
+      expect(recipe.sourcedir).to eq('/tmp/foo/bar')
+    end
+  end
+
   describe "#local_path" do
     it "returns the path to the local source file" do
       klass.class_eval do

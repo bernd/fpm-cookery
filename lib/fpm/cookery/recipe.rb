@@ -184,7 +184,11 @@ module FPM
         self.class.extracted_source
       end
 
-      attr_reader :source_handler
+      def sourcedir=(sourcedir)
+        @sourcedir = sourcedir
+      end
+
+      attr_reader :source_handler, :sourcedir
 
       extend Forwardable
       def_delegator :@source_handler, :local_path
