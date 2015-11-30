@@ -12,3 +12,4 @@ tmp-dest/
 .vagrant
 Vagrantfile
 /vendor
+*~
