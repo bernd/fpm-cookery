@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "facter"
   s.add_runtime_dependency "puppet", "~> 3.4"
-  s.add_runtime_dependency "addressable"
+  s.add_runtime_dependency "addressable", "~> 2.3.8"
   s.add_runtime_dependency "systemu"
 end
