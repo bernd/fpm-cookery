@@ -1,3 +1,7 @@
+# v0.31.0 (2015-11-07)
+* Add support for .tar archives. (devkid / #132)
+* Add support for virtualenv recipes. (skoenig/zalando / #137)
+
 # v0.30.1 (2015-09-17)
 * Do not extract the source again if it has been extraced in a previous run. (#100)
 * Allow passing a `Path` object to the `Path#/` method. (#127)

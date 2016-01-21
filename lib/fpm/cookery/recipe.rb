@@ -13,6 +13,7 @@ require 'fpm/cookery/package/gem'
 require 'fpm/cookery/package/npm'
 require 'fpm/cookery/package/pear'
 require 'fpm/cookery/package/python'
+require 'fpm/cookery/package/virtualenv'
 
 module FPM
   module Cookery
@@ -183,7 +184,11 @@ module FPM
         self.class.extracted_source
       end
 
-      attr_reader :source_handler
+      def sourcedir=(sourcedir)
+        @sourcedir = sourcedir
+      end
+
+      attr_reader :source_handler, :sourcedir
 
       extend Forwardable
       def_delegator :@source_handler, :local_path
@@ -218,6 +223,13 @@ module FPM
 
       def input(config)
         FPM::Cookery::Package::PEAR.new(self, config)
+      end
+    end
+
+    class VirtualenvRecipe < BaseRecipe
+      attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name
+      def input(config)
+        FPM::Cookery::Package::Virtualenv.new(self, config)
       end
     end
   end
