@@ -1,6 +1,8 @@
 require 'forwardable'
 require 'fileutils'
+require 'set'
 require 'fpm/cookery/facts'
+require 'fpm/cookery/hiera'
 require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
@@ -22,6 +24,46 @@ module FPM
       include FPM::Cookery::Utils
       include FPM::Cookery::PathHelper
       include FPM::Cookery::LifecycleHooks
+      include FPM::Cookery::Hiera
+
+      # Constants used for registering singleton class instance variables and
+      # related accessors through {.register_attr}
+      RW_ATTR_PREFIX = 'rw'.freeze
+      RW_LIST_ATTR_PREFIX = 'rw_list'.freeze
+      RW_HASH_ATTR_PREFIX = 'rw_hash'.freeze
+      RW_ATTR_SUFFIX = 'attrs'.freeze
+
+      def self.rw_attr_groups
+        @rw_attr_names ||= Set.new
+      end
+
+      # Create +Set+s of recipe attributes and +attr_reader+s to access them.
+      # This is the means by which we control what attributes can be set
+      # through Hiera backend lookups.
+      def self.register_attr(attr, attr_type)
+        accessor = :"#{attr_type}_#{RW_ATTR_SUFFIX}"
+        instance_variable = :"@#{accessor}"
+
+        # Register this attribute type so that it can be duplicated in
+        # {.inherited}.
+        rw_attr_groups.add(accessor)
+
+        if !instance_variable_defined?(instance_variable)
+          # Create accessor on singleton class
+          self.class.send(:attr_reader, accessor)
+
+          # Create accessor on instances
+          class_eval %Q{
+            def #{accessor}
+              self.class.#{accessor}
+            end
+          }
+
+          instance_variable_set(instance_variable, Set.new)
+        end
+
+        instance_variable_get(instance_variable).add(attr)
+      end
 
       def self.attr_rw(*attrs)
         attrs.each do |attr|
@@ -34,15 +76,19 @@ module FPM
               self.class.#{attr}
             end
           }
+
+          register_attr(attr, RW_ATTR_PREFIX)
         end
       end
 
       def self.inherited(klass)
         super
-        # Apply class data inheritable pattern to @fpm_attributes
-        # class variable.
-        klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
-        klass.instance_variable_set(:@environment, self.environment.dup)
+        # Apply class data inheritable pattern to singleton class instance
+        # variables.
+        inherited_variables = rw_attr_groups + [:fpm_attributes, :environment]
+        inherited_variables.each do |attr|
+          klass.instance_variable_set(:"@#{attr}", send(attr).dup)
+        end
       end
 
       def self.platforms(valid_platforms)
@@ -68,6 +114,8 @@ module FPM
               self.class.#{attr}
             end
           }
+
+          register_attr(attr, RW_LIST_ATTR_PREFIX)
         end
       end
 
@@ -96,6 +144,8 @@ module FPM
         #   fpm_attributes[:attr1] = xxxx
         #   fpm_attributes :xxxx=>1, :yyyy=>2
         def fpm_attributes(args=nil)
+          @fpm_attributes ||= {}
+
           if args.is_a?(Hash)
             @fpm_attributes.merge!(args)
           end
@@ -103,11 +153,12 @@ module FPM
         end
 
         def environment
-          @environment
+          @environment ||= FPM::Cookery::Environment.new
         end
       end
-      @fpm_attributes = {}
-      @environment = FPM::Cookery::Environment.new
+
+      register_attr(:fpm_attributes, RW_HASH_ATTR_PREFIX)
+      register_attr(:environment, RW_HASH_ATTR_PREFIX)
 
       def initialize(filename, config)
         @filename = Path.new(filename).expand_path
@@ -117,23 +168,27 @@ module FPM
         @tmp_root = @config.tmp_root ? Path.new(@config.tmp_root) : @workdir
         @pkgdir = @config.pkg_dir && Path.new(@config.pkg_dir)
         @cachedir = @config.cache_dir && Path.new(@config.cache_dir)
+        @datadir = @config.data_dir && Path.new(@config.data_dir)
+        @hiera = FPM::Cookery::Hiera::Instance.new(self)
       end
 
-      def workdir=(value)  @workdir  = Path.new(value) end
-      def tmp_root=(value) @tmp_root = Path.new(value) end
-      def destdir=(value)  @destdir  = Path.new(value) end
-      def builddir=(value) @builddir = Path.new(value) end
-      def pkgdir=(value)   @pkgdir   = Path.new(value) end
-      def cachedir=(value) @cachedir = Path.new(value) end
+      def workdir=(value)   @workdir  = Path.new(value) end
+      def tmp_root=(value)  @tmp_root = Path.new(value) end
+      def destdir=(value)   @destdir  = Path.new(value) end
+      def builddir=(value)  @builddir = Path.new(value) end
+      def pkgdir=(value)    @pkgdir   = Path.new(value) end
+      def cachedir=(value)  @cachedir = Path.new(value) end
+      def datadir=(value)   @datadir  = Path.new(value) end
 
-      def workdir(path = nil)  @workdir/path                               end
-      def tmp_root(path = nil) @tmp_root/path                              end
-      def destdir(path = nil)  (@destdir  || tmp_root('tmp-dest'))/path    end
-      def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path   end
-      def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
-      def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
-      def fpm_attributes() self.class.fpm_attributes end
-      def environment()        self.class.environment                      end
+      def workdir(path = nil)   @workdir/path                             end
+      def tmp_root(path = nil)  @tmp_root/path                            end
+      def destdir(path = nil)   (@destdir  || tmp_root('tmp-dest'))/path  end
+      def builddir(path = nil)  (@builddir || tmp_root('tmp-build'))/path end
+      def pkgdir(path = nil)    (@pkgdir   || workdir('pkg'))/path        end
+      def cachedir(path = nil)  (@cachedir || workdir('cache'))/path      end
+      def datadir(path = nil)   (@datadir  || workdir('config'))/path     end
+      def fpm_attributes()      self.class.fpm_attributes                 end
+      def environment()         self.class.environment                    end
 
       # Resolve dependencies from omnibus package.
       def depends_all
@@ -159,6 +214,7 @@ module FPM
 
       def initialize(filename, config)
         super(filename, config)
+        hiera.apply
         @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
       end
 
@@ -175,6 +231,8 @@ module FPM
           @extracted_source = path
         end
       end
+      register_attr(:source, RW_ATTR_PREFIX)
+      register_attr(:url, RW_ATTR_PREFIX)
 
       def source
         self.class.source

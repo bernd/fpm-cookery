@@ -23,6 +23,10 @@ module FPM
         end
       end
 
+      def merge!(other)
+        other.each_pair { |k, v| self[k] = v }
+      end
+
       def with_clean
         saved_env = ENV.to_hash
 
