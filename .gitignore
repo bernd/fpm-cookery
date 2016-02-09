@@ -12,3 +12,6 @@ tmp-dest/
 .vagrant
 Vagrantfile
 /vendor
+
+# vim backups
+*~

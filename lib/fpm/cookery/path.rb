@@ -66,7 +66,10 @@ module FPM
 
         # We used to use :preserve => true here, but that broke package
         # building when the file tree contains broken symlinks.
-        FileUtils.cp_r src, dst
+        # :dereference_root => false, results in symlinks being copied instead
+        # of dereferencing them first. Copying a symlink that points to a
+        # non-existent file is not an error.
+        FileUtils.cp_r src, dst, :dereference_root => false
 
         # if File.symlink? src
         #   # we use the BSD mv command because FileUtils copies the target and
