@@ -228,7 +228,9 @@ module FPM
     end
 
     class VirtualenvRecipe < BaseRecipe
-      attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name
+      attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name,
+              :virtualenv_pypi_extra_index_urls, :virtualenv_package_name_prefix,
+              :virtualenv_other_files_dir
       def input(config)
         FPM::Cookery::Package::Virtualenv.new(self, config)
       end
