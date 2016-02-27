@@ -1,0 +1,4 @@
+source:
+   - 'https://github.com/antirez/redis/trunk'
+   - :with :svn
+     :revision: '2400'

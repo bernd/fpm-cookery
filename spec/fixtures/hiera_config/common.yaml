@@ -1,0 +1,12 @@
+name: fake_package
+description: >
+    For testing purposes on %{scope("platform")} only - you've been warned ;)
+version: 1.0.2
+source:
+    - http://www.dummy-url.com/archive/%{hiera("name")}-%{hiera("version")}.tar.gz
+    - :with: :git
+
+environment:
+    PREFIX: '/opt'
+
+post_install: '%{scope("workdir")}/default.sh'

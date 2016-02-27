@@ -1,0 +1,4 @@
+source:
+   - 'https://github.com/antirez/redis'
+   - :with: :git
+     :branch: '2.4'

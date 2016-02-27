@@ -23,17 +23,10 @@ module FPM
       def url
         @url.to_s
       end
+      [:to_s, :to_str].each { |m| alias_method m, :url }
 
       def path
         @url.path
-      end
-
-      def to_s
-        @url.to_s
-      end
-
-      def to_str
-        @url.to_s
       end
     end
   end

@@ -1,5 +1,6 @@
 require 'fpm/cookery/packager'
 require 'fpm/cookery/facts'
+require 'fpm/cookery/exceptions'
 
 module FPM
   module Cookery
@@ -21,8 +22,9 @@ module FPM
           recipe_file = build_recipe_file_path(name)
           Log.info "Loading dependency recipe #{name} from #{recipe_file}"
           unless File.exists?(recipe_file)
-            Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
-            exit 1
+            error_message = "Cannot find a recipe for #{name} at #{recipe_file}"
+            Log.fatal error_message
+            raise Error::ExecutionFailure, error_message
           end
 
           FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |dep_recipe|

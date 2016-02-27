@@ -1,0 +1,12 @@
+depends:
+    - on
+    - some
+    - rhel
+    - specific
+    - packages
+
+build_depends:
+    - on
+    - having
+    - devel-prefixed
+    - libraries

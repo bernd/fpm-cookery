@@ -29,6 +29,8 @@ module FPM
         :attribute_name => 'cache_dir'
       option '--data-dir', 'DIR', 'directory for Hiera data files',
         :attribute_name => 'data_dir'
+      option '--hiera-config', 'FILE', 'Hiera configuration file',
+        :attribute_name => 'hiera_config'
       option '--skip-package', :flag, 'do not call FPM to build the package',
         :attribute_name => 'skip_package'
 
@@ -78,6 +80,8 @@ module FPM
 
             exec(config, recipe, packager)
           end
+        rescue Error::ExecutionFailure, Error::Misconfiguration
+          exit 1
         end
 
         def show_version

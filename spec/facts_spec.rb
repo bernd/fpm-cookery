@@ -2,33 +2,29 @@ require 'spec_helper'
 require 'ostruct'
 require 'fpm/cookery/facts'
 
+shared_context "mock facts" do |facts = {}|
+  before do
+    facts.each_pair do |k, v|
+      allow(Facter).to receive(:fact).with(k).and_return(OpenStruct.new(:value => v))
+    end
+  end
+end
+
 describe "Facts" do
   before do
     FPM::Cookery::Facts.reset!
   end
 
   describe "arch" do
-    before do
-      Facter.class_eval do
-        def self.fact(v)
-          v == :architecture ? OpenStruct.new(:value => 'x86_64') : nil
-        end
-      end
-    end
+    include_context "mock facts", { :architecture => 'x86_64' }
 
-    it "is returns the current platform" do
+    it "it returns the current architecture" do
       expect(FPM::Cookery::Facts.arch).to eq(:x86_64)
     end
   end
 
   describe "platform" do
-    before do
-      Facter.class_eval do
-        def self.fact(v)
-          v == :operatingsystem ? OpenStruct.new(:value => 'CentOS') : nil
-        end
-      end
-    end
+    include_context "mock facts", { :operatingsystem => 'CentOS' }
 
     it "is using Facter to autodetect the platform" do
       expect(FPM::Cookery::Facts.platform).to eq(:centos)
@@ -41,13 +37,7 @@ describe "Facts" do
   end
 
   describe "osrelease" do
-    before do
-      Facter.class_eval do
-        def self.fact(v)
-          v == :operatingsystemrelease ? OpenStruct.new(:value => '6.5') : nil
-        end
-      end
-    end
+    include_context "mock facts", { :operatingsystemrelease => '6.5' }
 
     it "returns the operating system release version" do
       expect(FPM::Cookery::Facts.osrelease).to eq('6.5')
@@ -55,13 +45,7 @@ describe "Facts" do
   end
 
   describe "osmajorrelease" do
-    before do
-      Facter.class_eval do
-        def self.fact(v)
-          v == :operatingsystemmajrelease ? OpenStruct.new(:value => '6') : nil
-        end
-      end
-    end
+    include_context "mock facts", { :operatingsystemmajrelease => '6' }
 
     it "returns the operating system major release version" do
       expect(FPM::Cookery::Facts.osmajorrelease).to eq('6')

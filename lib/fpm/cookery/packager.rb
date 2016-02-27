@@ -1,6 +1,7 @@
 #require 'digest/md5'
 #require 'fpm/cookery/recipe_inspector'
 require 'fpm/cookery/dependency_inspector'
+require 'fpm/cookery/exceptions'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/path'
@@ -105,7 +106,7 @@ module FPM
   Filename:          #{check.filename}
 
                   __ERROR
-                  exit 1
+                  raise Error::ExecutionFailure, 'checksums do not match'
                 end #end checksum missing
               end #end check
             end #end checksum
@@ -244,7 +245,7 @@ module FPM
           end
         end
 
-        exit(1) if error
+        raise Error::ExecutionFailure, 'failed to locate all scripts' if error
       end
     end
   end

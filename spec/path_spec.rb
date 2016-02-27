@@ -67,6 +67,26 @@ describe "Path" do
     end
   end
 
+  describe "#=~" do
+    let(:path) { FPM::Cookery::Path.new('/bar/baz/quux.txt') }
+
+    context "given a Regexp matching the path" do
+      it "returns the index of the beginning of the the match" do
+        expect(path =~ %r[/\w{4}\.\w{3}]).to eq(8)
+      end
+    end
+
+    context "given a non-Regexp argument" do
+      it "raises TypeError" do
+        expect { path =~ 'this' }.to raise_error do |error|
+          expect(error).to be_a(TypeError)
+          expect(error.message).to match(/type\s+mismatch/)
+        end
+      end
+    end
+
+  end
+
   describe "#mkdir" do
     it "creates the directory" do
       dir = Dir.mktmpdir
