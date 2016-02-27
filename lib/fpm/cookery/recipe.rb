@@ -16,6 +16,7 @@ require 'fpm/cookery/package/npm'
 require 'fpm/cookery/package/pear'
 require 'fpm/cookery/package/python'
 require 'fpm/cookery/package/virtualenv'
+require 'fpm/cookery/log'
 
 module FPM
   module Cookery
@@ -366,9 +367,35 @@ module FPM
     end
 
     class VirtualenvRecipe < BaseRecipe
-      attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name
+      attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name,
+              :virtualenv_pypi_extra_index_urls, :virtualenv_package_name_prefix,
+              :virtualenv_other_files_dir
       def input(config)
         FPM::Cookery::Package::Virtualenv.new(self, config)
+      end
+    end
+
+    # Helps packaging a directory of content
+    class DirRecipe < Recipe
+
+      def input(config)
+        FPM::Cookery::Package::Dir.new(self, config)
+      end
+
+      # Dir Recipes by default build action.
+      def build
+      end
+
+      # Default action for a dir recipe install is to copy items selected
+      def install
+        FileUtils.cp_r File.join(builddir, '.'), destdir
+        # Remove build cookies
+        %w(build extract).each do |cookie|
+          Dir.glob("#{destdir}/.#{cookie}-cookie-*").each do |f|
+            Log.info "Deleting FPM Cookie #{f}"
+            File.delete(f)
+          end
+        end
       end
     end
   end
