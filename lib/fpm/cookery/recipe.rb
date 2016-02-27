@@ -2,6 +2,7 @@ require 'forwardable'
 require 'fileutils'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/hiera'
+require 'fpm/cookery/inheritable_attr'
 require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
@@ -26,116 +27,25 @@ module FPM
       include FPM::Cookery::PathHelper
       include FPM::Cookery::LifecycleHooks
 
-      SCALAR_ATTRIBUTES = [:arch, :description, :homepage, :maintainer, :md5,
-                           :name, :revision, :section, :sha1, :sha256, :spec,
-                           :vendor, :version, :pre_install, :post_install,
-                           :pre_uninstall, :post_uninstall, :license,
-                           :omnibus_package, :omnibus_dir, :chain_package,
-                           :default_prefix].freeze
+      extend FPM::Cookery::InheritableAttr
 
-      LIST_ATTRIBUTES = [:build_depends, :config_files, :conflicts, :depends,
-                         :exclude, :patches, :provides, :replaces,
-                         :omnibus_recipes, :omnibus_additional_paths,
-                         :chain_recipes, :directories].freeze
+      attr_rw       :arch, :description, :homepage, :maintainer, :md5, :name,
+                    :revision, :section, :sha1, :sha256, :spec, :vendor,
+                    :version, :pre_install, :post_install, :pre_uninstall,
+                    :post_uninstall, :license, :omnibus_package, :omnibus_dir,
+                    :chain_package, :default_prefix
 
-      HASH_ATTRIBUTES = [:fpm_attributes, :environment].freeze
+      attr_rw_list  :build_depends, :config_files, :conflicts, :depends,
+                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,
+                    :omnibus_additional_paths, :chain_recipes,
+                    :directories
 
-      PATH_ATTRIBUTES = [:workdir, :tmp_root, :destdir, :builddir, :pkgdir,
-                         :cachedir, :datadir].freeze
+      attr_rw_hash  :fpm_attributes, :environment
+
+      attr_rw_path  :workdir, :tmp_root, :destdir, :builddir, :pkgdir,
+                    :cachedir, :datadir
 
       class << self
-        def inherited(klass)
-          super
-          # Apply class data inheritable pattern to @fpm_attributes class
-          # variable.
-          klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
-          klass.instance_variable_set(:@environment, self.environment.dup)
-        end
-
-        # Create "scalar" attributes.
-        def attr_rw(*attrs)
-          attrs.each do |attr|
-            class_eval %Q{
-              def self.#{attr}(value = nil)
-                value.nil? ? @#{attr} : @#{attr} = value
-              end
-
-              def #{attr}
-                self.class.#{attr}
-              end
-            }
-          end
-        end
-
-        # Create list-style attributes, backed by +Array+s.  +nil+ entries will
-        # be filtered, and non-unique entries will be culled to one instance
-        # only.
-        def attr_rw_list(*attrs)
-          attrs.each do |attr|
-            class_eval %Q{
-              def self.#{attr}(*list)
-                @#{attr} ||= []
-                @#{attr} << list
-                @#{attr}.flatten!
-                @#{attr}.uniq!
-                @#{attr}
-              end
-
-              def #{attr}
-                self.class.#{attr}
-              end
-            }
-          end
-        end
-
-        # Create +Hash+-style attributes.  Supports both hash and argument
-        # assignment:
-        #   attr_method[:attr1] = xxxx
-        #   attr_method :xxxx=>1, :yyyy=>2
-        def attr_rw_hash(*attrs)
-          attrs.each do |attr|
-            class_eval %Q{
-              def self.#{attr}(args=nil)
-                if args.is_a?(Hash)
-                  @#{attr}.merge!(args)
-                end
-
-                @#{attr}
-              end
-
-              def #{attr}
-                self.class.#{attr}
-              end
-            }
-          end
-        end
-
-        # Create methods for attributes representing paths.  Arguments to
-        # writer methods will be converted to +FPM::Cookery::Path+ objects.
-        # Note: no class-level reader methods are defined here; they are
-        # instead defined manually (see +.workdir+ and friends).
-        def attr_rw_path(*attrs)
-          attrs.each do |attr|
-            class_eval %Q{
-              def self.#{attr}=(value)
-                @#{attr} = Path.new(value)
-              end
-            }
-
-            class_eval %Q{
-              def #{attr}=(value)
-                self.class.#{attr} = value
-              end
-            }
-
-            class_eval %Q{
-              def #{attr}(path = nil)
-                self.class.#{attr}(path)
-              end
-            }
-          end
-        end
-
         # Make sure that +Recipe+ classes responds to these methods, but issue
         # an exception to inform the caller that they are expected to define
         # them.
@@ -190,13 +100,7 @@ module FPM
         end
       end
 
-      @fpm_attributes = {}
       @environment = FPM::Cookery::Environment.new
-
-      attr_rw(*SCALAR_ATTRIBUTES)
-      attr_rw_list(*LIST_ATTRIBUTES)
-      attr_rw_hash(*HASH_ATTRIBUTES)
-      attr_rw_path(*PATH_ATTRIBUTES)
 
       # Resolve dependencies from omnibus package.
       def depends_all
@@ -220,9 +124,7 @@ module FPM
     end
 
     class Recipe < BaseRecipe
-      # Want +.source+ (which is defined here and not inherited from
-      # +BaseRecipe+) to be settable from Hiera data files, too.
-      const_set(:LIST_ATTRIBUTES, LIST_ATTRIBUTES.dup << :source).freeze
+      attr_rw_list :source
 
       def input(config)
         FPM::Cookery::Package::Dir.new(self, config)
@@ -240,13 +142,6 @@ module FPM
       end
 
       class << self
-        def inherited(klass)
-          super
-
-          # Reset :@hiera so that it will be reinitialized for the child class
-          klass.instance_variable_set(:@hiera, nil)
-        end
-
         def source(source = nil, spec = {})
           return @source if source.nil?
           @source = source
@@ -283,10 +178,10 @@ module FPM
         # files into a hash and then calling only those methods for which a
         # key-value pair is specified.
         def apply
-          self::SCALAR_ATTRIBUTES.each  { |m| applicator(m) { |r| send(m, r) } }
-          self::LIST_ATTRIBUTES.each    { |m| applicator(m) { |r| send(m, *r) } }
-          self::HASH_ATTRIBUTES.each    { |m| applicator(m) { |r| send(m).merge!(r) } }
-          self::PATH_ATTRIBUTES.each    { |m| applicator(m) { |r| send("#{m}=", r) } }
+          scalar_attrs.each  { |m| applicator(m) { |r| send(m, r) } }
+          list_attrs.each    { |m| applicator(m) { |r| send(m, *r) } }
+          hash_attrs.each    { |m| applicator(m) { |r| send(m).merge!(r) } }
+          path_attrs.each    { |m| applicator(m) { |r| send("#{m}=", r) } }
         end
 
         private
@@ -334,31 +229,31 @@ module FPM
       def_single_delegator :hiera, :lookup
     end
 
-    class RubyGemRecipe < BaseRecipe
+    class RubyGemRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::Gem.new(self, config)
       end
     end
 
-    class NPMRecipe < BaseRecipe
+    class NPMRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::NPM.new(self, config)
       end
     end
 
-    class PythonRecipe < BaseRecipe
+    class PythonRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::Python.new(self, config)
       end
     end
 
-    class CPANRecipe < BaseRecipe
+    class CPANRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::CPAN.new(self, config)
       end
     end
 
-    class PEARRecipe < BaseRecipe
+    class PEARRecipe < Recipe
       attr_rw :pear_package_name_prefix, :pear_channel, :pear_php_dir
 
       def input(config)
@@ -366,7 +261,7 @@ module FPM
       end
     end
 
-    class VirtualenvRecipe < BaseRecipe
+    class VirtualenvRecipe < Recipe
       attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name,
               :virtualenv_pypi_extra_index_urls, :virtualenv_package_name_prefix,
               :virtualenv_other_files_dir
