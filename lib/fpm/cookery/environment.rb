@@ -2,29 +2,34 @@ require 'fpm/cookery/log'
 
 module FPM
   module Cookery
-    class Environment
+    class Environment < Hash
       REMOVALS = %w(
         BUNDLE_GEMFILE RUBYOPT BUNDLE_BIN_PATH GEM_HOME GEM_PATH
       ).freeze
 
-      def initialize
-        @env = {}
+      # Coerce keys and values to +String+s on creation
+      def self.[](h = {})
+        super(Hash[h.map { |k, v| [k.to_s, v.to_s] }])
       end
 
       def [](key)
-        @env[key.to_s]
+        super(key.to_s)
       end
 
       def []=(key, value)
         if value.nil?
-          @env.delete(key.to_s)
+          delete(key.to_s)
         else
-          @env[key.to_s] = value.to_s
+          super(key.to_s, value.to_s)
         end
       end
 
+      def merge(other)
+        super(self.class[other])
+      end
+
       def merge!(other)
-        other.each_pair { |k, v| self[k] = v }
+        super(self.class[other])
       end
 
       def with_clean
@@ -35,7 +40,7 @@ module FPM
           Log.debug("Removing '#{var}' => '#{value}' from environment")
         end
 
-        @env.each do |k, v|
+        each do |k, v|
           Log.debug("Adding '#{k}' => '#{v}' to environment")
           ENV[k] = v
         end
@@ -46,7 +51,7 @@ module FPM
       end
 
       def to_hash
-        @env.dup
+        Hash[self]
       end
     end
   end
