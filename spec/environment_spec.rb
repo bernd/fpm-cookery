@@ -38,11 +38,30 @@ describe FPM::Cookery::Environment do
     expect(env.to_hash).to_not have_key('foo')
   end
 
+  describe '.[]' do
+    context 'given a Hash' do
+      it 'returns an new instance with keys and values coerced to Strings' do
+        expect(described_class[:this => :that]).to eq({"this" => "that"})
+      end
+    end
+
+    context 'given an array of two-member arrays' do
+      it 'returns an new instance with keys and values coerced to Strings' do
+        expected = {"this" => "that", "foo" => "bar"}
+        expect(described_class[[[:this, :that], [:foo, :bar]]]).to eq(expected)
+      end
+    end
+  end
+
   describe '#to_hash' do
     it 'returns the data as a hash' do
       env['foo'] = 'bar'
 
       expect(env.to_hash).to eq({'foo' => 'bar'})
+      # Note: not using +be_a+ because +Environment+ inherits from +Hash+, and
+      # we want to test that +env.to_hash+ actually is an instance of +Hash+
+      # and not an instance of a subclass of +Hash+.
+      expect(env.to_hash.class).to eq(Hash)
     end
 
     it 'returns a copy of the data' do
@@ -53,6 +72,24 @@ describe FPM::Cookery::Environment do
       env['foo'] = 'nope'
 
       expect(data).to eq({'foo' => 'bar'})
+    end
+  end
+
+  describe '#merge' do
+    context 'given a Hash' do
+      it 'returns a new instance with merged contents' do
+        expect(env.merge({:this => :that})).to eq({"this" => "that"})
+      end
+    end
+  end
+
+  describe '#merge!' do
+    context 'given a Hash' do
+      let(:env_dup) { env.dup }
+      it 'merges their contents in-place' do
+        env.merge!({:this => :that})
+        expect(env).to eq({"this" => "that"})
+      end
     end
   end
 

@@ -168,7 +168,7 @@ module FPM
           @hiera
         end
 
-        # Iterates over all of the +*_ATTRIBUTES+ constants, calling the
+        # Iterates over all of the +*_attrs+ class methods, calling the
         # relevant setter methods for all attributes which return non-+nil+
         # results for +.lookup+.
         # Note: Hiera does not provide access to a structure that represents
