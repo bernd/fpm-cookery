@@ -206,7 +206,7 @@ module FPM
               obj.class[obj.map { |k, v| [DeepClone.(k), DeepClone.(v)] }]
             when Array
               obj.map { |v| DeepClone.(v) }
-            when Symbol, TrueClass, FalseClass, NilClass
+            when Symbol, TrueClass, FalseClass, NilClass, Integer, Float
               obj
             else
               obj.respond_to?(:clone) ? obj.clone : obj

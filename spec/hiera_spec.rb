@@ -32,7 +32,7 @@ describe 'Hiera' do
 
   describe 'Fpm_cookery_logger' do
     it 'aliases Hiera::Fpm_cookery_logger to FPM::Cookery::Log::Hiera' do
-      expect(Object.const_get("Hiera::Fpm_cookery_logger")).to be (FPM::Cookery::Log::Hiera)
+      expect(Hiera.const_get("Fpm_cookery_logger")).to be (FPM::Cookery::Log::Hiera)
     end
   end
 
