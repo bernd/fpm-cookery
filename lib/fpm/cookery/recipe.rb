@@ -29,11 +29,11 @@ module FPM
 
       extend FPM::Cookery::InheritableAttr
 
-      attr_rw       :arch, :description, :homepage, :maintainer, :md5, :name,
-                    :revision, :section, :sha1, :sha256, :spec, :vendor,
-                    :version, :pre_install, :post_install, :pre_uninstall,
-                    :post_uninstall, :license, :omnibus_package, :omnibus_dir,
-                    :chain_package, :default_prefix
+      attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
+              :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
+              :pre_install, :post_install, :pre_uninstall, :post_uninstall,
+              :license, :omnibus_package, :omnibus_dir, :chain_package,
+              :default_prefix
 
       attr_rw_list  :build_depends, :config_files, :conflicts, :depends,
                     :exclude, :patches, :provides, :replaces, :omnibus_recipes,
@@ -185,6 +185,7 @@ module FPM
         end
 
         private
+
         def hiera_hierarchy
           hiera_hierarchy = (from_env = ENV['FPM_HIERARCHY']).nil? ? [] : from_env.split(':')
           (hiera_hierarchy + [config.platform.to_s, config.target.to_s, 'common']).compact
@@ -221,6 +222,7 @@ module FPM
 
       extend Forwardable
       def_instance_delegator :source_handler, :local_path
+
       # Delegate to class methods
       def_instance_delegators :'self.class', :source, :extracted_source,
                               :hiera, :lookup, :apply
@@ -265,6 +267,7 @@ module FPM
       attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name,
               :virtualenv_pypi_extra_index_urls, :virtualenv_package_name_prefix,
               :virtualenv_other_files_dir
+
       def input(config)
         FPM::Cookery::Package::Virtualenv.new(self, config)
       end
@@ -272,7 +275,6 @@ module FPM
 
     # Helps packaging a directory of content
     class DirRecipe < Recipe
-
       def input(config)
         FPM::Cookery::Package::Dir.new(self, config)
       end

@@ -103,9 +103,9 @@ module FPM
         register_attrs(:scalar, *attrs)
       end
 
-      # Create list-style attributes, backed by +Array+s. +nil+ entries will
-      # be filtered, and non-unique entries will be culled to one instance
-      # only.
+      # Create list-style attributes, backed by +Array+s. +nil+ entries will be
+      # filtered, non-unique entries will be culled to one instance only, and
+      # the list will be flattened.
       def attr_rw_list(*attrs)
         attrs.each do |attr|
           class_eval %Q{
@@ -115,9 +115,13 @@ module FPM
               end
 
               @#{attr} ||= []
-              @#{attr} << list
-              @#{attr}.flatten!
-              @#{attr}.uniq!
+
+              unless list.empty?
+                @#{attr} << list
+                @#{attr}.flatten!
+                @#{attr}.uniq!
+              end
+
               @#{attr}
             end
 
@@ -198,7 +202,7 @@ module FPM
       # +InheritableAttr.inherit_for+ to, among other things, avoid
       # accidentally propagating to the superclass changes made to
       # substructures of an attribute (such as arrays contained in a hash
-      # attributes).
+      # attribute).
       class DeepClone
         def self.call(obj)
           case obj

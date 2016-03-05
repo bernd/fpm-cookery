@@ -18,7 +18,7 @@ describe "Facts" do
   describe "arch" do
     include_context "mock facts", { :architecture => 'x86_64' }
 
-    it "it returns the current architecture" do
+    it "returns the current architecture" do
       expect(FPM::Cookery::Facts.arch).to eq(:x86_64)
     end
   end

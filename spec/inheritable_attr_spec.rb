@@ -89,12 +89,6 @@ shared_context 'inheritable attributes' do |attr_method, default_value, attr_nam
 end
 
 describe FPM::Cookery::InheritableAttr do
-  describe 'this' do
-    it 'fails' do
-      puts ''
-    end
-  end
-
   describe '.register_attrs' do
     describe '.attr_rw' do
       include_examples 'attribute registration', 'attr_rw', 'scalar_attrs'

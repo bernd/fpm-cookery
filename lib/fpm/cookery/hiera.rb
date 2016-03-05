@@ -20,7 +20,7 @@ module FPM
 
           # For some reason, +Hiera+'s constructor expects a hash with just the
           # one key.
-          super({:config => hiera_config(options)})
+          super({ :config => hiera_config(options) })
         end
 
         # Provides a default scope, and attempts to look up the key both as a
