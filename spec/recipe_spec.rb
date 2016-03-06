@@ -10,7 +10,7 @@ describe "BaseRecipe" do
     describe method_name.to_s do
       it "informs the caller that it must be implemented at runtime" do
         expect { FPM::Cookery::BaseRecipe.send(method_name) }.to raise_error do |error|
-          expect(error).to be_a(RuntimeError)
+          expect(error).to be_a(NotImplementedError)
           expect(error.message).to match(/must be defined when recipe file is loaded/)
         end
       end

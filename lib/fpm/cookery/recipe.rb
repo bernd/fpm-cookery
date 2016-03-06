@@ -51,7 +51,7 @@ module FPM
         # them.
         [:filename, :config].each do |m|
           define_method m do
-            raise "`.#{__method__}' must be defined when recipe file is loaded"
+            raise NotImplementedError, "`.#{__method__}' must be defined when recipe file is loaded"
           end
         end
 
@@ -143,9 +143,11 @@ module FPM
 
       class << self
         def source(source = nil, spec = {})
+          #puts "#=> SOURCE: #{@source.inspect}"
           return @source if source.nil?
           @source = source
           @spec = spec
+          @source
         end
         alias_method :url, :source
 
@@ -185,7 +187,6 @@ module FPM
         end
 
         private
-
         def hiera_hierarchy
           hiera_hierarchy = (from_env = ENV['FPM_HIERARCHY']).nil? ? [] : from_env.split(':')
           (hiera_hierarchy + [config.platform.to_s, config.target.to_s, 'common']).compact

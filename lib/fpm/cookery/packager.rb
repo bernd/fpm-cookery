@@ -77,9 +77,7 @@ module FPM
 
         recipe.installing = false
 
-        if defined? recipe.source_handler()
-          source = recipe.source_handler
-
+        if (source = recipe.source_handler).fetchable?
           recipe.cachedir.mkdir
           Dir.chdir(recipe.cachedir) do
             recipe.run_lifecycle_hook(:before_source_download)

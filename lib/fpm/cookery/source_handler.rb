@@ -17,6 +17,7 @@ module FPM
 
       extend Forwardable
       def_delegators :@handler, :fetch, :extract, :local_path, :checksum?
+      def_delegators :@source, :fetchable?
 
       attr_reader :source_url
 

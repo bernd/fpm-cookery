@@ -8,7 +8,8 @@ class Redis < FPM::Cookery::Recipe
   end
 
   def install
-     make :install, 'DESTDIR' => destdir
+    # C'mon, redis, what's up with not respecting DESTDIR?
+    make :install, 'PREFIX' => destdir / 'usr'
 
     var('lib/redis').mkdir
 

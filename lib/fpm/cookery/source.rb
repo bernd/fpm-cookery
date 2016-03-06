@@ -20,6 +20,11 @@ module FPM
         @url.scheme.to_s.downcase == 'file'
       end
 
+      # If the Addressable::URI is empty, there's nothing to fetch
+      def fetchable?
+        !@url.empty?
+      end
+
       def url
         @url.to_s
       end
