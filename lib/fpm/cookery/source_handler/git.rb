@@ -24,9 +24,6 @@ module FPM
             Dir.chdir(cachedir) do
               git('clone', url, local_path)
             end
-            Dir.chdir(local_path) do
-              git('submodule', 'update', '--init') if options[:submodule]
-            end
           end
 
           local_path
@@ -50,6 +47,9 @@ module FPM
               extracted_source << '-HEAD'
             end
 
+            # Initialize submodules after sha/tag/branch has been set.
+            # See: https://github.com/bernd/fpm-cookery/issues/144
+            git('submodule', 'update', '--init') if options[:submodule]
 
             case options.fetch(:extract, :default).to_s.to_sym
             when :clone
