@@ -1,3 +1,15 @@
+unless RUBY_ENGINE == "rbx"
+  require "simplecov"
+
+  formatters = [SimpleCov::Formatter::HTMLFormatter]
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
+  SimpleCov.start do
+    minimum_coverage 75
+    add_group "Sources", "lib"
+    add_group "Tests", "spec"
+  end
+end
+
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
@@ -10,6 +22,8 @@ RSpec.configure do |config|
 
   config.raise_errors_for_deprecations!
 end
+
+require_relative "support/shared_context"
 
 def fixture_path(file)
   File.expand_path("../fixtures/#{file}", __FILE__)

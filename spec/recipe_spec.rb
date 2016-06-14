@@ -1,23 +1,27 @@
 require 'spec_helper'
+require 'fpm/cookery/book'
+require 'fpm/cookery/book_hook'
+require 'fpm/cookery/exceptions'
+require 'fpm/cookery/facts'
 require 'fpm/cookery/recipe'
 
+describe "BaseRecipe" do
+  [:config, :filename].each do |method_name|
+    describe method_name.to_s do
+      it "informs the caller that it must be implemented at runtime" do
+        expect { FPM::Cookery::BaseRecipe.send(method_name) }.to raise_error do |error|
+          expect(error).to be_a(NotImplementedError)
+          expect(error.message).to match(/must be defined when recipe file is loaded/)
+        end
+      end
+    end
+  end
+end
+
 describe "Recipe" do
-  def stub_dir(dir, path)
-    value = path.nil? ? nil : FPM::Cookery::Path.new(path)
-    allow(config).to receive(dir).and_return(value)
-  end
-
-  let(:klass) do
-    Class.new(FPM::Cookery::Recipe)
-  end
-
-  let(:config) do
-    double('Config', :tmp_root => nil, :pkg_dir => nil, :cache_dir => nil).as_null_object
-  end
-
-  let(:recipe) do
-    klass.new(__FILE__, config)
-  end
+  config_options = { :tmp_root => nil, :pkg_dir => nil, :cache_dir => nil,
+                     :hiera_config => nil }
+  include_context "recipe class", __FILE__, config_options
 
   it "sets the filename" do
     expect(recipe.filename.to_s).to eq(__FILE__)
@@ -31,9 +35,20 @@ describe "Recipe" do
     describe "with a relative filename path" do
       it "expands the workdir path" do
         filename = "spec/#{File.basename(__FILE__)}"
-        r = klass.new(filename, config)
+        r = klass.new
         expect(r.workdir.to_s).to eq(File.dirname(__FILE__))
       end
+    end
+  end
+
+  describe "#input" do
+    # Avoid Errno::ENOENT for recipe dir that no longer exists
+    before do
+      allow(config).to receive(:fetch).with(:input, nil).and_return([])
+    end
+
+    it "defaults to FPM::Cookery::Package::Dir" do
+      expect(recipe.input(config)).to be_a(FPM::Cookery::Package::Dir)
     end
   end
 
@@ -205,6 +220,48 @@ describe "Recipe" do
     end
   end
 
+  describe "#hiera" do
+    before do
+      allow(config).to receive(:hiera_config).and_return("/probably/does/not/exist/pretty/sure/anyway")
+    end
+
+    it "raises an error when Hiera config file does not exist" do
+      expect { klass.hiera }.to raise_error do |error|
+        expect(error).to be_an(FPM::Cookery::Error::ExecutionFailure)
+        expect(error.message).to match(/Encountered error loading Hiera/)
+      end
+    end
+  end
+
+  describe "#applicator" do
+    context "given an attribute not set in the Hiera data file(s)" do
+      before do
+        allow(klass).to receive(:lookup).with(:source).and_return(nil)
+        allow(klass).to receive(:source).and_return('http://www.facsimile.co.uk')
+      end
+
+      it "returns `nil'" do
+        expect(klass.send(:applicator, :source)).to be_nil
+      end
+
+      it "does not call the provided block" do
+        expect { klass.send(:applicator, :source) { print "whoa" } }.not_to \
+          output("whoa").to_stdout
+      end
+    end
+
+    context "given an attribute set in the Hiera data file(s)" do
+      before do
+        allow(klass).to receive(:lookup).with(:name).and_return('J.J. Jingleheimer-Schmidt IV')
+      end
+
+      it "calls the provided block" do
+        expect { klass.send(:applicator, :name) { print "whoa" } }.to \
+          output("whoa").to_stdout
+      end
+    end
+  end
+
   def self.spec_recipe_attribute_list(name, list)
     class_eval %Q{
       describe "##{name}" do
@@ -243,7 +300,7 @@ describe "Recipe" do
       end
 
       expect(klass.source).to eq('http://example.com/foo-1.0.tar.gz')
-      expect(klass.new(__FILE__, config).source).to eq('http://example.com/foo-1.0.tar.gz')
+      expect(klass.new.source).to eq('http://example.com/foo-1.0.tar.gz')
     end
 
     describe "with specs" do
@@ -253,7 +310,7 @@ describe "Recipe" do
         end
 
         expect(klass.spec).to eq({:foo => 'bar'})
-        expect(klass.new(__FILE__, config).spec).to eq({:foo => 'bar'})
+        expect(klass.new.spec).to eq({:foo => 'bar'})
       end
     end
   end
@@ -265,7 +322,7 @@ describe "Recipe" do
       end
 
       expect(klass.source).to eq('http://example.com/foo-1.0.tar.gz')
-      expect(klass.new(__FILE__, config).source).to eq('http://example.com/foo-1.0.tar.gz')
+      expect(klass.new.source).to eq('http://example.com/foo-1.0.tar.gz')
     end
 
     describe "with specs" do
@@ -275,7 +332,7 @@ describe "Recipe" do
         end
 
         expect(klass.spec).to eq({:foo => 'bar'})
-        expect(klass.new(__FILE__, config).spec).to eq({:foo => 'bar'})
+        expect(klass.new.spec).to eq({:foo => 'bar'})
       end
     end
   end
@@ -297,7 +354,7 @@ describe "Recipe" do
         source 'http://example.com/foo-1.0.tar.gz'
       end
 
-      expect(File.basename(klass.new(__FILE__, config).local_path.to_s)).to eq('foo-1.0.tar.gz')
+      expect(File.basename(klass.new.local_path.to_s)).to eq('foo-1.0.tar.gz')
     end
   end
 
@@ -314,7 +371,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__, config).vendor).to eq('b')
+        expect(klass.new.vendor).to eq('b')
       end
     end
 
@@ -330,7 +387,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__, config).vendor).to eq('b')
+        expect(klass.new.vendor).to eq('b')
       end
     end
 
@@ -346,7 +403,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__, config).vendor).to eq('a')
+        expect(klass.new.vendor).to eq('a')
       end
     end
   end
@@ -368,7 +425,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__, config).vendor).to eq('b')
+        expect(klass.new.vendor).to eq('b')
       end
     end
 
@@ -382,7 +439,7 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__, config).vendor).to eq('b')
+        expect(klass.new.vendor).to eq('b')
       end
     end
 
@@ -396,11 +453,16 @@ describe "Recipe" do
           end
         end
 
-        expect(klass.new(__FILE__, config).vendor).to eq('a')
+        expect(klass.new.vendor).to eq('a')
       end
     end
   end
 
+  describe ".platform" do
+    it 'matches the current platform from FPM::Cookery::Facts' do
+      expect(klass.platform).to eq(FPM::Cookery::Facts.platform)
+    end
+  end
 
   #############################################################################
   # Directories

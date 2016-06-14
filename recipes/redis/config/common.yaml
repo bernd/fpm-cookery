@@ -1,0 +1,11 @@
+homepage: 'http://redis.io'
+
+source: 'http://redis.googlecode.com/files/redis-%{hiera("version")}.tar.gz'
+md5: 'c4b0b5e4953a11a503cb54cf6b09670e'
+name: 'redis-server'
+version: '2.4.2'
+revision: '0' # => redis-server-2.2.5+fpm1
+description: 'An advanced key-value store.'
+conflicts: '%{hiera("name")}'
+config_files: '/etc/redis/redis.conf'
+patches: 'patches/test.patch'

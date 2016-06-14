@@ -20,20 +20,18 @@ module FPM
         @url.scheme.to_s.downcase == 'file'
       end
 
+      # If the Addressable::URI is empty, there's nothing to fetch
+      def fetchable?
+        !@url.empty?
+      end
+
       def url
         @url.to_s
       end
+      [:to_s, :to_str].each { |m| alias_method m, :url }
 
       def path
         @url.path
-      end
-
-      def to_s
-        @url.to_s
-      end
-
-      def to_str
-        @url.to_s
       end
     end
   end

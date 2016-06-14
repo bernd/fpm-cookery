@@ -58,7 +58,10 @@ describe 'Maintainer' do
 
     context 'without valid git data' do
       before do
-        allow(FPM::Cookery::Shellout).to receive(:git_config_get).and_return(nil)
+        allow(FPM::Cookery::Shellout).to receive(:git_config_get).and_raise(
+          FPM::Cookery::Shellout::CommandFailed, 'whoops!'
+        )
+
         allow(Socket).to receive(:gethostname).and_return('hostname')
       end
 

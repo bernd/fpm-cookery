@@ -3,14 +3,15 @@ require 'fpm/cookery/source_integrity_check'
 require 'fpm/cookery/recipe'
 
 describe "SourceIntegrityCheck" do
-  let(:recipe_class) do
-    Class.new(FPM::Cookery::Recipe) {
-      source 'http://example.com/foo.tar.gz'
-    }
+  config_options = { :hiera_config => nil }
+  include_context "recipe class", __FILE__, config_options do
+    let(:klass) do
+      Class.new(FPM::Cookery::Recipe) {
+        source 'http://example.com/foo.tar.gz'
+      }
+    end
   end
 
-  let(:config) { double('Config').as_null_object }
-  let(:recipe) { recipe_class.new(__FILE__, config) }
   let(:check) { FPM::Cookery::SourceIntegrityCheck.new(recipe) }
 
   before do

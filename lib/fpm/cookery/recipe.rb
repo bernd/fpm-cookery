@@ -1,12 +1,15 @@
 require 'forwardable'
 require 'fileutils'
 require 'fpm/cookery/facts'
+require 'fpm/cookery/hiera'
+require 'fpm/cookery/inheritable_attr'
 require 'fpm/cookery/source'
 require 'fpm/cookery/source_handler'
 require 'fpm/cookery/utils'
 require 'fpm/cookery/path_helper'
 require 'fpm/cookery/environment'
 require 'fpm/cookery/lifecycle_hooks'
+require 'fpm/cookery/log'
 require 'fpm/cookery/package/cpan'
 require 'fpm/cookery/package/dir'
 require 'fpm/cookery/package/gem'
@@ -24,53 +27,7 @@ module FPM
       include FPM::Cookery::PathHelper
       include FPM::Cookery::LifecycleHooks
 
-      def self.attr_rw(*attrs)
-        attrs.each do |attr|
-          class_eval %Q{
-            def self.#{attr}(value = nil)
-              value.nil? ? @#{attr} : @#{attr} = value
-            end
-
-            def #{attr}
-              self.class.#{attr}
-            end
-          }
-        end
-      end
-
-      def self.inherited(klass)
-        super
-        # Apply class data inheritable pattern to @fpm_attributes
-        # class variable.
-        klass.instance_variable_set(:@fpm_attributes, self.fpm_attributes.dup)
-        klass.instance_variable_set(:@environment, self.environment.dup)
-      end
-
-      def self.platforms(valid_platforms)
-        Array(valid_platforms).member?(self.platform) and block_given? ? yield : false
-      end
-
-      def self.architectures(archs)
-        Array(archs).member?(FPM::Cookery::Facts.arch) and block_given? ? yield : false
-      end
-
-      def self.attr_rw_list(*attrs)
-        attrs.each do |attr|
-          class_eval %Q{
-            def self.#{attr}(*list)
-              @#{attr} ||= []
-              @#{attr} << list
-              @#{attr}.flatten!
-              @#{attr}.uniq!
-              @#{attr}
-            end
-
-            def #{attr}
-              self.class.#{attr}
-            end
-          }
-        end
-      end
+      extend FPM::Cookery::InheritableAttr
 
       attr_rw :arch, :description, :homepage, :maintainer, :md5, :name,
               :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
@@ -78,13 +35,34 @@ module FPM
               :license, :omnibus_package, :omnibus_dir, :chain_package,
               :default_prefix
 
-      attr_rw_list :build_depends, :config_files, :conflicts, :depends,
-                   :exclude, :patches, :provides, :replaces, :omnibus_recipes,
-                   :omnibus_additional_paths, :chain_recipes, :directories
+      attr_rw_list  :build_depends, :config_files, :conflicts, :depends,
+                    :exclude, :patches, :provides, :replaces, :omnibus_recipes,
+                    :omnibus_additional_paths, :chain_recipes,
+                    :directories
 
-      attr_reader :filename
+      attr_rw_hash  :fpm_attributes, :environment
+
+      attr_rw_path  :workdir, :tmp_root, :destdir, :builddir, :pkgdir,
+                    :cachedir, :datadir
 
       class << self
+        # Make sure that +Recipe+ classes responds to these methods, but issue
+        # an exception to inform the caller that they are expected to define
+        # them.
+        [:filename, :config].each do |m|
+          define_method m do
+            raise NotImplementedError, "`.#{__method__}' must be defined when recipe file is loaded"
+          end
+        end
+
+        def platforms(valid_platforms)
+          Array(valid_platforms).member?(self.platform) and block_given? ? yield : false
+        end
+
+        def architectures(archs)
+          Array(archs).member?(FPM::Cookery::Facts.arch) and block_given? ? yield : false
+        end
+
         def platform
           FPM::Cookery::Facts.platform
         end
@@ -93,48 +71,36 @@ module FPM
           (depends + build_depends).uniq
         end
 
-        # Supports both hash and argument assignment
-        #   fpm_attributes[:attr1] = xxxx
-        #   fpm_attributes :xxxx=>1, :yyyy=>2
-        def fpm_attributes(args=nil)
-          if args.is_a?(Hash)
-            @fpm_attributes.merge!(args)
-          end
-          @fpm_attributes
+        def workdir(path = nil)
+          (@workdir  ||= Path.new(filename).dirname)/path
         end
 
-        def environment
-          @environment
+        def tmp_root(path = nil)
+          (@tmp_root ||= config.tmp_root ? Path.new(config.tmp_root) : workdir)/path
+        end
+
+        def pkgdir(path = nil)
+          (@pkgdir ||= config.pkg_dir ? Path.new(config.pkg_dir) : workdir('pkg'))/path
+        end
+
+        def cachedir(path = nil)
+          (@cachedir ||= config.cache_dir ? Path.new(config.cache_dir) : workdir('cache'))/path
+        end
+
+        def datadir(path = nil)
+          (@datadir ||= config.data_dir ? Path.new(config.data_dir) : workdir('config'))/path
+        end
+
+        def destdir(path = nil)
+          (@destdir ||= tmp_root('tmp-dest'))/path
+        end
+
+        def builddir(path = nil)
+          (@builddir ||= tmp_root('tmp-build'))/path
         end
       end
-      @fpm_attributes = {}
+
       @environment = FPM::Cookery::Environment.new
-
-      def initialize(filename, config)
-        @filename = Path.new(filename).expand_path
-        @config = config
-
-        @workdir = @filename.dirname
-        @tmp_root = @config.tmp_root ? Path.new(@config.tmp_root) : @workdir
-        @pkgdir = @config.pkg_dir && Path.new(@config.pkg_dir)
-        @cachedir = @config.cache_dir && Path.new(@config.cache_dir)
-      end
-
-      def workdir=(value)  @workdir  = Path.new(value) end
-      def tmp_root=(value) @tmp_root = Path.new(value) end
-      def destdir=(value)  @destdir  = Path.new(value) end
-      def builddir=(value) @builddir = Path.new(value) end
-      def pkgdir=(value)   @pkgdir   = Path.new(value) end
-      def cachedir=(value) @cachedir = Path.new(value) end
-
-      def workdir(path = nil)  @workdir/path                               end
-      def tmp_root(path = nil) @tmp_root/path                              end
-      def destdir(path = nil)  (@destdir  || tmp_root('tmp-dest'))/path    end
-      def builddir(path = nil) (@builddir || tmp_root('tmp-build'))/path   end
-      def pkgdir(path = nil)   (@pkgdir   || workdir('pkg'))/path         end
-      def cachedir(path = nil) (@cachedir || workdir('cache'))/path       end
-      def fpm_attributes() self.class.fpm_attributes end
-      def environment()        self.class.environment                      end
 
       # Resolve dependencies from omnibus package.
       def depends_all
@@ -151,23 +117,37 @@ module FPM
 
         pkg_depends.flatten.uniq
       end
+
+      extend Forwardable
+      # Delegate to class methods
+      def_instance_delegators :'self.class', :config, :filename
     end
 
     class Recipe < BaseRecipe
+      attr_rw_list :source
+
       def input(config)
         FPM::Cookery::Package::Dir.new(self, config)
       end
 
-      def initialize(filename, config)
-        super(filename, config)
-        @source_handler = SourceHandler.new(Source.new(source, spec), cachedir, builddir)
+      def source_handler
+        @source_handler ||= SourceHandler.new(Source.new(source, spec), cachedir, builddir)
+      end
+
+      def initialize(defer_application = false)
+        # Note: this must be called prior to instantiating the +SourceHandler+,
+        # so that +source+ can be picked up if it is defined in a +Hiera+ #
+        # data file.
+        apply unless defer_application
       end
 
       class << self
         def source(source = nil, spec = {})
+          #puts "#=> SOURCE: #{@source.inspect}"
           return @source if source.nil?
           @source = source
           @spec = spec
+          @source
         end
         alias_method :url, :source
 
@@ -175,51 +155,108 @@ module FPM
           return @extracted_source if path.nil?
           @extracted_source = path
         end
-      end
 
-      def source
-        self.class.source
-      end
+        def hiera
+          if !defined?(@hiera) or @hiera.nil?
+            begin
+              @hiera = FPM::Cookery::Hiera::Instance.new(self, :config => hiera_config)
+            rescue StandardError => e
+              error_message = "Encountered error loading Hiera: #{e.message}"
+              Log.fatal error_message
+              raise Error::ExecutionFailure, error_message
+            end
+          end
 
-      def extracted_source
-        self.class.extracted_source
+          @hiera
+        end
+
+        # Iterates over all of the +*_attrs+ class methods, calling the
+        # relevant setter methods for all attributes which return non-+nil+
+        # results for +.lookup+.
+        # Note: Hiera does not provide access to a structure that represents
+        # the merged contents of all data files; interaction with the data must
+        # go through one channel, the +.lookup+ method.  That is why we have to
+        # iterate over all of these attributes, rather than loading the data
+        # files into a hash and then calling only those methods for which a
+        # key-value pair is specified.
+        def apply
+          scalar_attrs.each  { |m| applicator(m) { |r| send(m, r) } }
+          list_attrs.each    { |m| applicator(m) { |r| send(m, *r) } }
+          hash_attrs.each    { |m| applicator(m) { |r| send(m).merge!(r) } }
+          path_attrs.each    { |m| applicator(m) { |r| send("#{m}=", r) } }
+        end
+
+        private
+        def hiera_hierarchy
+          hiera_hierarchy = (from_env = ENV['FPM_HIERARCHY']).nil? ? [] : from_env.split(':')
+          (hiera_hierarchy + [config.platform.to_s, config.target.to_s, 'common']).compact
+        end
+
+        def hiera_config
+          # Note: +Hiera.new+ takes either a hash of options (with the sole
+          # top-level key +:options+) or a string representing the path to a
+          # configuration file.  If the `--hiera-config' flag was seen, return
+          # that; otherwise, construct a hash of sane defaults.
+          config.hiera_config || {
+            :yaml       => { :datadir  => datadir.to_s },
+            :json       => { :datadir  => datadir.to_s },
+            :hierarchy  => hiera_hierarchy
+          }
+        end
+
+        def applicator(method)
+          if (result = lookup(method)).nil?
+            Log.debug("No result for `#{method}'")
+            return
+          end
+
+          Log.debug("Setting `#{method}' to `#{result}'")
+          Proc.new.call(result)
+        end
       end
 
       def sourcedir=(sourcedir)
         @sourcedir = sourcedir
       end
 
-      attr_reader :source_handler, :sourcedir
+      attr_reader :sourcedir
 
       extend Forwardable
-      def_delegator :@source_handler, :local_path
+      def_instance_delegator :source_handler, :local_path
+
+      # Delegate to class methods
+      def_instance_delegators :'self.class', :source, :extracted_source,
+                              :hiera, :lookup, :apply
+
+      extend SingleForwardable
+      def_single_delegator :hiera, :lookup
     end
 
-    class RubyGemRecipe < BaseRecipe
+    class RubyGemRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::Gem.new(self, config)
       end
     end
 
-    class NPMRecipe < BaseRecipe
+    class NPMRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::NPM.new(self, config)
       end
     end
 
-    class PythonRecipe < BaseRecipe
+    class PythonRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::Python.new(self, config)
       end
     end
 
-    class CPANRecipe < BaseRecipe
+    class CPANRecipe < Recipe
       def input(config)
         FPM::Cookery::Package::CPAN.new(self, config)
       end
     end
 
-    class PEARRecipe < BaseRecipe
+    class PEARRecipe < Recipe
       attr_rw :pear_package_name_prefix, :pear_channel, :pear_php_dir
 
       def input(config)
@@ -227,10 +264,11 @@ module FPM
       end
     end
 
-    class VirtualenvRecipe < BaseRecipe
+    class VirtualenvRecipe < Recipe
       attr_rw :virtualenv_pypi, :virtualenv_install_location, :virtualenv_fix_name,
               :virtualenv_pypi_extra_index_urls, :virtualenv_package_name_prefix,
               :virtualenv_other_files_dir
+
       def input(config)
         FPM::Cookery::Package::Virtualenv.new(self, config)
       end
@@ -238,7 +276,6 @@ module FPM
 
     # Helps packaging a directory of content
     class DirRecipe < Recipe
-
       def input(config)
         FPM::Cookery::Package::Dir.new(self, config)
       end

@@ -1,0 +1,4 @@
+source:
+   - 'https://github.com/antirez/redis'
+   - :with: :git
+     :tag: '2.4.2'

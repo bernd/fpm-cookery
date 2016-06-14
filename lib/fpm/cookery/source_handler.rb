@@ -7,6 +7,7 @@ require 'fpm/cookery/source_handler/local_path'
 require 'fpm/cookery/source_handler/noop'
 require 'fpm/cookery/source_handler/directory'
 require 'fpm/cookery/log'
+require 'fpm/cookery/exceptions'
 
 module FPM
   module Cookery
@@ -16,6 +17,7 @@ module FPM
 
       extend Forwardable
       def_delegators :@handler, :fetch, :extract, :local_path, :checksum?
+      def_delegators :@source, :fetchable?
 
       attr_reader :source_url
 
@@ -45,9 +47,9 @@ module FPM
       def handler_to_class(provider)
         begin
           self.class.const_get(provider.to_s.split('_').map(&:capitalize).join)
-        rescue NameError
+        rescue NameError => e
           Log.error "Specified provider #{provider} does not exist."
-          exit(1)
+          raise Error::Misconfiguration, e.message
         end
       end
     end

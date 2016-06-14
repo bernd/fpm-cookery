@@ -131,10 +131,28 @@ describe 'Config' do
     common_tests(:cache_dir)
   end
 
+  describe '#data_dir' do
+    it 'defaults to nil' do
+      expect(default_config.data_dir).to be_nil
+    end
+
+    common_tests(:data_dir)
+  end
+
+  describe '#hiera_config' do
+    it 'defaults to nil' do
+      expect(default_config.hiera_config).to be_nil
+    end
+
+    common_tests(:hiera_config)
+  end
+
   describe '#to_hash' do
     it 'returns a hash representation of the object' do
       expect(default_config.to_hash).to eq({
         :color => true,
+        :data_dir => nil,
+        :hiera_config => nil,
         :debug => false,
         :target => nil,
         :platform => nil,

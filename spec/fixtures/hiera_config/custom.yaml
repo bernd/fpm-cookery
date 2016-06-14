@@ -1,0 +1,3 @@
+environment:
+    PREFIX: '/usr/local'
+    AUTOMATED_TESTING: 1

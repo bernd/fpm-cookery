@@ -1,5 +1,6 @@
 require 'fpm/cookery/packager'
 require 'fpm/cookery/omnibus_packager'
+require 'fpm/cookery/exceptions'
 
 module FPM
   module Cookery
@@ -20,8 +21,9 @@ module FPM
         recipe.chain_recipes.each do |name|
           recipe_file = build_recipe_file_path(name)
           unless File.exists?(recipe_file)
-            Log.fatal "Cannot find a recipe for #{name} at #{recipe_file}"
-            exit 1
+            error_message = "Cannot find a recipe for #{name} at #{recipe_file}"
+            Log.fatal error_message
+            raise Error::ExecutionFailure, error_message
           end
           FPM::Cookery::Book.instance.load_recipe(recipe_file, config) do |dep_recipe|
             depPackager = FPM::Cookery::Packager.new(dep_recipe, config.to_hash)
