@@ -1,3 +1,13 @@
+# v0.32.0
+* Add `sourcedir` accessor that holds the path to the extracted source. (#132)
+* Add support for DirRecipe and Directory Handler. (cas-ei / #147)
+* Extend virtualenv support. (MrPrimate / #146)
+* Don't dereference symlinks in 'install'. (phyber / #143)
+* Add support for OracleLinux. (#148)
+* Initialize submodules after sha/tag/branch has been set. (#144)
+* Fix configure arguments for list of strings.
+
+
 # v0.31.0 (2015-11-07)
 * Add support for .tar archives. (devkid / #132)
 * Add support for virtualenv recipes. (skoenig/zalando / #137)
