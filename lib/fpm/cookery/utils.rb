@@ -37,6 +37,7 @@ module FPM
             end
           }
         end
+        args
       end
 
       def configure(*args)
