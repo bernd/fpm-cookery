@@ -8,9 +8,11 @@ rvm:
   - 2.2.5
   - 2.3.1
   - ruby-head
-  - rbx-head
 
 matrix:
+  include:
+    - rvm: rbx-3
+      env: RBX_RUBY_COMPAT=2.2.2 RBX_VERSION=3.40
   allow_failures:
     - rvm: ruby-head
-    - rvm: rbx-head
+    - rvm: rbx-3
