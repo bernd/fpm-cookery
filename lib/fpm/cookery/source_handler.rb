@@ -14,6 +14,7 @@ module FPM
     class SourceHandler
       DEFAULT_HANDLER = :curl
       LOCAL_HANDLER = :local_path
+      REQUIRED_METHODS = [:fetch, :extract]
 
       extend Forwardable
       def_delegators :@handler, :fetch, :extract, :local_path, :checksum?
@@ -46,7 +47,19 @@ module FPM
 
       def handler_to_class(provider)
         begin
-          self.class.const_get(provider.to_s.split('_').map(&:capitalize).join)
+          maybe_klass = self.class.const_get(provider.to_s.split('_').map(&:capitalize).join)
+
+          instance_method_map = Hash[maybe_klass.instance_methods.map { |m| [m, true] }]
+          missing_methods = REQUIRED_METHODS.find_all { |m| !instance_method_map.key?(m) }
+
+          unless missing_methods.empty?
+            formatted_missing = missing_methods.map { |m| "`#{m}'" }.join(', ')
+            message = %{#{maybe_klass} does not implement required method(s): #{formatted_missing}}
+            Log.error message
+            raise Error::Misconfiguration, message
+          end
+
+          maybe_klass
         rescue NameError => e
           Log.error "Specified provider #{provider} does not exist."
           raise Error::Misconfiguration, e.message

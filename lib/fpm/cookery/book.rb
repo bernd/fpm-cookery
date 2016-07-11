@@ -15,10 +15,10 @@ module FPM
       # Load the given file and instantiate an object. Wrap the class in an
       # anonymous module to avoid namespace cluttering. (see Kernel.load)
       def load_recipe(filename, config, &callback)
-        @filename = FPM::Cookery::Path.new(filename)
+        @filename = FPM::Cookery::Path.new(filename).realpath
         @config = config
 
-        Kernel.load(filename, true)
+        Kernel.load(@filename.to_path, true)
         callback.call(@recipe.new)
       end
 
