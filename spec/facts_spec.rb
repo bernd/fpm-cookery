@@ -23,6 +23,30 @@ describe "Facts" do
     end
   end
 
+  describe "lsbcodename" do
+    context "where lsbcodename is present" do
+      before do
+        Facter.class_eval do
+          def self.fact(v)
+            v == :lsbcodename ? OpenStruct.new(:value => 'trusty') : nil
+          end
+        end
+      end
+
+      it "returns the current platforms codename" do
+        expect(FPM::Cookery::Facts.lsbcodename).to eq :trusty
+      end
+    end
+
+    context "where lsbcodename is not present" do
+      it "returns nil" do
+        allow(Facter).to receive(:fact).with(:lsbcodename).and_return(nil)
+
+        expect(FPM::Cookery::Facts.lsbcodename).to be_nil
+      end
+    end
+  end
+
   describe "platform" do
     include_context "mock facts", { :operatingsystem => 'CentOS' }
 

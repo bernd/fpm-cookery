@@ -19,6 +19,12 @@ module FPM
         @osrelease ||= Facter.fact(:operatingsystemrelease).value
       end
 
+      def self.lsbcodename
+        codename = Facter.fact(:lsbcodename)
+
+        @lsbcodenode ||= codename.nil? ? nil : codename.value.downcase.to_sym
+      end
+
       def self.osmajorrelease
         @osmajorrelease ||= Facter.fact(:operatingsystemmajrelease).value
       end
