@@ -19,7 +19,7 @@ describe "Book" do
   describe ".instance" do
     describe ".load_recipe" do
       context "given an existing file" do
-        include_context "temporary recipe", <<-RECIPE
+        include_context "temporary recipe", "recipe.rb", <<-RECIPE
           class FakeRecipe < FPM::Cookery::Recipe
             print 'Hello, world!'
           end

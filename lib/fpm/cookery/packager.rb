@@ -58,10 +58,12 @@ module FPM
         Log.info("All dependencies installed!")
       end
 
+      def package_name
+        [recipe.name, recipe.version, recipe.revision].compact.join('-')
+      end
 
       def dispense
         env = ENV.to_hash
-        package_name = "#{recipe.name}-#{recipe.version}"
         platform = FPM::Cookery::Facts.platform
         target = FPM::Cookery::Facts.target
 
@@ -113,7 +115,7 @@ module FPM
           recipe.builddir.mkdir
           Dir.chdir(recipe.builddir) do
             recipe.run_lifecycle_hook(:before_source_extraction)
-            extract_cookie = extract_cookie_name(package_name)
+            extract_cookie = extract_cookie_name
 
             # Do not extract source again because it might destroy changes
             # that have been made to the source. (like patches)
@@ -147,7 +149,8 @@ module FPM
               else
                 recipe.run_lifecycle_hook(:before_build)
                 Log.info "Building in #{File.expand_path(extracted_source, recipe.builddir)}"
-                recipe.build and FileUtils.touch(build_cookie)
+                recipe.build
+                FileUtils.touch(build_cookie)
                 recipe.run_lifecycle_hook(:after_build)
               end
 
@@ -177,11 +180,11 @@ module FPM
         ENV.replace(env)
       end
 
-      def extract_cookie_name(name)
+      def extract_cookie_name(name = package_name)
         (recipe.builddir/".extract-cookie-#{name.gsub(/[^\w]/,'_')}").to_s
       end
 
-      def build_cookie_name(name)
+      def build_cookie_name(name = package_name)
         (recipe.builddir/".build-cookie-#{name.gsub(/[^\w]/,'_')}").to_s
       end
 
