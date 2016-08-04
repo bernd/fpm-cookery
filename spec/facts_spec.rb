@@ -126,6 +126,13 @@ describe "Facts" do
       end
     end
 
+    describe "with platform Alpine" do
+      it "returns apk" do
+        FPM::Cookery::Facts.platform = 'Alpine'
+        expect(FPM::Cookery::Facts.target).to eq(:apk)
+      end
+    end
+
     describe "with an unknown platform" do
       it "returns nil" do
         FPM::Cookery::Facts.platform = '___X___'
