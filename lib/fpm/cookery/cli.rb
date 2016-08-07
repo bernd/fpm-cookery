@@ -35,6 +35,10 @@ module FPM
         :attribute_name => 'skip_package'
 
       class Command < self
+        def self.add_recipe_parameter!
+          parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+        end
+
         def recipe_file
           file = File.expand_path(recipe)
 
@@ -108,7 +112,7 @@ module FPM
       end
 
       class PackageCmd < Command
-        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+        add_recipe_parameter!
 
         def exec(config, recipe, packager)
           if recipe.omnibus_package == true
@@ -122,7 +126,7 @@ module FPM
       end
 
       class CleanCmd < Command
-        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+        add_recipe_parameter!
 
         def exec(config, recipe, packager)
           packager.cleanup
@@ -130,7 +134,7 @@ module FPM
       end
 
       class InstallDepsCmd < Command
-        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+        add_recipe_parameter!
 
         def exec(config, recipe, packager)
           packager.install_deps
@@ -138,7 +142,7 @@ module FPM
       end
 
       class InstallBuildDepsCmd < Command
-        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+        add_recipe_parameter!
 
         def exec(config, recipe, packager)
           if recipe.omnibus_package == true
@@ -152,10 +156,37 @@ module FPM
       end
 
       class ShowDepsCmd < Command
-        parameter '[RECIPE]', 'the recipe file', :default => 'recipe.rb'
+        add_recipe_parameter!
 
         def exec(config, recipe, packager)
           puts recipe.depends_all.join(' ')
+        end
+      end
+
+      class InspectCmd < Command
+        add_recipe_parameter!
+
+        option ['-F', '--format'], 'TEMPLATE', 'ERB template string'
+        option '--terse', :flag, 'show recipe data in compact form'
+
+        self.description = <<DESCRIPTION
+With --format, templates and prints an ERB string with recipe attributes.
+
+Example:
+
+  # Given a recipe with name "foo", version "1.1", revision "12":
+  $ fpm-cook -t rpm --format "<%= name %>-<%= version %>-<%= revision %>.rpm"
+  foo-1.1-12.rpm
+
+Without --format, prints a JSON representation of the recipe.
+DESCRIPTION
+
+        def exec(config, recipe, packager)
+          unless format.nil?
+            puts recipe.template(format)
+          else
+            puts terse? ? recipe.to_json : recipe.to_pretty_json
+          end
         end
       end
 
@@ -166,6 +197,7 @@ module FPM
       subcommand 'install-deps', 'installs build and runtime dependencies', InstallDepsCmd
       subcommand 'install-build-deps', 'installs build dependencies', InstallBuildDepsCmd
       subcommand 'show-deps', 'show build and runtime dependencies', ShowDepsCmd
+      subcommand 'inspect', 'inspect recipe attributes', InspectCmd
     end
   end
 end

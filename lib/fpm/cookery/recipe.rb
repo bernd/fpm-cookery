@@ -1,5 +1,7 @@
+require 'erb'
 require 'forwardable'
 require 'fileutils'
+require 'json'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/hiera'
 require 'fpm/cookery/inheritable_attr'
@@ -139,6 +141,29 @@ module FPM
         # so that +source+ can be picked up if it is defined in a +Hiera+ #
         # data file.
         apply unless defer_application
+      end
+
+      def to_h
+        attr_registry.values.flatten.each_with_object({}) do |m, a|
+          a[m] = send(m) unless m == :attr_registry
+        end
+      end
+
+      def to_json
+        JSON.unparse(to_h)
+      end
+
+      def to_pretty_json
+        JSON.pretty_generate(to_h)
+      end
+
+      def template(format)
+        renderer = ERB.new(format, nil, '-')
+        renderer.result(binding)
+      rescue NameError, NoMethodError => e
+        message = "Error evaluating format string: no attribute `#{e.name}' for recipe"
+        Log.error message
+        raise Error::ExecutionFailure, message
       end
 
       class << self
