@@ -27,5 +27,4 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "puppet", "~> 3.4"
   s.add_runtime_dependency "addressable", "~> 2.3.8"
   s.add_runtime_dependency "systemu"
-  s.add_runtime_dependency "json", ">= 1.7.7.", "< 2.0"
 end
