@@ -1,11 +1,10 @@
 require 'spec_helper'
-require 'ostruct'
 require 'fpm/cookery/facts'
 
 shared_context "mock facts" do |facts = {}|
   before do
     facts.each_pair do |k, v|
-      allow(Facter).to receive(:fact).with(k).and_return(OpenStruct.new(:value => v))
+      allow(Facter).to receive(:value).with(k).and_return(v)
     end
   end
 end
@@ -25,13 +24,7 @@ describe "Facts" do
 
   describe "lsbcodename" do
     context "where lsbcodename is present" do
-      before do
-        Facter.class_eval do
-          def self.fact(v)
-            v == :lsbcodename ? OpenStruct.new(:value => 'trusty') : nil
-          end
-        end
-      end
+      include_context "mock facts", { :lsbcodename => 'trusty' }
 
       it "returns the current platforms codename" do
         expect(FPM::Cookery::Facts.lsbcodename).to eq :trusty
@@ -39,9 +32,9 @@ describe "Facts" do
     end
 
     context "where lsbcodename is not present" do
-      it "returns nil" do
-        allow(Facter).to receive(:fact).with(:lsbcodename).and_return(nil)
+      include_context "mock facts", { :lsbcodename => nil }
 
+      it "returns nil" do
         expect(FPM::Cookery::Facts.lsbcodename).to be_nil
       end
     end

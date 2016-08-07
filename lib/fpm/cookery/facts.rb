@@ -3,47 +3,55 @@ require 'facter'
 module FPM
   module Cookery
     class Facts
-      def self.arch
-        @arch ||= Facter.fact(:architecture).value.downcase.to_sym
-      end
+      class << self
+        def arch
+          @arch ||= value(:architecture)
+        end
 
-      def self.platform
-        @platform ||= Facter.fact(:operatingsystem).value.downcase.to_sym
-      end
+        def platform
+          @platform ||= value(:operatingsystem)
+        end
 
-      def self.platform=(value)
-        @platform = value.downcase.to_sym
-      end
+        def platform=(value)
+          @platform = value.downcase.to_sym
+        end
 
-      def self.osrelease
-        @osrelease ||= Facter.fact(:operatingsystemrelease).value
-      end
+        def osrelease
+          @osrelease ||= value(:operatingsystemrelease, false)
+        end
 
-      def self.lsbcodename
-        codename = Facter.fact(:lsbcodename)
+        def lsbcodename
+          @lsbcodename ||= value(:lsbcodename)
+        end
 
-        @lsbcodenode ||= codename.nil? ? nil : codename.value.downcase.to_sym
-      end
+        def osmajorrelease
+          @osmajorrelease ||= value(:operatingsystemmajrelease, false)
+        end
 
-      def self.osmajorrelease
-        @osmajorrelease ||= Facter.fact(:operatingsystemmajrelease).value
-      end
+        def target
+          @target ||= case platform
+                      when :centos, :redhat, :fedora, :amazon,
+                           :scientific, :oraclelinux           then :rpm
+                      when :debian, :ubuntu                    then :deb
+                      when :darwin                             then :osxpkg
+                      end
+        end
 
-      def self.target
-        @target ||= case platform
-                    when :centos, :redhat, :fedora, :amazon,
-                         :scientific, :oraclelinux           then :rpm
-                    when :debian, :ubuntu                    then :deb
-                    when :darwin                             then :osxpkg
-                    end
-      end
+        def target=(value)
+          @target = value.to_sym
+        end
 
-      def self.target=(value)
-        @target = value.to_sym
-      end
+        def reset!
+          instance_variables.each {|v| instance_variable_set(v, nil) }
+        end
 
-      def self.reset!
-        instance_variables.each {|v| instance_variable_set(v, nil) }
+        private
+
+        def value(fact_name, symbolize = true)
+          v = Facter.value(fact_name)
+          return v if v.nil? or !symbolize
+          return v.downcase.to_sym
+        end
       end
     end
   end
