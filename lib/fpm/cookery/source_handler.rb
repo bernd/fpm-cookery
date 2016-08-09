@@ -6,6 +6,7 @@ require 'fpm/cookery/source_handler/hg'
 require 'fpm/cookery/source_handler/local_path'
 require 'fpm/cookery/source_handler/noop'
 require 'fpm/cookery/source_handler/directory'
+require 'fpm/cookery/source_handler/multi_source'
 require 'fpm/cookery/log'
 require 'fpm/cookery/exceptions'
 
