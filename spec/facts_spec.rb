@@ -84,6 +84,7 @@ describe "Facts" do
         expect(FPM::Cookery::Facts.target).to eq(:rpm)
       end
     end
+
     describe "with platform CentOS" do
       it "returns rpm" do
         FPM::Cookery::Facts.platform = 'CentOS'
@@ -105,15 +106,29 @@ describe "Facts" do
       end
     end
 
-    describe "with platform Debian" do
+    describe "with platform Amazon" do
       it "returns rpm" do
+        FPM::Cookery::Facts.platform = 'Amazon'
+        expect(FPM::Cookery::Facts.target).to eq(:rpm)
+      end
+    end
+
+    describe "with platform OracleLinux" do
+      it "returns rpm" do
+        FPM::Cookery::Facts.platform = 'OracleLinux'
+        expect(FPM::Cookery::Facts.target).to eq(:rpm)
+      end
+    end
+
+    describe "with platform Debian" do
+      it "returns deb" do
         FPM::Cookery::Facts.platform = 'Debian'
         expect(FPM::Cookery::Facts.target).to eq(:deb)
       end
     end
 
     describe "with platform Ubuntu" do
-      it "returns rpm" do
+      it "returns deb" do
         FPM::Cookery::Facts.platform = 'Ubuntu'
         expect(FPM::Cookery::Facts.target).to eq(:deb)
       end
