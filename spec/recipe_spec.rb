@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'json'
 require 'fpm/cookery/book'
 require 'fpm/cookery/book_hook'
 require 'fpm/cookery/exceptions'
@@ -622,6 +623,42 @@ describe "Recipe" do
       recipe_klass.fpm_attributes :rpm_user => 'httpd', :deb_user => 'apache'
 
       expect(recipe.fpm_attributes).to include({:rpm_user=>'httpd', :deb_user=>'apache'})
+    end
+  end
+
+  describe "#to_json" do
+    it "returns a terse JSON-formatted string with recipe attributes" do
+      json = recipe.to_json
+      expect { JSON.load(json) }.not_to raise_error
+      expect(json.lines.length).to be == 1
+      expect(json).to match(/"name"/)
+    end
+  end
+
+  describe "#to_pretty_json" do
+    it "returns a multiline JSON-formatted string with recipe attributes" do
+      json = recipe.to_pretty_json
+      expect { JSON.load(json) }.not_to raise_error
+      expect(json.lines.length).to be > 1
+      expect(json).to match(/"name"/)
+    end
+  end
+
+  describe "#template" do
+    context "given an ERB template containing valid recipe attributes" do
+      it "formats the string with recipe attributes" do
+        formatted = recipe.template("<%= name %>")
+        expect(formatted).to be == recipe.name
+      end
+    end
+
+    context "given an ERB template containing invalid recipe attributes" do
+      it "raises an error" do
+        expect { recipe.template("<%= notarecipeattr %>") }.to raise_error do |error|
+          expect(error).to be_an(FPM::Cookery::Error::ExecutionFailure)
+          expect(error.message).to match(/no attribute.*notarecipeattr/)
+        end
+      end
     end
   end
 end
