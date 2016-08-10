@@ -175,7 +175,7 @@ With --format, templates and prints an ERB string with recipe attributes.
 Example:
 
   # Given a recipe with name "foo", version "1.1", revision "12":
-  $ fpm-cook -t rpm --format "<%= name %>-<%= version %>-<%= revision %>.rpm"
+  $ fpm-cook inspect -t rpm --format "<%= name %>-<%= version %>-<%= revision %>.rpm"
   foo-1.1-12.rpm
 
 Without --format, prints a JSON representation of the recipe.
