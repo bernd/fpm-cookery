@@ -35,6 +35,7 @@ module FPM
                          :scientific, :oraclelinux           then :rpm
                     when :debian, :ubuntu                    then :deb
                     when :darwin                             then :osxpkg
+                    when :alpine                             then :apk
                     end
       end
 
