@@ -37,7 +37,7 @@ module FPM
 
               FileUtils.cp_r(local_path, local_path.basename)
             end
-            extracted_source
+            (builddir/extracted_source).to_s
           end
         end
 
@@ -61,7 +61,7 @@ module FPM
             files = Dir['*'].select {|dir| File.file?(dir) }
 
             if files.size > 0
-              builddir
+              ''
             else
               raise "Empty archive! (#{local_path})"
             end

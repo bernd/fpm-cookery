@@ -13,9 +13,8 @@ module FPM
 
         def extract(config = {})
           Log.info "Not extracting - noop source handler"
-          builddir
+          builddir.to_s
         end
-
       end
     end
   end

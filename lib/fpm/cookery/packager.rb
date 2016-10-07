@@ -133,7 +133,7 @@ module FPM
             end
 
             # Make the path to the extracted source available in the recipe.
-            recipe.sourcedir = recipe.builddir(extracted_source)
+            recipe.sourcedir = extracted_source
             recipe.run_lifecycle_hook(:after_source_extraction, recipe.sourcedir)
 
             Log.info "Using source directory: #{extracted_source}"

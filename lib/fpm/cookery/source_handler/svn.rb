@@ -19,7 +19,7 @@ module FPM
         def extract(config = {})
           Dir.chdir(builddir) do
             safesystem('cp', '-Rp', local_path, '.')
-            extracted_source
+            (builddir/extracted_source).to_s
           end
         end
 
