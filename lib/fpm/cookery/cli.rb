@@ -33,6 +33,8 @@ module FPM
         :attribute_name => 'hiera_config'
       option '--skip-package', :flag, 'do not call FPM to build the package',
         :attribute_name => 'skip_package'
+      option '--vendor-delimiter', 'DELIMITER', 'vendor delimiter for version string',
+        :attribute_name => 'vendor_delimiter'
 
       class Command < self
         def self.add_recipe_parameter!

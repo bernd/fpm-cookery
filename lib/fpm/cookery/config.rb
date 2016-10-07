@@ -7,7 +7,8 @@ module FPM
       ATTRIBUTES = [
         :color, :debug, :target, :platform, :maintainer, :vendor,
         :skip_package, :keep_destdir, :dependency_check, :quiet,
-        :tmp_root, :pkg_dir, :cache_dir, :data_dir, :hiera_config
+        :tmp_root, :pkg_dir, :cache_dir, :data_dir, :hiera_config,
+        :vendor_delimiter
       ].freeze
 
       DEFAULTS = {

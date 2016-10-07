@@ -35,6 +35,7 @@ module FPM
         end
 
         def vendor_delimiter
+          return @config[:vendor_delimiter] if @config[:vendor_delimiter]
           VENDOR_DELIMITER[@target.to_sym] || VENDOR_DELIMITER[:default]
         end
 

@@ -161,6 +161,7 @@ describe 'Config' do
         :pkg_dir => nil,
         :cache_dir => nil,
         :vendor => nil,
+        :vendor_delimiter => nil,
         :skip_package => false,
         :keep_destdir => false,
         :dependency_check => true,
