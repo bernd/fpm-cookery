@@ -140,4 +140,54 @@ describe 'Version' do
       expect(version.to_str).to eq('1.3-1.foo')
     end
   end
+
+  describe '#version' do
+    context 'given a colon-delimited string in recipe.version' do
+      context 'where version and epoch are defined' do
+        before(:each) { recipe.version = '8675309:3.1.1'}
+
+        it 'returns the version and epoch' do
+          expect(version.version).to eq('3.1.1')
+          expect(version.epoch).to eq('8675309')
+        end
+      end
+
+      context 'where only version is defined' do
+        before(:each) { recipe.version = ':2.1' }
+
+        it 'returns the version and sets epoch to nil' do
+          expect(version.version).to eq('2.1')
+          expect(version.epoch).to be nil
+        end
+      end
+
+      context 'where only epoch is defined' do
+        before(:each) { recipe.version = '12345:' }
+
+        it 'returns the epoch as version and sets epoch to nil' do
+          expect(version.version).to eq('12345')
+          expect(version.epoch).to be nil
+        end
+      end
+
+    end
+
+    context 'given a nil recipe.version' do
+      before(:each) { recipe.version = nil }
+
+      it 'returns the default version' do
+        expect(version.version).to eq(klass::DEFAULT_VERSION)
+        expect(version.epoch).to be nil
+      end
+    end
+
+    context 'given a recipe.version containing the empty string' do
+      before(:each) { recipe.version = '' }
+
+      it 'returns the default version' do
+        expect(version.version).to eq(klass::DEFAULT_VERSION)
+        expect(version.epoch).to be nil
+      end
+    end
+  end
 end
