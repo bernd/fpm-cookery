@@ -20,7 +20,7 @@ module FPM
         # command line interface, we need to set our own value.
         DEFAULT_VERSION = '1.0'
 
-        attr_reader :version, :epoch, :revision
+        attr_reader :epoch, :revision
 
         def initialize(recipe, target, config)
           @recipe = recipe
