@@ -16,6 +16,10 @@ module FPM
           :default => '-'
         }
 
+        # fpm sets the default version in FPM::Command; since we bypass the
+        # command line interface, we need to set our own value.
+        DEFAULT_VERSION = '1.0'
+
         attr_reader :version, :epoch, :revision
 
         def initialize(recipe, target, config)
@@ -28,6 +32,10 @@ module FPM
 
         def vendor
           @config[:vendor] || @recipe.vendor
+        end
+
+        def version
+          @version ||= DEFAULT_VERSION
         end
 
         def revision_delimiter
@@ -49,9 +57,7 @@ module FPM
         private
 
         def split_version(version)
-          epoch, version = version.split(':', 2)
-
-          version.nil? ? [epoch, nil] : [version, epoch]
+          (version || '').split(':', 2).reject(&:empty?).reverse
         end
       end
     end
