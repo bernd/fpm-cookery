@@ -29,7 +29,7 @@ module FPM
               File.chmod(0755, local_path)
               safesystem(local_path)
             when '.zip'
-              safesystem('unzip', '-d', local_path.basename('.zip'), local_path)
+              safesystem('unzip', local_path)
             else
               if !local_path.directory? && !local_path.basename.exist?
                 Dir.mkdir(local_path.basename)
