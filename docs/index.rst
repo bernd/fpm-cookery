@@ -26,6 +26,7 @@ Documentation Contents
    :maxdepth: 2
 
    pages/getting-started
+   pages/using-hiera
 
 
 Indices and tables
