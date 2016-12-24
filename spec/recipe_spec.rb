@@ -630,7 +630,7 @@ describe "Recipe" do
     it "returns a terse JSON-formatted string with recipe attributes" do
       json = recipe.to_json
       expect { JSON.load(json) }.not_to raise_error
-      expect(json.lines.length).to be == 1
+      expect(json.lines.to_a.length).to be == 1
       expect(json).to match(/"name"/)
     end
   end
@@ -639,7 +639,7 @@ describe "Recipe" do
     it "returns a multiline JSON-formatted string with recipe attributes" do
       json = recipe.to_pretty_json
       expect { JSON.load(json) }.not_to raise_error
-      expect(json.lines.length).to be > 1
+      expect(json.lines.to_a.length).to be > 1
       expect(json).to match(/"name"/)
     end
   end
