@@ -58,13 +58,15 @@ module FPM
         return unless type
 
         digest = Digest.const_get(type.to_s.upcase).new
-
-        File.open(@recipe.local_path, 'r') do |file|
-          while chunk = file.read(4096)
-            digest.update(chunk)
+        begin
+          File.open(@recipe.local_path, 'r') do |file|
+            while chunk = file.read(4096)
+              digest.update(chunk)
+            end
           end
+        rescue
+          Log.warn "Can't obtain checksum for file #{@recipe.local_path}"
         end
-
         digest.hexdigest
       end
     end
