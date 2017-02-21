@@ -39,10 +39,8 @@ module FPM
           when 1
             entries.first
           else
-            # Use the directory that was created last.
-            dir = entries.sort do |a, b|
-              File.stat(a).ctime <=> File.stat(b).ctime
-            end.last
+            ext = Path.new(url).extname
+            dir = local_path.basename(ext)
 
             if File.exist?(dir)
               dir
