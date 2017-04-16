@@ -205,6 +205,7 @@ module FPM
 
           output_class = FPM::Package.types[@target]
 
+          input.fpm.attributes[:excludes] = recipe.exclude
           output = input.convert(output_class)
 
           recipe.run_lifecycle_hook(:before_package_create, output)
