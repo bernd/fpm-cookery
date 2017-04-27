@@ -29,4 +29,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "systemu"
   s.add_runtime_dependency "json", ">= 1.7.7", "< 2.0"
   s.add_runtime_dependency "json_pure", ">= 1.7.7", "< 2.0"
+  s.add_runtime_dependency "safe_yaml", "~> 1.0.4"
 end
