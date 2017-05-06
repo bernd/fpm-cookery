@@ -10,5 +10,9 @@ rvm:
   - ruby-head
 
 matrix:
+  include:
+    - rvm: rbx-3
+      env: RBX_RUBY_COMPAT=2.2.2 RBX_VERSION=3.40
   allow_failures:
     - rvm: ruby-head
+    - rvm: rbx-3
