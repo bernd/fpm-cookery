@@ -59,17 +59,16 @@ module FPM
           end
 
           # Override the detected platform.
-          if platform
+          if platform.nil?
+            config.platform = FPM::Cookery::Facts.platform
+          else
             FPM::Cookery::Facts.platform = platform
           end
 
-          if target
+          if target.nil?
+            config.target = FPM::Cookery::Facts.target
+          else
             FPM::Cookery::Facts.target = target
-          end
-
-          if FPM::Cookery::Facts.target.nil?
-            Log.error "No target given and we're unable to detect your platform"
-            exit 1
           end
         end
 
