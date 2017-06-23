@@ -33,6 +33,7 @@ module FPM
           @fpm.attributes[:rpm_group] = 'root'
           @fpm.attributes[:rpm_defattrfile] = '-'
           @fpm.attributes[:rpm_defattrdir] = '-'
+          @fpm.attributes[:rpm_dist] = recipe.rpm_dist.to_s if recipe.rpm_dist
           @fpm.attributes[:excludes] = recipe.exclude
 
           # Package type specific code should be called in package_setup.
