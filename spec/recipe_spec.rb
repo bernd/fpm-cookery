@@ -75,6 +75,12 @@ describe "Recipe" do
     expect(recipe.send(attr)).to eq(expect)
   end
 
+  describe '#rpm_dist' do
+    it 'can be set' do
+      check_attribute(:rpm_dist, 'el7')
+    end
+  end
+
   describe "#arch" do
     it "can be set" do
       check_attribute(:arch, 'i386')
