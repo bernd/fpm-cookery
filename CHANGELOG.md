@@ -1,3 +1,22 @@
+# v0.33.0
+* Hiera lookups of recipe data from templated YAML files. (BaxterStockman / #150)
+* Travis-CI build matrix improvements. (thedrow / #155)
+* Expose `lsbcodename` fact. (thedrow / #158)
+* Improved build cookie generator. (BaxterStockman / #157)
+* Improved facter usage. (BaxterStockman / #167)
+* Alpine (apk) package support. (lloydpick / #162)
+* Fix typos and missing tests. (lloydpick / #163)
+* Add `inspect` command. (BaxterStockman / #165)
+* json dependency fix to work with older Rubies. (BaxterStockman / #166)
+* Bug fix when using local directory sources. (#164)
+* Make vendor delimiter configurable. (#169)
+* Ensure consistend extracted source value from all source handlers. (#170)
+* Add default package version and guard against nil/empty versions. (BaxterStockman / #176)
+* Documenting the use of Hiera in recipes. (BaxterStockman / #184)
+* Ruby pre-2.0 compatibility fix. (BaxterStockman / #183)
+* Add "safe\_yaml" dependency. (davewongillies / #186, #154)
+* Add `rpm_dist` method. (sfzylad / #190)
+
 # v0.32.0
 * Add `sourcedir` accessor that holds the path to the extracted source. (#132)
 * Add support for DirRecipe and Directory Handler. (cas-ei / #147)
