@@ -25,9 +25,19 @@ module FPM
 
         private
         def svn(url, path)
+          extra_args = []
+
+          extra_args << '--ignore-externals' if !options[:externals]
+
+          [:username, :password].each do |opt|
+            if options.key? opt
+              extra_args << "--#{opt}" << options[opt]
+            end
+          end
+
           revision = options[:revision] || 'HEAD'
-          externals = '--ignore-externals' if !options[:externals]
-          safesystem('svn', 'export', '--force', externals, '-q', '-r', revision, url, path)
+
+          safesystem('svn', 'export', '--force', *extra_args, '-q', '-r', revision, url, path)
         end
 
         def extracted_source
