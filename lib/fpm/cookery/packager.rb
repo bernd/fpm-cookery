@@ -123,7 +123,13 @@ module FPM
               extracted_source = File.read(extract_cookie).chomp
               Log.debug "Extract cookie exists, using existing source directory: #{extracted_source}"
             else
-              extracted_source = source.extract
+              # First check if the Recipe#extract method returns a source location
+              extracted_source = recipe.extract
+              if extracted_source.nil?
+                # Recipe extraction method didn't return the extracted source
+                # so we use the extraction method of the source handler
+                extracted_source = source.extract
+              end
               File.open(extract_cookie, 'w', 0644) {|f| f.puts(extracted_source) }
             end
 

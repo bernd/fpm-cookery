@@ -143,6 +143,11 @@ module FPM
         apply unless defer_application
       end
 
+      # Custom source extraction code, must return the extracted source directory.
+      def extract
+        nil
+      end
+
       def to_h
         attr_registry.values.flatten.each_with_object({}) do |m, a|
           a[m] = send(m) unless m == :attr_registry

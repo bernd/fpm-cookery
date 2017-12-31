@@ -667,4 +667,10 @@ describe "Recipe" do
       end
     end
   end
+
+  describe "#extract" do
+    it "returns nil by default" do
+      expect(recipe.extract).to be_nil
+    end
+  end
 end
