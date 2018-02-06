@@ -67,8 +67,8 @@ afterwards. Use your text editor to add the code to the ``recipe.rb`` file.
 
     name     'tmux'
     version  '1.9a'
-    homepage 'http://tmux.sourceforce.net/'
-    source   'http://freefr.dl.sourceforge.net/project/tmux/tmux/tmux-1.9/tmux-1.9a.tar.gz'
+    homepage 'http://tmux.github.io'
+    source   'https://github.com/tmux/tmux/releases/download/1.9a/tmux-1.9a.tar.gz'
 
     build_depends 'libevent-dev', 'libncurses5-dev'
     depends       'libevent-2.0-5'
