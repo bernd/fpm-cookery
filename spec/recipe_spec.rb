@@ -459,6 +459,67 @@ describe "Recipe" do
     end
   end
 
+  describe ".targets" do
+    before do
+      FPM::Cookery::Facts.class_eval do
+        class << self
+          alias_method :target_orig, :target
+          def target; :rpm; end
+        end
+      end
+    end
+
+    after do
+      FPM::Cookery::Facts.class_eval do
+        class << self
+          alias_method :target, :target_orig
+        end
+      end
+    end
+
+    describe "with a list of targets" do
+      it "allows target specific settings" do
+        recipe_klass.class_eval do
+          vendor 'a'
+
+          targets [:rpm, :deb] do
+            vendor 'b'
+          end
+        end
+
+        expect(recipe_klass.new.vendor).to eq('b')
+      end
+    end
+
+    describe "with a single target" do
+      it "allows target specific settings" do
+        recipe_klass.class_eval do
+          vendor 'a'
+
+          targets :rpm do
+            vendor 'b'
+          end
+        end
+
+        expect(recipe_klass.new.vendor).to eq('b')
+      end
+    end
+
+    describe "without a matching target" do
+      it "does not set target specific settings" do
+        recipe_klass.class_eval do
+          vendor 'a'
+
+          targets :deb do
+            vendor 'b'
+          end
+        end
+
+        expect(recipe_klass.new.vendor).to eq('a')
+      end
+    end
+  end
+
   describe ".platform" do
     it 'matches the current platform from FPM::Cookery::Facts' do
       expect(recipe_klass.platform).to eq(FPM::Cookery::Facts.platform)

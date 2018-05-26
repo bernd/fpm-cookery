@@ -65,6 +65,10 @@ module FPM
           Array(archs).member?(FPM::Cookery::Facts.arch) and block_given? ? yield : false
         end
 
+        def targets(valid_targets)
+          Array(valid_targets).member?(FPM::Cookery::Facts.target) and block_given? ? yield : false
+        end
+
         def platform
           FPM::Cookery::Facts.platform
         end
