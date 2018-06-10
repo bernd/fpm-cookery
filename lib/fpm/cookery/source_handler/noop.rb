@@ -15,6 +15,10 @@ module FPM
           Log.info "Not extracting - noop source handler"
           builddir.to_s
         end
+
+        def fetchable?
+          true
+        end
       end
     end
   end

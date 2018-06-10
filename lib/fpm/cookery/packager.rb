@@ -174,7 +174,7 @@ module FPM
               end
             end #end chdir extracted_source
           end #end chdir builddir
-        end #end defined source_handler
+        end #end source_handler.fetchable?
 
         if skip_package?
           Log.info "Package building disabled"

@@ -28,6 +28,10 @@ module FPM
           raise "#{self}#fetch not implemented!"
         end
 
+        def fetchable?
+          @url.fetchable?
+        end
+
         def extract(config = {})
           raise "#{self}#extract not implemented!"
         end
