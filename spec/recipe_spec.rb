@@ -111,6 +111,12 @@ describe "Recipe" do
     end
   end
 
+  describe "#sha512" do
+    it "can be set" do
+      check_attribute(:sha512, '123456789abcdef')
+    end
+  end
+
   describe "#sha256" do
     it "can be set" do
       check_attribute(:sha256, '123456789abcdef')

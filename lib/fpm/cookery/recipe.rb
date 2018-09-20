@@ -32,7 +32,7 @@ module FPM
       extend FPM::Cookery::InheritableAttr
 
       attr_rw :arch, :description, :rpm_dist, :homepage, :maintainer, :md5, :name,
-              :revision, :section, :sha1, :sha256, :spec, :vendor, :version,
+              :revision, :section, :sha1, :sha256, :sha512, :spec, :vendor, :version,
               :pre_install, :post_install, :pre_uninstall, :post_uninstall,
               :license, :omnibus_package, :omnibus_dir, :chain_package,
               :default_prefix

@@ -90,7 +90,7 @@ module FPM
             if source.checksum?
               SourceIntegrityCheck.new(recipe).tap do |check|
                 if check.checksum_missing?
-                  Log.warn 'Recipe does not provide a checksum. (sha256, sha1 or md5)'
+                  Log.warn 'Recipe does not provide a checksum. (sha512, sha256, sha1 or md5)'
                   Log.puts <<-__WARN
   Digest:   #{check.digest}
   Checksum: #{check.checksum_actual}

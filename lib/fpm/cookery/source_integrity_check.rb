@@ -43,7 +43,7 @@ module FPM
       end
 
       def get_checksum
-        type = [:sha256, :sha1, :md5].find do |digest|
+        type = [:sha512, :sha256, :sha1, :md5].find do |digest|
           @recipe.respond_to?(digest) and
           @recipe.send(digest) and
           !@recipe.send(digest).empty?

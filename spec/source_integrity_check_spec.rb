@@ -48,6 +48,44 @@ describe "SourceIntegrityCheck" do
     end
   end
 
+  describe "with a correct sha512 checksum defined" do
+    describe "#error?" do
+      it "returns false" do
+        allow(recipe).to receive(:sha512).and_return('488f02db910d6a12f194ed62d7e6a89d9e408c8354acb875cf81c5fb284022cd320d4803a968f8754f5cc53797d515994619f669d359e3b4f989801a39ee6ffd')
+
+        expect(check.error?).to eq(false)
+      end
+    end
+  end
+
+  describe "with a wrong sha512 checksum defined" do
+    before do
+      allow(recipe).to receive(:sha512).and_return('xxxx02db910d6a12f194ed62d7e6a89d9e408c8354acb875cf81c5fb284022cd320d4803a968f8754f5cc53797d515994619f669d359e3b4f989801a39ee6ffd')
+    end
+
+    describe "#error?" do
+      it "returns true" do
+        expect(check.error?).to eq(true)
+      end
+    end
+
+    it "has checksum_expected set to the expected checksum" do
+      expect(check.checksum_expected).to eq('xxxx02db910d6a12f194ed62d7e6a89d9e408c8354acb875cf81c5fb284022cd320d4803a968f8754f5cc53797d515994619f669d359e3b4f989801a39ee6ffd')
+    end
+
+    it "has checksum_actual set to the actual checksum" do
+      expect(check.checksum_actual).to eq('488f02db910d6a12f194ed62d7e6a89d9e408c8354acb875cf81c5fb284022cd320d4803a968f8754f5cc53797d515994619f669d359e3b4f989801a39ee6ffd')
+    end
+
+    it "has filename set" do
+      expect(check.filename).to eq(fixture_path('test-source-1.0.tar.gz'))
+    end
+
+    it "has digest set to :sha512" do
+      expect(check.digest).to eq(:sha512)
+    end
+  end
+
   describe "with a correct sha256 checksum defined" do
     describe "#error?" do
       it "returns false" do
