@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "pry"
   s.add_development_dependency "simplecov", "~> 0.11"
+
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "facter"
   s.add_runtime_dependency "puppet", "~> 3.4"
@@ -30,4 +31,9 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "json", ">= 1.7.7", "< 2.0"
   s.add_runtime_dependency "json_pure", ">= 1.7.7", "< 2.0"
   s.add_runtime_dependency "safe_yaml", "~> 1.0.4"
+
+  # xmlrpc, which is a dependency of puppet, was removed from Ruby in 2.4.0
+  if RUBY_VERSION >= "2.4.0"
+    s.add_runtime_dependency "xmlrpc", "~> 0.3.0"
+  end
 end
