@@ -1,5 +1,6 @@
 require 'fpm/cookery/facts'
 require 'fpm/cookery/log'
+require 'fpm/cookery/monkey_patches'
 
 begin
   require 'puppet'
