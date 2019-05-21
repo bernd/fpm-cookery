@@ -90,6 +90,12 @@ module FPM
           safesystem "patch -p#{level} --batch < #{src}"
         end
       end
+
+      def go(*args)
+        args = argument_build(*args)
+        args.each {|a| a == '--mod=vendor' && ENV['GO111MODULE'] = 'on' }
+        safesystem "go #{args.join(' ')}"
+      end
     end
   end
 end
