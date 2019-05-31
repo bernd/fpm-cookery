@@ -29,6 +29,16 @@ module FPM
             result.value
           end
         end
+
+        # Newer versions of Hiera requires also +#include?+ method for context
+        def include?(name)
+          [recipe, FPM::Cookery::Facts].each do |source|
+            return true if source.respond_to?(name)
+          end
+
+          # If not found, check in +Facter+.
+          ! Facter[name].nil?
+        end
       end
     end
   end
