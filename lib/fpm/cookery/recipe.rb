@@ -19,7 +19,6 @@ require 'fpm/cookery/package/npm'
 require 'fpm/cookery/package/pear'
 require 'fpm/cookery/package/python'
 require 'fpm/cookery/package/virtualenv'
-require 'fpm/cookery/log'
 
 module FPM
   module Cookery
