@@ -11,7 +11,7 @@
 * Remove duplicate require. (FooBarQuaxx / #204)
 * Automatically gunzip gzipped patch files. (davewongillies / #208)
 
-# v0.33.0
+# v0.33.0 (2017-07-09)
 * Hiera lookups of recipe data from templated YAML files. (BaxterStockman / #150)
 * Travis-CI build matrix improvements. (thedrow / #155)
 * Expose `lsbcodename` fact. (thedrow / #158)
@@ -30,7 +30,7 @@
 * Add "safe\_yaml" dependency. (davewongillies / #186, #154)
 * Add `rpm_dist` method. (sfzylad / #190)
 
-# v0.32.0
+# v0.32.0 (2016-06-14)
 * Add `sourcedir` accessor that holds the path to the extracted source. (#132)
 * Add support for DirRecipe and Directory Handler. (cas-ei / #147)
 * Extend virtualenv support. (MrPrimate / #146)
