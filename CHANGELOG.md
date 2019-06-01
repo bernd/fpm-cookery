@@ -1,4 +1,4 @@
-# v0.34.0 (unreleased)
+# v0.34.0 (2019-06-01)
 * Use factor defaults for `platform` and `target` values. (FooBarQuaxx / #189)
 * Add `:username` and `:password` parameters to the SVN source handler. (tomeon / #191)
 * Add `Recipe#extract` method to allow custom extraction logic.
@@ -10,6 +10,7 @@
 * Add sha512 checksum support. (b00ga / #202)
 * Remove duplicate require. (FooBarQuaxx / #204)
 * Automatically gunzip gzipped patch files. (davewongillies / #208)
+* Add a golang util. (davewongillies / #209)
 
 # v0.33.0 (2017-07-09)
 * Hiera lookups of recipe data from templated YAML files. (BaxterStockman / #150)
