@@ -20,6 +20,14 @@ describe FPM::Cookery::Utils do
     def run_configure_mix
       configure '--first=okay', '--second=okay', :hello_world => true, :prefix => '/usr', 'a-dash' => 1
     end
+
+    def run_go_build
+      go 'build', '-mod=vendor', '-v'
+    end
+
+    def run_go_build_hash
+      go :build, :mod => 'vendor', :v => true
+    end
   end
 
   let(:test) { TestUtils.new }
@@ -55,6 +63,21 @@ describe FPM::Cookery::Utils do
       it 'calls ./configure without any arguments' do
         expect(test).to receive(:system).with('./configure')
         test.run_configure_no_arg
+      end
+    end
+  end
+  describe '#go' do
+    context 'with a list of string arguments' do
+      it 'calls go with the correct arguments' do
+        expect(test).to receive(:system).with('go', 'build', '-mod=vendor', '-v')
+        test.run_go_build
+      end
+    end
+
+    context 'with hash arguments' do
+      it 'calls go with the correct arguments' do
+        expect(test).to receive(:system).with('go', 'build', '--mod=vendor', '--v')
+        test.run_go_build_hash
       end
     end
   end
