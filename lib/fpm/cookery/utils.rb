@@ -6,8 +6,13 @@ module FPM
       protected
       # From fpm. (lib/fpm/util.rb)
       def safesystem(*args)
-        # Make sure to avoid nil elements in args. This might happen on 1.8.
-        success = system(*args.compact.flatten)
+        # Process the arguments:
+        #   - Convert all arguments to strings because "system" cannot handle
+        #     keys (avoids TypeError)
+        #   - Make sure to avoid nil elements in args. This might happen on 1.8.
+        safe_args = args.map(&:to_s).compact.flatten
+        Log.debug("Executing command: #{safe_args.inspect}")
+        success = system(*safe_args)
         if !success
           raise "'system(#{args.inspect})' failed with error code: #{$?.exitstatus}"
         end
@@ -94,7 +99,7 @@ module FPM
       def go(*args)
         args = argument_build(*args)
         args.each {|a| a == '--mod=vendor' && ENV['GO111MODULE'] = 'on' }
-        safesystem "go #{args.join(' ')}"
+        safesystem 'go', *args
       end
     end
   end
