@@ -1,11 +1,11 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
       curl \
       wget \
       git \
-      ruby2.3-dev \
+      ruby2.5-dev \
       build-essential \
       man-db \
     && gem install --no-ri --no-rdoc fpm-cookery \
