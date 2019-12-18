@@ -45,7 +45,7 @@ module FPM
         end
 
         if image_name.nil? || image_name.empty?
-          image_name = "fpm-cookery:#{FPM::Cookery::VERSION}-#{FPM::Cookery::Facts.platform}-#{FPM::Cookery::Facts.osrelease}"
+          image_name = "fpmcookery/#{FPM::Cookery::Facts.platform}-#{FPM::Cookery::Facts.osrelease}:#{FPM::Cookery::VERSION}"
         end
 
         Log.info "Building #{recipe.name}-#{recipe.version} inside a Docker container using image #{image_name}"
