@@ -1,3 +1,6 @@
+# v0.35.1 (2019-12-18)
+* Fix default Docker image name
+
 # v0.35.0 (2019-12-18)
 * Add support for building packages inside Docker containers.
 
