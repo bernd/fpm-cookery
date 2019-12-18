@@ -8,6 +8,7 @@ RUN apt-get update \
       ruby2.3-dev \
       build-essential \
       man-db \
+      unzip \
     && gem install --no-ri --no-rdoc fpm-cookery \
     && apt-get clean \
     && rm -rf \
