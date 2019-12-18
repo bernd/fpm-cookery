@@ -68,7 +68,7 @@ module FPM
         ].compact.flatten.join(' ')
 
 
-        Log.info "Running: #{cmd}"
+        Log.debug "Running: #{cmd}"
         begin
           sh cmd
         rescue => e
