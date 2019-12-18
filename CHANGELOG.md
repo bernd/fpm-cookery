@@ -1,3 +1,6 @@
+# v0.35.0 (2019-12-18)
+* Add support for building packages inside Docker containers.
+
 # v0.34.0 (2019-06-01)
 * Use factor defaults for `platform` and `target` values. (FooBarQuaxx / #189)
 * Add `:username` and `:password` parameters to the SVN source handler. (tomeon / #191)
