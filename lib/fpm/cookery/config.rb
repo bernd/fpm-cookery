@@ -8,7 +8,8 @@ module FPM
         :color, :debug, :target, :platform, :maintainer, :vendor,
         :skip_package, :keep_destdir, :dependency_check, :quiet,
         :tmp_root, :pkg_dir, :cache_dir, :data_dir, :hiera_config,
-        :vendor_delimiter
+        :vendor_delimiter, :docker, :docker_image, :docker_keep_container,
+        :docker_cache, :docker_bin, :dockerfile
       ].freeze
 
       DEFAULTS = {
@@ -17,7 +18,13 @@ module FPM
         :dependency_check => true,
         :skip_package => false,
         :keep_destdir => false,
-        :quiet => false
+        :quiet => false,
+        :docker => false,
+        :docker_image => nil,
+        :docker_keep_container => false,
+        :docker_cache => nil,
+        :docker_bin => 'docker',
+        :dockerfile => 'Dockerfile'
       }.freeze
 
       def self.load_file(paths)

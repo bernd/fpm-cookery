@@ -2,6 +2,7 @@ require 'fpm/cookery/book_hook'
 require 'fpm/cookery/recipe'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/packager'
+require 'fpm/cookery/docker_packager'
 require 'fpm/cookery/chain_packager'
 require 'fpm/cookery/omnibus_packager'
 require 'fpm/cookery/log'
@@ -35,6 +36,20 @@ module FPM
         :attribute_name => 'skip_package'
       option '--vendor-delimiter', 'DELIMITER', 'vendor delimiter for version string',
         :attribute_name => 'vendor_delimiter'
+
+      # Docker related flags
+      option '--docker', :flag, 'Execute fpm-cookery inside a Docker container',
+        :attribute_name => 'docker'
+      option '--docker-bin', 'BINARY', 'Docker binary to use',
+        :attribute_name => 'docker_bin'
+      option '--docker-image', 'IMAGE-NAME', 'Docker image to use',
+        :attribute_name => 'docker_image'
+      option '--docker-keep-container', :flag, 'Keep Docker container after build (e.g. to debug issues)',
+        :attribute_name => 'docker_keep_container'
+      option '--docker-cache', 'PATHS', 'Container paths to cache (can be a comma separated list)',
+        :attribute_name => 'docker_cache'
+      option '--dockerfile', 'PATHS', 'The Dockerfile to use for a custom container',
+        :attribute_name => 'dockerfile'
 
       class Command < self
         def self.add_recipe_parameter!
@@ -116,7 +131,10 @@ module FPM
         add_recipe_parameter!
 
         def exec(config, recipe, packager)
-          if recipe.omnibus_package == true
+          # Don't try to launch a new container if we are already running inside one
+          if (config.docker == true or recipe.docker == true) and ENV['FPMC_INSIDE_DOCKER'].nil?
+            FPM::Cookery::DockerPackager.new(recipe, config).run
+          elsif recipe.omnibus_package == true
             FPM::Cookery::OmnibusPackager.new(packager, config).run
           elsif recipe.chain_package == true
             FPM::Cookery::ChainPackager.new(packager, config).run
@@ -146,7 +164,9 @@ module FPM
         add_recipe_parameter!
 
         def exec(config, recipe, packager)
-          if recipe.omnibus_package == true
+          if config.docker == true
+            # Nothing to do!
+          elsif recipe.omnibus_package == true
             FPM::Cookery::OmnibusPackager.new(packager, config).install_build_deps
           elsif recipe.chain_package == true
             FPM::Cookery::ChainPackager.new(packager, config).install_build_deps

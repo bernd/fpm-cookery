@@ -31,11 +31,11 @@ describe "Facts" do
       end
     end
 
-    context "where lsbcodename is not present" do
-      include_context "mock facts", { :lsbcodename => nil }
+    context "where lsbcodename is not present but lsbdistcodename is" do
+      include_context "mock facts", { :lsbcodename => nil, :lsbdistcodename => 'trusty' }
 
       it "returns nil" do
-        expect(FPM::Cookery::Facts.lsbcodename).to be_nil
+        expect(FPM::Cookery::Facts.lsbcodename).to eq :trusty
       end
     end
   end

@@ -165,7 +165,13 @@ describe 'Config' do
         :skip_package => false,
         :keep_destdir => false,
         :dependency_check => true,
-        :quiet => false
+        :quiet => false,
+        :docker => false,
+        :docker_image => nil,
+        :docker_keep_container => false,
+        :docker_cache => nil,
+        :docker_bin => 'docker',
+        :dockerfile => 'Dockerfile'
       })
     end
   end

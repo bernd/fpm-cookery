@@ -21,7 +21,7 @@ module FPM
         end
 
         def lsbcodename
-          @lsbcodename ||= value(:lsbcodename)
+          @lsbcodename ||= value(:lsbcodename) || value(:lsbdistcodename)
         end
 
         def osmajorrelease

@@ -34,12 +34,12 @@ module FPM
               :revision, :section, :sha1, :sha256, :sha512, :spec, :vendor, :version,
               :pre_install, :post_install, :pre_uninstall, :post_uninstall,
               :license, :omnibus_package, :omnibus_dir, :chain_package,
-              :default_prefix
+              :default_prefix, :docker, :docker_image, :dockerfile
 
       attr_rw_list  :build_depends, :config_files, :conflicts, :depends,
                     :exclude, :patches, :provides, :replaces, :omnibus_recipes,
                     :omnibus_additional_paths, :chain_recipes,
-                    :directories
+                    :directories, :docker_cache
 
       attr_rw_hash  :fpm_attributes, :environment
 

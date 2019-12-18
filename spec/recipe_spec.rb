@@ -99,6 +99,24 @@ describe "Recipe" do
     end
   end
 
+  describe "#docker" do
+    it "can be set" do
+      check_attribute(:docker, true)
+    end
+  end
+
+  describe "#docker_image" do
+    it "can be set" do
+      check_attribute(:docker_image, "hello:world")
+    end
+  end
+
+  describe "#dockerfile" do
+    it "can be set" do
+      check_attribute(:dockerfile, "Dockefile")
+    end
+  end
+
   describe "#license" do
     it "can be set" do
       check_attribute(:license, 'MIT')
@@ -305,6 +323,7 @@ describe "Recipe" do
   spec_recipe_attribute_list(:omnibus_recipes, %w{one two})
   spec_recipe_attribute_list(:chain_recipes, %w{one two})
   spec_recipe_attribute_list(:directories, %w{one two})
+  spec_recipe_attribute_list(:docker_cache, %w{one two})
 
   describe ".source" do
     it "sets a source url" do
