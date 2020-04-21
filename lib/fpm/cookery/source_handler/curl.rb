@@ -21,7 +21,7 @@ module FPM
         end
 
         def extract(config = {})
-          Dir.chdir(builddir) do
+          Dir.chdir((builddir/options[:directory])) do
             case local_path.extname
             when '.bz2', '.gz', '.tgz', '.xz', '.tar'
               safesystem('tar', 'xf', local_path)

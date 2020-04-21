@@ -7,8 +7,15 @@ module FPM
 
       def initialize(url, options = nil)
         options ||= {}
-        @url = Addressable::URI.parse(url.to_s)
-        @provider = options[:with]
+
+        if url.is_a? Array
+          @url = url
+          @provider = :multi_source
+        else
+          @url = Addressable::URI.parse(url.to_s)
+          @provider = options[:with]
+        end
+
         @options = options
       end
 
@@ -26,7 +33,7 @@ module FPM
       end
 
       def url
-        @url.to_s
+        @provider == :multi_source ? @url : @url.to_s
       end
       [:to_s, :to_str].each { |m| alias_method m, :url }
 
