@@ -28,8 +28,8 @@ module FPM
         super(self.class[other])
       end
 
-      def merge!(other)
-        super(self.class[other])
+      def merge!(*other)
+        super(self.class[*other])
       end
 
       def with_clean
