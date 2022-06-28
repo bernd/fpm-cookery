@@ -1,6 +1,6 @@
 name: Ruby
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -8,14 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [2.4, 2.5, 2.6]
+        ruby: [2.4, 2.5, 2.6, 2.7, 3.0, 3.1]
 
     steps:
     - uses: actions/checkout@v1
     - name: Set up Ruby ${{ matrix.ruby }}
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}.x
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
     - name: Build and test with Rake
       run: |
         gem install bundler
