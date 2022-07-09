@@ -27,7 +27,7 @@ module FPM
 
       # If the Addressable::URI is empty, there's nothing to fetch
       def fetchable?
-        !@url.empty?
+        !@url.to_s.empty?
       end
 
       def url
