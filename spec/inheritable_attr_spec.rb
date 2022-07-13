@@ -15,12 +15,12 @@ shared_examples 'attribute registration' do |attr_method, registry_method|
         extend FPM::Cookery::InheritableAttr
 
         instance_eval %Q{
-          #{attr_method} :dummy_attr
+          #{attr_method} :example_attr
         }
       end
 
       expect(klass).to respond_to(registry_method)
-      expect(klass.send(registry_method)).to include(:dummy_attr)
+      expect(klass.send(registry_method)).to include(:example_attr)
     end
   end
 end
@@ -30,7 +30,7 @@ shared_context 'class inheritance' do
   let(:subklass) { Class.new(superklass) }
 end
 
-shared_examples 'attribute inheritance' do |attr_method, default_value, attr_name = :dummy_attr|
+shared_examples 'attribute inheritance' do |attr_method, default_value, attr_name = :example_attr|
   # A default implementation.  Useful for +.attr_rw+, but should probably be
   # overridden for the other DSL methods.
   let(:attr_setter) {
@@ -74,7 +74,7 @@ shared_examples 'attribute inheritance' do |attr_method, default_value, attr_nam
   end
 end
 
-shared_context 'inheritable attributes' do |attr_method, default_value, attr_name = :dummy_attr|
+shared_context 'inheritable attributes' do |attr_method, default_value, attr_name = :example_attr|
   include_context 'class inheritance'
   include_examples 'attribute inheritance', attr_method, default_value
 
