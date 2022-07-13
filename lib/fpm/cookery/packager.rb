@@ -214,10 +214,10 @@ module FPM
           output = input.convert(output_class)
 
           output_filename = output.to_s(recipe.package_name_format)
-          recipe.run_lifecycle_hook(:before_package_create, output)
+          recipe.run_lifecycle_hook(:before_package_file_create, output_filename, output)
           begin
             output.output(output_filename)
-            recipe.run_lifecycle_hook(:after_package_create, output)
+            recipe.run_lifecycle_hook(:after_package_file_create, output_filename, output)
           rescue FPM::Package::FileAlreadyExists
             Log.info "Removing existing package file: #{output_filename}"
             FileUtils.rm_f(output_filename)
