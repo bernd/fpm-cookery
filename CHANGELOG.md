@@ -1,3 +1,10 @@
+# v0.36.0 (2022-07-13)
+* Add Dockerfile for Ubuntu 18.04.
+* Allow newer versions of Puppet (gmathes / #211)
+* Fix compatibility issues with newer Ruby and newer dependencies. (#214)
+* Add Ruby versions up to 3.1 to GitHub Action workflow.
+* Switch default branch to `main`.
+
 # v0.35.1 (2019-12-18)
 * Fix default Docker image name
 
