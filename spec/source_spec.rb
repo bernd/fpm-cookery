@@ -52,6 +52,8 @@ describe "Source" do
 
       expect(source.url).to eq('git@github.com:foo/bar.git')
       expect(source.path).to eq('foo/bar.git')
+      expect(source.local?).to eq(false)
+      expect(source.fetchable?).to eq(true)
     end
   end
 end

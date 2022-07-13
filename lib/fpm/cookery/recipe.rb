@@ -237,14 +237,14 @@ module FPM
           }
         end
 
-        def applicator(method)
+        def applicator(method, &block)
           if (result = lookup(method)).nil?
             Log.debug("No result for `#{method}'")
             return
           end
 
           Log.debug("Setting `#{method}' to `#{result}'")
-          Proc.new.call(result)
+          block.call(result)
         end
       end
 

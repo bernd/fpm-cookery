@@ -25,9 +25,10 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "facter"
   s.add_runtime_dependency "puppet", ">= 3.4", "< 8.0"
-  s.add_runtime_dependency "addressable", "~> 2.3.8"
+  s.add_runtime_dependency "addressable", "~> 2.8"
   s.add_runtime_dependency "systemu"
-  s.add_runtime_dependency "json", ">= 1.7.7", "< 2.0"
-  s.add_runtime_dependency "json_pure", ">= 1.7.7", "< 2.0"
+  s.add_runtime_dependency "json", "~> 2.6"
+  s.add_runtime_dependency "json_pure", "~> 2.6"
   s.add_runtime_dependency "safe_yaml", "~> 1.0.4"
+  s.add_runtime_dependency "uri-ssh_git", "~> 2.0"
 end
