@@ -35,7 +35,7 @@ module FPM
               :pre_install, :post_install, :pre_uninstall, :post_uninstall,
               :license, :omnibus_package, :omnibus_dir, :chain_package,
               :default_prefix, :docker, :docker_image, :dockerfile,
-              :epoch
+              :package_name_format, :epoch
 
       attr_rw_list  :build_depends, :config_files, :conflicts, :depends,
                     :exclude, :patches, :provides, :replaces, :omnibus_recipes,
