@@ -281,5 +281,5 @@ Examples
 --------
 
 See the `Redis recipe
-<https://github.com/bernd/fpm-cookery/tree/master/recipes/redis>`_ for an
+<https://github.com/bernd/fpm-cookery/tree/main/recipes/redis>`_ for an
 example of fpm-cookery and Hiera in action.

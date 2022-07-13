@@ -1,4 +1,5 @@
 require 'addressable/uri'
+require 'uri/ssh_git'
 
 module FPM
   module Cookery
@@ -7,7 +8,11 @@ module FPM
 
       def initialize(url, options = nil)
         options ||= {}
-        @url = Addressable::URI.parse(url.to_s)
+        begin
+          @url = Addressable::URI.parse(url.to_s)
+        rescue Addressable::URI::InvalidURIError
+          @url = URI::SshGit.parse(url.to_s)
+        end
         @provider = options[:with]
         @options = options
       end
@@ -22,7 +27,7 @@ module FPM
 
       # If the Addressable::URI is empty, there's nothing to fetch
       def fetchable?
-        !@url.empty?
+        !@url.to_s.empty?
       end
 
       def url

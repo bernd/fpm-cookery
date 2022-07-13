@@ -1,6 +1,6 @@
 # fpm-cookery - For building software
 
-[![Build Status](https://travis-ci.org/bernd/fpm-cookery.svg)](https://travis-ci.org/bernd/fpm-cookery)
+![Build Status](https://github.com/bernd/fpm-cookery/actions/workflows/ruby.yml/badge.svg)
 
 A tool for building software packages with
 [fpm](https://github.com/jordansissel/fpm).
