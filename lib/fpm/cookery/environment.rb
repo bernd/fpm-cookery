@@ -24,11 +24,11 @@ module FPM
         end
       end
 
-      def merge(other)
+      def merge(other = {})
         super(self.class[other])
       end
 
-      def merge!(other)
+      def merge!(other = {})
         super(self.class[other])
       end
 
