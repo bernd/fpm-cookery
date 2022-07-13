@@ -28,13 +28,20 @@ module FPM
           @osmajorrelease ||= value(:operatingsystemmajrelease, false)
         end
 
+        def osfamily
+          @osfamily ||= value(:osfamily)
+        end
+
+        def osfamily=(value)
+          @osfamily = value.downcase.to_sym
+        end
+
         def target
-          @target ||= case platform
-                      when :centos, :redhat, :fedora, :amazon,
-                           :scientific, :oraclelinux, :sles    then :rpm
-                      when :debian, :ubuntu                    then :deb
-                      when :darwin                             then :osxpkg
-                      when :alpine                             then :apk
+          @target ||= case osfamily
+                      when :redhat, :suse then :rpm
+                      when :debian        then :deb
+                      when :darwin        then :osxpkg
+                      when :alpine        then :apk
                       end
         end
 
