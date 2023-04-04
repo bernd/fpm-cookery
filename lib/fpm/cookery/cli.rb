@@ -60,7 +60,7 @@ module FPM
           file = File.expand_path(recipe)
 
           # Allow giving the directory containing a recipe.rb
-          if File.directory?(file) && File.exists?(File.join(file, 'recipe.rb'))
+          if File.directory?(file) && File.exist?(File.join(file, 'recipe.rb'))
             file = File.join(file, 'recipe.rb')
           end
 
@@ -68,7 +68,7 @@ module FPM
         end
 
         def validate
-          unless File.exists?(recipe_file)
+          unless File.exist?(recipe_file)
             Log.error 'No recipe.rb found in the current directory, abort.'
             exit 1
           end

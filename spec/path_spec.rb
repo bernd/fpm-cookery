@@ -91,10 +91,10 @@ describe "Path" do
     it "creates the directory" do
       dir = Dir.mktmpdir
       FileUtils.rm_rf(dir)
-      expect(File.exists?(dir)).to eq(false)
+      expect(File.exist?(dir)).to eq(false)
 
       FPM::Cookery::Path.new(dir).mkdir
-      expect(File.exists?(dir)).to eq(true)
+      expect(File.exist?(dir)).to eq(true)
 
       FileUtils.rm_rf(dir)
     end
@@ -102,7 +102,7 @@ describe "Path" do
     describe "directory exists" do
       it "does not throw an error" do
         dir = Dir.mktmpdir
-        expect(File.exists?(dir)).to eq(true)
+        expect(File.exist?(dir)).to eq(true)
 
         expect(FPM::Cookery::Path.new(dir).mkdir).to eq([dir])
 

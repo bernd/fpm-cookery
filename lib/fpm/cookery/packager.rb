@@ -119,7 +119,7 @@ module FPM
 
             # Do not extract source again because it might destroy changes
             # that have been made to the source. (like patches)
-            if File.exists?(extract_cookie)
+            if File.exist?(extract_cookie)
               extracted_source = File.read(extract_cookie).chomp
               Log.debug "Extract cookie exists, using existing source directory: #{extracted_source}"
             else
@@ -149,7 +149,7 @@ module FPM
 
               build_cookie = build_cookie_name(package_name)
 
-              if File.exists?(build_cookie)
+              if File.exist?(build_cookie)
                 Log.warn "Skipping build of #{recipe.name} because build cookie found (#{build_cookie})," \
                          " use \"fpm-cook clean\" to rebuild!"
               else
@@ -161,7 +161,7 @@ module FPM
               end
 
               FileUtils.rm_rf(recipe.destdir) unless keep_destdir?
-              recipe.destdir.mkdir unless File.exists?(recipe.destdir)
+              recipe.destdir.mkdir unless File.exist?(recipe.destdir)
 
               begin
                 recipe.installing = true
@@ -243,7 +243,7 @@ module FPM
               script_file = File.expand_path("../#{script_file.to_s}", recipe.filename)
             end
 
-            if File.exists?(script_file)
+            if File.exist?(script_file)
               input.add_script(script, File.read(script_file.to_s))
             else
               Log.error "#{script} script '#{script_file}' is missing"
