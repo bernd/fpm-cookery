@@ -19,6 +19,8 @@ jobs:
         bundler-cache: true
     - name: Build and test with Rake
       run: |
+        sudo apt-get update -qq
+        sudo apt-get install -yqq python3-sphinx
         gem install bundler
         bundle install --jobs 4 --retry 3
         bundle exec rake
