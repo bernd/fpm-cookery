@@ -1,3 +1,6 @@
+require 'fpm/cookery/exceptions'
+require 'fpm/cookery/log'
+
 module FPM
   module Cookery
     module Package
@@ -28,6 +31,21 @@ module FPM
           @config = config
           @revision = recipe.revision
           @version, @epoch = split_version(@recipe.version)
+
+          if !@epoch.nil? and !recipe.epoch.nil?
+            # If the epoch is defined in the version string and set in the
+            # epoch field, we don't know what to choose.
+            message = "The \"epoch\" is defined in the recipe's version (#{@recipe.version}) AND epoch (#{@recipe.epoch}) fields"
+            Log.error message
+            raise Error::Misconfiguration, message
+          end
+
+          # The epoch in the version string has precedence over the #epoch
+          # attribute in the recipe. (backward compatibility)
+          @epoch = recipe.epoch if @epoch.nil?
+
+          # Ensure that epoch is always a string
+          @epoch = @epoch.to_s unless @epoch.nil?
         end
 
         def vendor

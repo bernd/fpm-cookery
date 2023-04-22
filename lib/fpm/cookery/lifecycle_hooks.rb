@@ -6,6 +6,18 @@ module FPM
       def run_lifecycle_hook(hook_name, *args)
         Log.debug("Run lifecycle hook: #{hook_name} (args: #{args.inspect})")
         self.__send__(hook_name, *args)
+
+        # Backward compatibility for users of deprecated lifecycle hooks
+        case hook_name
+        when :before_package_file_create
+          unless self.__send__(:before_package_create, args[1]) == :UNUSED
+            Log.deprecated("Switch from \"before_package_create\" lifecycle hook to \"before_package_file_create\"")
+          end
+        when :after_package_file_create
+          unless self.__send__(:after_package_create, args[1]) == :UNUSED
+            Log.deprecated("Switch from \"after_package_create\" lifecycle hook to \"after_package_file_create\"")
+          end
+        end
       end
 
       def before_dependency_installation
@@ -39,12 +51,24 @@ module FPM
       def after_install
       end
 
-      # Gets a FPM::Package object as argument.
-      def before_package_create(package)
+      # Gets a the output filename and the FPM::Package object as argument.
+      def before_package_file_create(filename, package)
+      end
+
+      # Gets a the output filename and the FPM::Package object as argument.
+      def after_package_file_create(filename, package)
       end
 
       # Gets a FPM::Package object as argument.
+      # @deprecated Use #after_package_file_create.
+      def before_package_create(package)
+        :UNUSED
+      end
+
+      # Gets a FPM::Package object as argument.
+      # @deprecated Use #after_package_file_create.
       def after_package_create(package)
+        :UNUSED
       end
     end
   end
