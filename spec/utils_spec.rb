@@ -28,6 +28,14 @@ describe FPM::Cookery::Utils do
     def run_go_build_hash
       go :build, :mod => 'vendor', :v => true
     end
+
+    def run_patch_level
+      patch 'file.patch', 'one'
+    end
+
+    def run_patch_missing
+      patch 'missing.patch'
+    end
   end
 
   let(:test) { TestUtils.new }
@@ -79,6 +87,16 @@ describe FPM::Cookery::Utils do
         expect(test).to receive(:system).with('go', 'build', '--mod=vendor', '--v')
         test.run_go_build_hash
       end
+    end
+  end
+  describe '#patch' do
+    it 'raises error if level is not an integer' do
+      expect { test.run_patch_level }.to raise_error("patch level must be integer")
+    end
+
+    it 'raises error if file does not exist' do
+      allow(File).to receive(:exist?).and_return(false)
+      expect { test.run_patch_missing }.to raise_error("missing.patch does not exist")
     end
   end
 end
