@@ -86,7 +86,7 @@ module FPM
       alias_method :inreplace, :inline_replace # homebrew compat
 
       def patch(src, level = 0)
-        raise "patch level must be integer" unless level.is_a?(Fixnum)
+        raise "patch level must be integer" unless level.is_a?(::Integer)
         raise "#{src} does not exist" unless File.exist? src
 
         if "#{src}".end_with?('.gz')
