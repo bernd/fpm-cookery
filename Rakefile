@@ -6,6 +6,25 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
 
+namespace 'test:ruby' do |ns|
+  src = File.dirname(File.expand_path(__FILE__))
+
+  %w(3.4 3.3 3.2 3.1 3.0 2.7).each do |version|
+    task version do
+      sh %(
+        docker run -i --rm -v #{src}:/src ruby:#{version}
+        bash -c '
+        git config --global --add safe.directory /src/.git
+        && git clone -s /src /work
+        && cd /work
+        && bundle install -j 4
+        && bundle exec rake
+        '
+      ).gsub(/\s+/, ' ').strip
+    end
+  end
+end
+
 namespace :docs do |ns|
   require 'systemu'
 
