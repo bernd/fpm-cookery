@@ -21,7 +21,7 @@ module FPM
         _recipe.omnibus_recipes.each do |name|
           recipe_file = build_recipe_file_path(name)
           Log.info "Loading dependency recipe #{name} from #{recipe_file}"
-          unless File.exists?(recipe_file)
+          unless File.exist?(recipe_file)
             error_message = "Cannot find a recipe for #{name} at #{recipe_file}"
             Log.fatal error_message
             raise Error::ExecutionFailure, error_message

@@ -1,3 +1,8 @@
+# v0.37.0 (2023-04-04)
+* Add `osfamily` fact and choose package target based on it. (FooBarQuaxx / #216)
+* Install Sphinx toolchain for GitHub Action workflow. (FooBarQuaxx / #217)
+* Add support for Ruby 3.2. (FooBarQuaxx / #218, bernd / #219)
+
 # v0.36.0 (2022-07-13)
 * Add Dockerfile for Ubuntu 18.04.
 * Allow newer versions of Puppet (gmathes / #211)

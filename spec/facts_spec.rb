@@ -69,81 +69,59 @@ describe "Facts" do
     end
   end
 
+  describe "osfamily" do
+    include_context "mock facts", { :osfamily => 'RedHat' }
+
+    it "is using Facter to autodetect the osfamily" do
+      expect(FPM::Cookery::Facts.osfamily).to eq(:redhat)
+    end
+
+    it "can be set" do
+      FPM::Cookery::Facts.platform = 'RedHat'
+      expect(FPM::Cookery::Facts.osfamily).to eq(:redhat)
+    end
+  end
+
   describe "target" do
 
-    describe "with platform Scientific" do
+    describe "with os family RedHat" do
       it "returns rpm" do
-        FPM::Cookery::Facts.platform = 'Scientific'
+        FPM::Cookery::Facts.osfamily = 'RedHat'
         expect(FPM::Cookery::Facts.target).to eq(:rpm)
       end
     end
 
-    describe "with platform CentOS" do
+    describe "with os family Suse" do
       it "returns rpm" do
-        FPM::Cookery::Facts.platform = 'CentOS'
+        FPM::Cookery::Facts.osfamily = 'Suse'
         expect(FPM::Cookery::Facts.target).to eq(:rpm)
       end
     end
 
-    describe "with platform RedHat" do
-      it "returns rpm" do
-        FPM::Cookery::Facts.platform = 'RedHat'
-        expect(FPM::Cookery::Facts.target).to eq(:rpm)
-      end
-    end
-
-    describe "with platform Fedora" do
-      it "returns rpm" do
-        FPM::Cookery::Facts.platform = 'Fedora'
-        expect(FPM::Cookery::Facts.target).to eq(:rpm)
-      end
-    end
-
-    describe "with platform Amazon" do
-      it "returns rpm" do
-        FPM::Cookery::Facts.platform = 'Amazon'
-        expect(FPM::Cookery::Facts.target).to eq(:rpm)
-      end
-    end
-
-    describe "with platform OracleLinux" do
-      it "returns rpm" do
-        FPM::Cookery::Facts.platform = 'OracleLinux'
-        expect(FPM::Cookery::Facts.target).to eq(:rpm)
-      end
-    end
-
-    describe "with platform Debian" do
+    describe "with os family Debian" do
       it "returns deb" do
-        FPM::Cookery::Facts.platform = 'Debian'
+        FPM::Cookery::Facts.osfamily = 'Debian'
         expect(FPM::Cookery::Facts.target).to eq(:deb)
       end
     end
 
-    describe "with platform Ubuntu" do
-      it "returns deb" do
-        FPM::Cookery::Facts.platform = 'Ubuntu'
-        expect(FPM::Cookery::Facts.target).to eq(:deb)
-      end
-    end
-
-    describe "with platform Darwin" do
+    describe "with os family Darwin" do
       it "returns osxpkg" do
-        FPM::Cookery::Facts.platform = 'Darwin'
+        FPM::Cookery::Facts.osfamily = 'Darwin'
         expect(FPM::Cookery::Facts.target).to eq(:osxpkg)
       end
     end
 
-    describe "with platform Alpine" do
+    describe "with os family Alpine" do
       it "returns apk" do
-        FPM::Cookery::Facts.platform = 'Alpine'
+        FPM::Cookery::Facts.osfamily = 'Alpine'
         expect(FPM::Cookery::Facts.target).to eq(:apk)
       end
     end
 
-    describe "with an unknown platform" do
+    describe "with an unknown os family" do
       it "returns nil" do
-        FPM::Cookery::Facts.platform = '___X___'
+        FPM::Cookery::Facts.osfamily = '___X___'
         expect(FPM::Cookery::Facts.target).to eq(nil)
       end
     end

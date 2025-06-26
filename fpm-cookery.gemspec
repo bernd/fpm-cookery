@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "json_pure", "~> 2.6"
   s.add_runtime_dependency "safe_yaml", "~> 1.0.4"
   s.add_runtime_dependency "uri-ssh_git", "~> 2.0"
+  s.add_runtime_dependency "base64", "~> 0.3.0"
 end

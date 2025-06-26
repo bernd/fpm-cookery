@@ -27,9 +27,6 @@ module FPM
         # Provides a default scope, and attempts to look up the key both as a
         # string and as a symbol.
         def lookup(key, default = nil, scope = self.scope, *rest)
-          
-          (Gem::Version.new(::Hiera.version) < Gem::Version.new('2.0.0') &&
-               super(key.to_sym, default, scope, *rest)) ||
             super(key.to_s, default, scope, *rest)
         end
         alias_method :[], :lookup
