@@ -85,6 +85,24 @@ describe 'Version' do
         expect(version.epoch).to eq(nil)
       end
     end
+
+    context 'with epoch set in recipe' do
+      it 'returns the recipe epoch' do
+        recipe.version = '1.2.3'
+        recipe.epoch = 2
+
+        expect(version.epoch).to eq('2') # Must be a string
+      end
+    end
+
+    context 'with epoch set in recipe version and epoch' do
+      it 'raises an Misconfiguration error' do
+        recipe.version = '3:1.2.3'
+        recipe.epoch = 2
+
+        expect { version.epoch }.to raise_error(FPM::Cookery::Error::Misconfiguration)
+      end
+    end
   end
 
   describe '#to_s' do
