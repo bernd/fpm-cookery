@@ -1,3 +1,7 @@
+# v0.38.0 (2025-07-07)
+* Fix compatibility with Ruby 3.2. (aalmenar / #221)
+* Fix compatibility with Ruby 3.4. (#222)
+
 # v0.37.0 (2023-04-04)
 * Add `osfamily` fact and choose package target based on it. (FooBarQuaxx / #216)
 * Install Sphinx toolchain for GitHub Action workflow. (FooBarQuaxx / #217)
