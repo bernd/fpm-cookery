@@ -158,7 +158,7 @@ module FPM
       end
 
       def to_json
-        JSON.unparse(to_h)
+        JSON.generate(to_h)
       end
 
       def to_pretty_json
