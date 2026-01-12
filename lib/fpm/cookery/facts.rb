@@ -159,8 +159,12 @@ module FPM
           return nil unless command_exists?('lsb_release')
           output = `lsb_release -cs 2>/dev/null`.strip
           return nil if output.empty?
+          # Validate output before creating symbol to prevent symbol table exhaustion
+          # Codenames are usually short (e.g., "bookworm", "jammy") and alphanumeric with hyphens
+          return nil if output.length > 64
+          return nil unless output.match?(/\A[a-zA-Z0-9._-]+\z/)
           output.downcase.to_sym
-        rescue
+        rescue Errno::ENOENT, IOError
           nil
         end
 

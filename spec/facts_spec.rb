@@ -155,6 +155,43 @@ describe "Facts" do
         expect(FPM::Cookery::Facts.lsbcodename).to eq(:focal)
       end
     end
+
+    context "with lsb_release fallback" do
+      before do
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with('/etc/os-release').and_return(true)
+        allow(File).to receive(:readlines).with('/etc/os-release').and_return([
+          'ID=debian'
+        ])
+        allow(FPM::Cookery::Facts).to receive(:system).and_return(true)
+      end
+
+      it "rejects output longer than 64 characters" do
+        long_output = 'a' * 65
+        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return(long_output)
+        expect(FPM::Cookery::Facts.lsbcodename).to be_nil
+      end
+
+      it "rejects output with invalid characters" do
+        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("bookworm; rm -rf /")
+        expect(FPM::Cookery::Facts.lsbcodename).to be_nil
+      end
+
+      it "accepts valid codenames with dots" do
+        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("n/a")
+        expect(FPM::Cookery::Facts.lsbcodename).to be_nil
+      end
+
+      it "accepts valid codenames with hyphens and underscores" do
+        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("test-code_name.1")
+        expect(FPM::Cookery::Facts.lsbcodename).to eq(:"test-code_name.1")
+      end
+
+      it "returns valid codename from lsb_release" do
+        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("bookworm\n")
+        expect(FPM::Cookery::Facts.lsbcodename).to eq(:bookworm)
+      end
+    end
   end
 
   describe "target" do
