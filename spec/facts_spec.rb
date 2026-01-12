@@ -355,4 +355,62 @@ describe "Facts" do
       end
     end
   end
+
+  describe "command_exists?" do
+    let(:tmpdir) { Dir.mktmpdir }
+    let(:fake_bin) { File.join(tmpdir, 'fake_cmd') }
+
+    before do
+      FileUtils.touch(fake_bin)
+      FileUtils.chmod(0755, fake_bin)
+    end
+
+    after do
+      FileUtils.rm_rf(tmpdir)
+    end
+
+    it "returns true when command exists in PATH" do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('PATH').and_return(tmpdir)
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'fake_cmd')).to be true
+    end
+
+    it "returns false when command does not exist in PATH" do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('PATH').and_return(tmpdir)
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'nonexistent')).to be false
+    end
+
+    it "returns false for command names with semicolons" do
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'cmd; rm -rf /')).to be false
+    end
+
+    it "returns false for command names with pipes" do
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'cmd | cat')).to be false
+    end
+
+    it "returns false for command names with backticks" do
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'cmd`whoami`')).to be false
+    end
+
+    it "returns false for command names with path traversal" do
+      expect(FPM::Cookery::Facts.send(:command_exists?, '../bin/cmd')).to be false
+    end
+
+    it "returns false for command names with absolute paths" do
+      expect(FPM::Cookery::Facts.send(:command_exists?, '/usr/bin/cmd')).to be false
+    end
+
+    it "returns false when PATH is empty" do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('PATH').and_return('')
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'fake_cmd')).to be false
+    end
+
+    it "returns false when PATH is nil" do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('PATH').and_return(nil)
+      expect(FPM::Cookery::Facts.send(:command_exists?, 'fake_cmd')).to be false
+    end
+  end
 end

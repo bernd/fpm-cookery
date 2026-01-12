@@ -184,7 +184,13 @@ module FPM
         end
 
         def command_exists?(cmd)
-          system("command -v #{cmd} >/dev/null 2>&1")
+          # Validate command name - must be simple name, no paths or shell metacharacters
+          return false unless cmd.match?(/\A[a-zA-Z0-9._-]+\z/)
+
+          ENV['PATH'].to_s.split(File::PATH_SEPARATOR).any? do |dir|
+            path = File.join(dir, cmd)
+            File.executable?(path) && File.file?(path)
+          end
         end
       end
     end
