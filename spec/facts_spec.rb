@@ -356,6 +356,48 @@ describe "Facts" do
     end
   end
 
+  describe "detect_redhat_platform" do
+    it "returns :redhat when file cannot be read (permission denied)" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_raise(Errno::EACCES)
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:redhat)
+    end
+
+    it "returns :redhat when file disappears after exist check (ENOENT)" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_raise(Errno::ENOENT)
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:redhat)
+    end
+
+    it "returns :redhat when path is a directory (EISDIR)" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_raise(Errno::EISDIR)
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:redhat)
+    end
+
+    it "returns :redhat on IO error" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_raise(IOError)
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:redhat)
+    end
+
+    it "detects CentOS from redhat-release content" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_return('CentOS Linux release 7.9')
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:centos)
+    end
+
+    it "detects Rocky from redhat-release content" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_return('Rocky Linux release 9.2')
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:rocky)
+    end
+
+    it "detects Fedora from redhat-release content" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_return('Fedora release 41')
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:fedora)
+    end
+
+    it "returns :redhat for unrecognized content" do
+      allow(File).to receive(:read).with('/etc/redhat-release').and_return('Some Unknown Linux')
+      expect(FPM::Cookery::Facts.send(:detect_redhat_platform)).to eq(:redhat)
+    end
+  end
+
   describe "command_exists?" do
     let(:tmpdir) { Dir.mktmpdir }
     let(:fake_bin) { File.join(tmpdir, 'fake_cmd') }

@@ -130,7 +130,7 @@ module FPM
           when /scientific/ then :scientific
           else :redhat
           end
-        rescue
+        rescue Errno::ENOENT, Errno::EACCES, Errno::EISDIR, IOError
           :redhat
         end
 
