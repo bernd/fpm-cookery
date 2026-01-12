@@ -158,7 +158,7 @@ module FPM
       end
 
       def to_json
-        JSON.unparse(to_h)
+        JSON.generate(to_h)
       end
 
       def to_pretty_json
@@ -166,7 +166,7 @@ module FPM
       end
 
       def template(format)
-        renderer = ERB.new(format, nil, '-')
+        renderer = ERB.new(format, trim_mode: '-')
         renderer.result(binding)
       rescue NameError, NoMethodError => e
         message = "Error evaluating format string: no attribute `#{e.name}' for recipe"
