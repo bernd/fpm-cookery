@@ -2,6 +2,8 @@ require 'rbconfig'
 
 module FPM
   module Cookery
+    class PlatformDetectionError < StandardError; end
+
     class Facts
       class << self
         def arch
@@ -85,7 +87,7 @@ module FPM
           return id.to_sym if id && !id.empty?
 
           # Fallback detection for older systems
-          case
+          result = case
           when File.exist?('/etc/debian_version')
             :debian
           when File.exist?('/etc/redhat-release')
@@ -101,6 +103,19 @@ module FPM
           when RUBY_PLATFORM.include?('darwin')
             :darwin
           end
+
+          return result if result
+
+          raise PlatformDetectionError, <<~MSG.strip
+            Unable to detect platform. Checked:
+            - /etc/os-release (ID field)
+            - /etc/debian_version, /etc/redhat-release, /etc/alpine-release
+            - /etc/arch-release, /etc/gentoo-release, /etc/SuSE-release
+            - RUBY_PLATFORM for darwin
+
+            Set platform manually: FPM::Cookery::Facts.platform = 'debian'
+            Or use --platform option with fpm-cook command.
+          MSG
         end
 
         def detect_redhat_platform

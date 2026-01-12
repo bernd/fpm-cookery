@@ -52,6 +52,51 @@ describe "Facts" do
       FPM::Cookery::Facts.platform = 'CentOS'
       expect(FPM::Cookery::Facts.platform).to eq(:centos)
     end
+
+    context "when platform detection fails completely" do
+      before do
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with('/etc/os-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/debian_version').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/redhat-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/alpine-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/arch-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/gentoo-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/SuSE-release').and_return(false)
+        stub_const('RUBY_PLATFORM', 'x86_64-linux')
+      end
+
+      it "raises PlatformDetectionError" do
+        expect { FPM::Cookery::Facts.platform }.to raise_error(FPM::Cookery::PlatformDetectionError)
+      end
+
+      it "includes helpful message in error" do
+        expect { FPM::Cookery::Facts.platform }.to raise_error(/Unable to detect platform/)
+      end
+
+      it "suggests manual override in error message" do
+        expect { FPM::Cookery::Facts.platform }.to raise_error(/Set platform manually/)
+      end
+    end
+
+    context "when platform is set manually before detection" do
+      before do
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with('/etc/os-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/debian_version').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/redhat-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/alpine-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/arch-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/gentoo-release').and_return(false)
+        allow(File).to receive(:exist?).with('/etc/SuSE-release').and_return(false)
+        stub_const('RUBY_PLATFORM', 'x86_64-linux')
+      end
+
+      it "does not raise error when platform is pre-set" do
+        FPM::Cookery::Facts.platform = 'debian'
+        expect(FPM::Cookery::Facts.platform).to eq(:debian)
+      end
+    end
   end
 
   describe "osrelease" do
