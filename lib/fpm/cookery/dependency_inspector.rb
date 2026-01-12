@@ -70,7 +70,10 @@ module FPM
           return true unless package_suitable?(package)
 
           backend = current_backend
-          return true unless backend
+          unless backend
+            warn_unsupported_platform_once
+            return true
+          end
 
           escaped_pkg = esc(package.to_s)
           backend[:check].call(escaped_pkg)
@@ -117,6 +120,13 @@ module FPM
 
         def esc(str)
           Shellwords.escape(str.to_s)
+        end
+
+        def warn_unsupported_platform_once
+          return if @unsupported_platform_warned
+          @unsupported_platform_warned = true
+          Log.warn "Unsupported platform '#{Facts.osfamily}'. " \
+                   "Cannot verify packages; assuming all dependencies are installed."
         end
       end
     end

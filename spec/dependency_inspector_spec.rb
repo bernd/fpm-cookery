@@ -122,10 +122,18 @@ describe FPM::Cookery::DependencyInspector do
     context 'on unsupported platform' do
       before do
         FPM::Cookery::Facts.osfamily = 'unknown'
+        described_class.instance_variable_set(:@unsupported_platform_warned, false)
       end
 
-      it 'returns true (skip check)' do
+      it 'returns true and logs warning' do
+        expect(FPM::Cookery::Log).to receive(:warn).with(/Unsupported platform.*unknown/)
         expect(described_class.package_installed?('curl')).to be true
+      end
+
+      it 'only warns once for multiple packages' do
+        expect(FPM::Cookery::Log).to receive(:warn).once
+        described_class.package_installed?('curl')
+        described_class.package_installed?('wget')
       end
     end
 
