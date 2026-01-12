@@ -5,26 +5,28 @@ require 'fpm/cookery/log'
 module FPM
   module Cookery
     class DependencyInspector
+      # Backend commands for each OS family.
+      # Note: Lambdas receive pre-escaped package names from calling methods.
       BACKENDS = {
         :debian => {
-          :check   => lambda { |pkg| system("dpkg-query -W -f='${Status}' #{esc(pkg)} 2>/dev/null | grep -q 'install ok installed'") },
-          :install => lambda { |pkg| system("apt-get install -y #{esc(pkg)}") }
+          :check   => lambda { |pkg| system("dpkg-query -W -f='${Status}' #{pkg} 2>/dev/null | grep -q 'install ok installed'") },
+          :install => lambda { |pkg| system("apt-get install -y #{pkg}") }
         },
         :redhat => {
-          :check   => lambda { |pkg| system("rpm -q #{esc(pkg)} >/dev/null 2>&1") },
-          :install => lambda { |pkg| system("yum install -y #{esc(pkg)}") }
+          :check   => lambda { |pkg| system("rpm -q #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("yum install -y #{pkg}") }
         },
         :suse => {
-          :check   => lambda { |pkg| system("rpm -q #{esc(pkg)} >/dev/null 2>&1") },
-          :install => lambda { |pkg| system("zypper install -y #{esc(pkg)}") }
+          :check   => lambda { |pkg| system("rpm -q #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("zypper install -y #{pkg}") }
         },
         :alpine => {
-          :check   => lambda { |pkg| system("apk info -e #{esc(pkg)} >/dev/null 2>&1") },
-          :install => lambda { |pkg| system("apk add #{esc(pkg)}") }
+          :check   => lambda { |pkg| system("apk info -e #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("apk add #{pkg}") }
         },
         :archlinux => {
-          :check   => lambda { |pkg| system("pacman -Q #{esc(pkg)} >/dev/null 2>&1") },
-          :install => lambda { |pkg| system("pacman -S --noconfirm #{esc(pkg)}") }
+          :check   => lambda { |pkg| system("pacman -Q #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("pacman -S --noconfirm #{pkg}") }
         }
       }.freeze
 
@@ -70,7 +72,8 @@ module FPM
           backend = current_backend
           return true unless backend
 
-          backend[:check].call(package.to_s)
+          escaped_pkg = esc(package.to_s)
+          backend[:check].call(escaped_pkg)
         end
 
         def install_package(package)
@@ -83,7 +86,8 @@ module FPM
             exit 1
           end
 
-          success = backend[:install].call(package.to_s)
+          escaped_pkg = esc(package.to_s)
+          success = backend[:install].call(escaped_pkg)
           unless success
             Log.fatal "Failed to install package '#{package}'"
             exit 1
@@ -114,11 +118,6 @@ module FPM
         def esc(str)
           Shellwords.escape(str.to_s)
         end
-      end
-
-      # Make esc available to lambdas
-      def self.esc(str)
-        Shellwords.escape(str.to_s)
       end
     end
   end
