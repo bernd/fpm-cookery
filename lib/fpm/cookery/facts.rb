@@ -44,6 +44,7 @@ module FPM
                       when :debian        then :deb
                       when :darwin        then :osxpkg
                       when :alpine        then :apk
+                      when :archlinux     then :pacman
                       end
         end
 
