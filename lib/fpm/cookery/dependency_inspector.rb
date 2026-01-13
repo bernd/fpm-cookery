@@ -9,22 +9,27 @@ module FPM
       # Note: Lambdas receive pre-escaped package names from calling methods.
       BACKENDS = {
         :debian => {
+          :update  => lambda { system("apt-get update -qq") },
           :check   => lambda { |pkg| system("dpkg-query -W -f='${Status}' #{pkg} 2>/dev/null | grep -q 'install ok installed'") },
           :install => lambda { |pkg| system("apt-get install -y #{pkg}") }
         },
         :redhat => {
+          :update  => lambda { system("yum makecache -q") },
           :check   => lambda { |pkg| system("rpm -q #{pkg} >/dev/null 2>&1") },
           :install => lambda { |pkg| system("yum install -y #{pkg}") }
         },
         :suse => {
+          :update  => lambda { system("zypper refresh -q") },
           :check   => lambda { |pkg| system("rpm -q #{pkg} >/dev/null 2>&1") },
           :install => lambda { |pkg| system("zypper install -y #{pkg}") }
         },
         :alpine => {
+          :update  => lambda { system("apk update -q") },
           :check   => lambda { |pkg| system("apk info -e #{pkg} >/dev/null 2>&1") },
           :install => lambda { |pkg| system("apk add #{pkg}") }
         },
         :archlinux => {
+          :update  => lambda { system("pacman -Sy --noconfirm >/dev/null 2>&1") },
           :check   => lambda { |pkg| system("pacman -Q #{pkg} >/dev/null 2>&1") },
           :install => lambda { |pkg| system("pacman -S --noconfirm #{pkg}") }
         }
@@ -38,6 +43,8 @@ module FPM
             Log.warn "Unsupported platform '#{Facts.osfamily}'. Automatic dependency installation disabled."
             return
           end
+
+          update_package_db_once
 
           Log.info "Verifying build_depends and depends"
 
@@ -127,6 +134,18 @@ module FPM
           @unsupported_platform_warned = true
           Log.warn "Unsupported platform '#{Facts.osfamily}'. " \
                    "Cannot verify packages; assuming all dependencies are installed."
+        end
+
+        def update_package_db_once
+          return if @package_db_updated
+          @package_db_updated = true
+
+          backend = current_backend
+          return unless backend && backend[:update]
+          return unless Process.euid == 0
+
+          Log.info "Updating package database"
+          backend[:update].call
         end
       end
     end

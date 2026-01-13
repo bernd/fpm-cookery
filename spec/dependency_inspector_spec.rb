@@ -322,4 +322,122 @@ describe FPM::Cookery::DependencyInspector do
       described_class.package_installed?("pkg'name")
     end
   end
+
+  describe 'package database update' do
+    before do
+      described_class.instance_variable_set(:@package_db_updated, false)
+    end
+
+    context 'on debian family' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'debian'
+      end
+
+      it 'runs apt-get update when root' do
+        allow(Process).to receive(:euid).and_return(0)
+        allow(described_class).to receive(:system).with(anything).and_return(true)
+
+        expect(described_class).to receive(:system).with('apt-get update -qq').and_return(true)
+
+        described_class.verify!([], ['build-essential'])
+      end
+
+      it 'does not run update when not root' do
+        allow(Process).to receive(:euid).and_return(1000)
+        allow(described_class).to receive(:system).with(/dpkg-query/).and_return(true)
+
+        expect(described_class).not_to receive(:system).with('apt-get update -qq')
+
+        described_class.verify!([], [])
+      end
+    end
+
+    context 'on redhat family' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'redhat'
+      end
+
+      it 'runs yum makecache when root' do
+        allow(Process).to receive(:euid).and_return(0)
+        allow(described_class).to receive(:system).with(anything).and_return(true)
+
+        expect(described_class).to receive(:system).with('yum makecache -q').and_return(true)
+
+        described_class.verify!([], [])
+      end
+    end
+
+    context 'on alpine family' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'alpine'
+      end
+
+      it 'runs apk update when root' do
+        allow(Process).to receive(:euid).and_return(0)
+        allow(described_class).to receive(:system).with(anything).and_return(true)
+
+        expect(described_class).to receive(:system).with('apk update -q').and_return(true)
+
+        described_class.verify!([], [])
+      end
+    end
+
+    context 'on suse family' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'suse'
+      end
+
+      it 'runs zypper refresh when root' do
+        allow(Process).to receive(:euid).and_return(0)
+        allow(described_class).to receive(:system).with(anything).and_return(true)
+
+        expect(described_class).to receive(:system).with('zypper refresh -q').and_return(true)
+
+        described_class.verify!([], [])
+      end
+    end
+
+    context 'on archlinux family' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'archlinux'
+      end
+
+      it 'runs pacman -Sy when root' do
+        allow(Process).to receive(:euid).and_return(0)
+        allow(described_class).to receive(:system).with(anything).and_return(true)
+
+        expect(described_class).to receive(:system).with('pacman -Sy --noconfirm >/dev/null 2>&1').and_return(true)
+
+        described_class.verify!([], [])
+      end
+    end
+
+    context 'runs only once' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'debian'
+        allow(Process).to receive(:euid).and_return(0)
+      end
+
+      it 'only updates package database once across multiple verify! calls' do
+        allow(described_class).to receive(:system).with(/dpkg-query/).and_return(true)
+
+        expect(described_class).to receive(:system).with('apt-get update -qq').once.and_return(true)
+
+        described_class.verify!([], [])
+        described_class.verify!([], ['another-package'])
+      end
+    end
+
+    context 'on unsupported platform' do
+      before do
+        FPM::Cookery::Facts.osfamily = 'unknown'
+      end
+
+      it 'does not attempt to update' do
+        expect(described_class).not_to receive(:system).with(/update/)
+
+        described_class.verify!([], [])
+      end
+    end
+  end
 end
