@@ -89,36 +89,37 @@ namespace 'test:distro' do
   task :all => distros.keys
 end
 
-namespace :docs do |ns|
+begin
   require 'systemu'
 
-  docs_dir = File.join(File.dirname(File.expand_path(__FILE__)), 'docs')
+  namespace :docs do |ns|
+    docs_dir = File.join(File.dirname(File.expand_path(__FILE__)), 'docs')
 
-  Dir.chdir docs_dir do
-    sphinxbuild = ENV['SPHINXBUILD'] || 'sphinx-build'
+    Dir.chdir docs_dir do
+      sphinxbuild = ENV['SPHINXBUILD'] || 'sphinx-build'
 
-    status, stdout, stderr = systemu "make SPHINXBUILD=#{sphinxbuild} help"
-    if status != 0 and Rake.verbose
-      $stderr.puts '# Unable to load tasks in the `docs` namespace:'
-      stderr.each_line { |l| $stderr.puts "# #{l}" }
-    end
+      status, stdout, stderr = systemu "make SPHINXBUILD=#{sphinxbuild} help"
+      next if status != 0
 
-    desc 'clean up doc builds'
-    task 'clean' do
-      Dir.chdir docs_dir do
-        system "make SPHINXBUILD=#{sphinxbuild} clean"
-      end
-    end
-
-    stdout.each_line.grep(/^\s+(\w+?)\s+(.*)$/) do
-      t, d = $1, $2
-
-      desc d
-      task t do
+      desc 'clean up doc builds'
+      task 'clean' do
         Dir.chdir docs_dir do
-          system "make SPHINXBUILD=#{sphinxbuild} #{t}"
+          system "make SPHINXBUILD=#{sphinxbuild} clean"
+        end
+      end
+
+      stdout.each_line.grep(/^\s+(\w+?)\s+(.*)$/) do
+        t, d = $1, $2
+
+        desc d
+        task t do
+          Dir.chdir docs_dir do
+            system "make SPHINXBUILD=#{sphinxbuild} #{t}"
+          end
         end
       end
     end
   end
+rescue LoadError
+  # systemu gem not available; skip docs tasks
 end
