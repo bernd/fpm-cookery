@@ -1,0 +1,25 @@
+name: Distro Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.4"
+        bundler-cache: true
+
+    - name: Build and test
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+        bundle exec rake test:distro:all
