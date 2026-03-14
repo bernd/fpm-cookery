@@ -1,100 +1,153 @@
+require 'shellwords'
 require 'fpm/cookery/facts'
 require 'fpm/cookery/log'
-
-begin
-  require 'puppet'
-  require 'puppet/resource'
-  require 'puppet/transaction/report'
-
-  # Init Puppet before using it
-  Puppet.initialize_settings
-rescue Exception
-end
 
 module FPM
   module Cookery
     class DependencyInspector
-      def self.verify!(depends, build_depends)
-        unless defined?(Puppet::Resource)
-          Log.warn "Unable to load Puppet. Automatic dependency installation disabled."
-          return
-        end
+      # Backend commands for each OS family.
+      # Note: Lambdas receive pre-escaped package names from calling methods.
+      BACKENDS = {
+        :debian => {
+          :update  => lambda { system("apt-get update -qq") },
+          :check   => lambda { |pkg| system("dpkg-query -W -f='${Status}' #{pkg} 2>/dev/null | grep -q 'install ok installed'") },
+          :install => lambda { |pkg| system("apt-get install -y #{pkg}") }
+        },
+        :redhat => {
+          :update  => lambda { system("yum makecache -q") },
+          :check   => lambda { |pkg| system("rpm -q #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("yum install -y #{pkg}") }
+        },
+        :suse => {
+          :update  => lambda { system("zypper refresh -q") },
+          :check   => lambda { |pkg| system("rpm -q #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("zypper install -y #{pkg}") }
+        },
+        :alpine => {
+          :update  => lambda { system("apk update -q") },
+          :check   => lambda { |pkg| system("apk info -e #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("apk add #{pkg}") }
+        },
+        :archlinux => {
+          :update  => lambda { system("pacman -Sy --noconfirm >/dev/null 2>&1") },
+          :check   => lambda { |pkg| system("pacman -Q #{pkg} >/dev/null 2>&1") },
+          :install => lambda { |pkg| system("pacman -S --noconfirm #{pkg}") }
+        }
+      }.freeze
 
-        Log.info "Verifying build_depends and depends with Puppet"
+      class << self
+        def verify!(depends, build_depends)
+          backend = current_backend
 
-        missing = missing_packages(build_depends + depends)
+          unless backend
+            Log.warn "Unsupported platform '#{Facts.osfamily}'. Automatic dependency installation disabled."
+            return
+          end
 
-        if missing.length == 0
-          Log.info "All build_depends and depends packages installed"
-        else
-          Log.info "Missing/wrong version packages: #{missing.join(', ')}"
-          if Process.euid != 0
-            Log.error "Not running as root; please run 'sudo fpm-cook install-deps' to install dependencies."
-            exit 1
+          update_package_db_once
+
+          Log.info "Verifying build_depends and depends"
+
+          missing = missing_packages(build_depends + depends)
+
+          if missing.length == 0
+            Log.info "All build_depends and depends packages installed"
           else
-            Log.info "Running as root; installing missing/wrong version build_depends and depends with Puppet"
-            missing.each do |package|
-              self.install_package(package)
+            Log.info "Missing/wrong version packages: #{missing.join(', ')}"
+            if Process.euid != 0
+              Log.error "Not running as root; please run 'sudo fpm-cook install-deps' to install dependencies."
+              exit 1
+            else
+              Log.info "Running as root; installing missing/wrong version build_depends and depends"
+              missing.each do |package|
+                install_package(package)
+              end
             end
           end
         end
 
-      end
-
-      def self.missing_packages(*pkgs)
-        pkgs.flatten.reject do |package|
-          self.package_installed?(package)
-        end
-      end
-
-      def self.package_installed?(package)
-        Log.info("Verifying package: #{package}")
-        return unless self.package_suitable?(package)
-
-        # Use Puppet in noop mode to see if the package exists
-        Puppet[:noop] = true
-        resource = Puppet::Resource.new("package", package, :parameters => {
-          :ensure => "present"
-        })
-        result    = Puppet::Resource.indirection.save(resource)[1]
-        !result.resource_statuses.values.first.out_of_sync
-      end
-
-      def self.install_package(package)
-        Log.info("Installing package: #{package}")
-        return unless self.package_suitable?(package)
-
-        # Use Puppet to install a package
-        Puppet[:noop] = false
-        resource = Puppet::Resource.new("package", package, :parameters => {
-          :ensure => "present"
-        })
-        result = Puppet::Resource.indirection.save(resource)[1]
-        failed = result.resource_statuses.values.first.failed
-        if failed
-          Log.fatal "While processing depends package '#{package}':"
-          result.logs.each {|log_line| Log.fatal log_line}
-          exit 1
-        else
-          result.logs.each {|log_line| Log.info log_line}
-        end
-      end
-
-      def self.package_suitable?(package)
-        # How can we handle "or" style depends?
-        if package =~ / \| /
-          Log.warn "Required package '#{package}' is an 'or' string; not attempting to find/install a package to satisfy"
-          return false
+        def missing_packages(*pkgs)
+          pkgs.flatten.reject do |package|
+            package_installed?(package)
+          end
         end
 
-        # We can't handle >=, <<, >>, <=, <, >
-        if package =~ />=|<<|>>|<=|<|>/
-          Log.warn "Required package '#{package}' has a relative version requirement; not attempting to find/install a package to satisfy"
-          return false
-        end
-        true
-      end
+        def package_installed?(package)
+          Log.info("Verifying package: #{package}")
+          return true unless package_suitable?(package)
 
+          backend = current_backend
+          unless backend
+            warn_unsupported_platform_once
+            return true
+          end
+
+          escaped_pkg = esc(package.to_s)
+          backend[:check].call(escaped_pkg)
+        end
+
+        def install_package(package)
+          Log.info("Installing package: #{package}")
+          return unless package_suitable?(package)
+
+          backend = current_backend
+          unless backend
+            Log.fatal "Cannot install package: unsupported platform '#{Facts.osfamily}'"
+            exit 1
+          end
+
+          escaped_pkg = esc(package.to_s)
+          success = backend[:install].call(escaped_pkg)
+          unless success
+            Log.fatal "Failed to install package '#{package}'"
+            exit 1
+          end
+        end
+
+        def package_suitable?(package)
+          # How can we handle "or" style depends?
+          if package.to_s =~ / \| /
+            Log.warn "Required package '#{package}' is an 'or' string; not attempting to find/install a package to satisfy"
+            return false
+          end
+
+          # We can't handle >=, <<, >>, <=, <, >
+          if package.to_s =~ />=|<<|>>|<=|<|>/
+            Log.warn "Required package '#{package}' has a relative version requirement; not attempting to find/install a package to satisfy"
+            return false
+          end
+          true
+        end
+
+        private
+
+        def current_backend
+          BACKENDS[Facts.osfamily]
+        end
+
+        def esc(str)
+          Shellwords.escape(str.to_s)
+        end
+
+        def warn_unsupported_platform_once
+          return if @unsupported_platform_warned
+          @unsupported_platform_warned = true
+          Log.warn "Unsupported platform '#{Facts.osfamily}'. " \
+                   "Cannot verify packages; assuming all dependencies are installed."
+        end
+
+        def update_package_db_once
+          return if @package_db_updated
+          @package_db_updated = true
+
+          backend = current_backend
+          return unless backend && backend[:update]
+          return unless Process.euid == 0
+
+          Log.info "Updating package database"
+          backend[:update].call
+        end
+      end
     end
   end
 end

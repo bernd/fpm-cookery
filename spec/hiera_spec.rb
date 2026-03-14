@@ -5,7 +5,6 @@ require 'fpm/cookery/facts'
 require 'fpm/cookery/hiera'
 require 'fpm/cookery/recipe'
 require 'hiera/fpm_cookery_logger'
-require 'facter'
 
 describe 'Hiera' do
   describe 'Defaults' do
@@ -55,8 +54,8 @@ describe 'Hiera' do
       end
 
       context 'given an otherwise unresolvable argument' do
-        it 'consults Facter' do
-          expect(scope['processorcount']).to eq(Facter['processorcount'].value)
+        it 'returns nil' do
+          expect(scope['nonexistent_key']).to be_nil
         end
       end
     end
