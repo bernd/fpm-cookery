@@ -54,8 +54,8 @@ describe 'Hiera' do
       end
 
       context 'given an otherwise unresolvable argument' do
-        it 'returns nil' do
-          expect(scope['nonexistent_key']).to be_nil
+        it 'raises a ScopeError' do
+          expect { scope['nonexistent_key'] }.to raise_error(FPM::Cookery::Hiera::ScopeError, /Unknown Hiera scope key/)
         end
       end
     end

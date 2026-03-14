@@ -442,9 +442,7 @@ describe "Recipe" do
 
   describe ".architectures" do
     before do
-      FPM::Cookery::Facts.class_eval do
-        def self.arch; :x86_64; end
-      end
+      allow(FPM::Cookery::Facts).to receive(:arch).and_return(:x86_64)
     end
 
     describe "with a list of architectures" do
@@ -492,20 +490,7 @@ describe "Recipe" do
 
   describe ".targets" do
     before do
-      FPM::Cookery::Facts.class_eval do
-        class << self
-          alias_method :target_orig, :target
-          def target; :rpm; end
-        end
-      end
-    end
-
-    after do
-      FPM::Cookery::Facts.class_eval do
-        class << self
-          alias_method :target, :target_orig
-        end
-      end
+      allow(FPM::Cookery::Facts).to receive(:target).and_return(:rpm)
     end
 
     describe "with a list of targets" do
