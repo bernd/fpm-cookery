@@ -14,6 +14,60 @@ describe "Facts" do
     it "returns a valid architecture" do
       expect(FPM::Cookery::Facts.arch).to_not be_nil
     end
+
+    context "on debian family" do
+      before do
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with('/etc/os-release').and_return(true)
+        allow(File).to receive(:readlines).with('/etc/os-release').and_return([
+          'ID=ubuntu',
+          'ID_LIKE=debian'
+        ])
+      end
+
+      context "when dpkg is available" do
+        before do
+          allow(FPM::Cookery::Facts).to receive(:find_command).with('dpkg').and_return('/usr/bin/dpkg')
+        end
+
+        it "returns amd64 from dpkg" do
+          allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/dpkg --print-architecture 2>/dev/null').and_return("amd64\n")
+          expect(FPM::Cookery::Facts.arch).to eq(:amd64)
+        end
+
+        it "returns arm64 from dpkg" do
+          allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/dpkg --print-architecture 2>/dev/null').and_return("arm64\n")
+          expect(FPM::Cookery::Facts.arch).to eq(:arm64)
+        end
+      end
+
+      context "when dpkg is not available" do
+        before do
+          allow(FPM::Cookery::Facts).to receive(:find_command).with('dpkg').and_return(nil)
+        end
+
+        it "raises PlatformDetectionError" do
+          expect { FPM::Cookery::Facts.arch }.to raise_error(FPM::Cookery::PlatformDetectionError, /dpkg is required/)
+        end
+      end
+    end
+
+    context "on non-debian family" do
+      before do
+        allow(File).to receive(:exist?).and_call_original
+        allow(File).to receive(:exist?).with('/etc/os-release').and_return(true)
+        allow(File).to receive(:readlines).with('/etc/os-release').and_return([
+          'ID=rocky',
+          'ID_LIKE="rhel centos fedora"'
+        ])
+      end
+
+      it "falls back to RbConfig host_cpu" do
+        arch = FPM::Cookery::Facts.arch
+        expect(arch).to be_a(Symbol)
+        expect(arch).to eq(RbConfig::CONFIG['host_cpu'].downcase.to_sym)
+      end
+    end
   end
 
   describe "platform" do
@@ -208,32 +262,32 @@ describe "Facts" do
         allow(File).to receive(:readlines).with('/etc/os-release').and_return([
           'ID=debian'
         ])
-        allow(FPM::Cookery::Facts).to receive(:system).and_return(true)
+        allow(FPM::Cookery::Facts).to receive(:find_command).with('lsb_release').and_return('/usr/bin/lsb_release')
       end
 
       it "rejects output longer than 64 characters" do
         long_output = 'a' * 65
-        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return(long_output)
+        allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/lsb_release -cs 2>/dev/null').and_return(long_output)
         expect(FPM::Cookery::Facts.lsbcodename).to be_nil
       end
 
       it "rejects output with invalid characters" do
-        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("bookworm; rm -rf /")
+        allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/lsb_release -cs 2>/dev/null').and_return("bookworm; rm -rf /")
         expect(FPM::Cookery::Facts.lsbcodename).to be_nil
       end
 
       it "accepts valid codenames with dots" do
-        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("n/a")
+        allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/lsb_release -cs 2>/dev/null').and_return("n/a")
         expect(FPM::Cookery::Facts.lsbcodename).to be_nil
       end
 
       it "accepts valid codenames with hyphens and underscores" do
-        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("test-code_name.1")
+        allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/lsb_release -cs 2>/dev/null').and_return("test-code_name.1")
         expect(FPM::Cookery::Facts.lsbcodename).to eq(:"test-code_name.1")
       end
 
       it "returns valid codename from lsb_release" do
-        allow(FPM::Cookery::Facts).to receive(:`).with('lsb_release -cs 2>/dev/null').and_return("bookworm\n")
+        allow(FPM::Cookery::Facts).to receive(:`).with('/usr/bin/lsb_release -cs 2>/dev/null').and_return("bookworm\n")
         expect(FPM::Cookery::Facts.lsbcodename).to eq(:bookworm)
       end
     end
@@ -272,6 +326,13 @@ describe "Facts" do
       it "returns apk" do
         FPM::Cookery::Facts.osfamily = 'Alpine'
         expect(FPM::Cookery::Facts.target).to eq(:apk)
+      end
+    end
+
+    describe "with os family Archlinux" do
+      it "returns pacman" do
+        FPM::Cookery::Facts.osfamily = 'Archlinux'
+        expect(FPM::Cookery::Facts.target).to eq(:pacman)
       end
     end
 

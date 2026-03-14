@@ -42,6 +42,13 @@ namespace 'test:distro' do
     'alpine-3.20'   => 'alpine:3.20',
     'fedora-40'     => 'fedora:40',
     'fedora-41'     => 'fedora:41',
+    # openSUSE Tumbleweed ships Ruby 4.0 which is incompatible with
+    # our dependencies (cabin/fpm require 'logger' which was removed
+    # from Ruby's standard library in 4.0). Leap 15.x ships Ruby 2.5
+    # which is below our minimum (2.7). Re-enable when dependencies
+    # support Ruby 4.0.
+    #'opensuse-tw'   => 'opensuse/tumbleweed:latest',
+    'archlinux'     => 'archlinux:latest',
   }
 
   distros.each do |name, image|
@@ -55,16 +62,21 @@ namespace 'test:distro' do
       'dnf install -y ruby ruby-devel gcc gcc-c++ make git redhat-rpm-config'
     when /alpine/
       'apk add ruby ruby-dev build-base git'
+    when /opensuse/
+      'zypper -n install ruby ruby-devel gcc gcc-c++ make git'
+    when /archlinux/
+      'pacman -Sy --noconfirm ruby base-devel git'
     end
 
-    # Install bundler with version check for Ruby < 3.0
-    bundler_install = 'ruby -e "puts RUBY_VERSION" | grep -q "^2\\." && gem install bundler -v 2.4.22 || gem install bundler'
+    # Bundler >= 2.5 requires Ruby >= 3.2. Use 2.4.22 for older Ruby.
+    bundler_install = 'ruby -e "exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new(%(3.2)) ? 0 : 1)" && gem install bundler || gem install bundler -v 2.4.22'
 
     desc "Run tests on #{name}"
     task name do
       sh %(docker run -i --rm -v #{src}:/src #{image} sh -c '
         #{install_cmd} &&
         #{bundler_install} &&
+        export PATH="$(ruby -e "puts Gem.user_dir")/bin:$PATH" &&
         git config --global --add safe.directory /src &&
         cp -r /src /work && cd /work &&
         bundle install -j 4 &&
@@ -77,36 +89,37 @@ namespace 'test:distro' do
   task :all => distros.keys
 end
 
-namespace :docs do |ns|
+begin
   require 'systemu'
 
-  docs_dir = File.join(File.dirname(File.expand_path(__FILE__)), 'docs')
+  namespace :docs do |ns|
+    docs_dir = File.join(File.dirname(File.expand_path(__FILE__)), 'docs')
 
-  Dir.chdir docs_dir do
-    sphinxbuild = ENV['SPHINXBUILD'] || 'sphinx-build'
+    Dir.chdir docs_dir do
+      sphinxbuild = ENV['SPHINXBUILD'] || 'sphinx-build'
 
-    status, stdout, stderr = systemu "make SPHINXBUILD=#{sphinxbuild} help"
-    if status != 0 and Rake.verbose
-      $stderr.puts '# Unable to load tasks in the `docs` namespace:'
-      stderr.each_line { |l| $stderr.puts "# #{l}" }
-    end
+      status, stdout, stderr = systemu "make SPHINXBUILD=#{sphinxbuild} help"
+      next if status != 0
 
-    desc 'clean up doc builds'
-    task 'clean' do
-      Dir.chdir docs_dir do
-        system "make SPHINXBUILD=#{sphinxbuild} clean"
-      end
-    end
-
-    stdout.each_line.grep(/^\s+(\w+?)\s+(.*)$/) do
-      t, d = $1, $2
-
-      desc d
-      task t do
+      desc 'clean up doc builds'
+      task 'clean' do
         Dir.chdir docs_dir do
-          system "make SPHINXBUILD=#{sphinxbuild} #{t}"
+          system "make SPHINXBUILD=#{sphinxbuild} clean"
+        end
+      end
+
+      stdout.each_line.grep(/^\s+(\w+?)\s+(.*)$/) do
+        t, d = $1, $2
+
+        desc d
+        task t do
+          Dir.chdir docs_dir do
+            system "make SPHINXBUILD=#{sphinxbuild} #{t}"
+          end
         end
       end
     end
   end
+rescue LoadError
+  # systemu gem not available; skip docs tasks
 end

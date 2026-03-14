@@ -4,6 +4,7 @@ require 'fpm/cookery/dependency_inspector'
 describe FPM::Cookery::DependencyInspector do
   before do
     FPM::Cookery::Facts.reset!
+    described_class.reset!
   end
 
   describe '.package_suitable?' do
@@ -122,7 +123,6 @@ describe FPM::Cookery::DependencyInspector do
     context 'on unsupported platform' do
       before do
         FPM::Cookery::Facts.osfamily = 'unknown'
-        described_class.instance_variable_set(:@unsupported_platform_warned, false)
       end
 
       it 'returns true and logs warning' do
@@ -324,10 +324,6 @@ describe FPM::Cookery::DependencyInspector do
   end
 
   describe 'package database update' do
-    before do
-      described_class.instance_variable_set(:@package_db_updated, false)
-    end
-
     context 'on debian family' do
       before do
         FPM::Cookery::Facts.osfamily = 'debian'
