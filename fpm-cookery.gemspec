@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "pry"
   s.add_development_dependency "simplecov", "~> 0.11"
+  s.add_development_dependency "ostruct"
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "hiera", "~> 3.12"
   s.add_runtime_dependency "addressable", "~> 2.8"
@@ -31,4 +32,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "safe_yaml", "~> 1.0.4"
   s.add_runtime_dependency "uri-ssh_git", "~> 2.0"
   s.add_runtime_dependency "base64", "~> 0.3.0"
+  s.add_runtime_dependency "erb", "~> 6.0"
 end
