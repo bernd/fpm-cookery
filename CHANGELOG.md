@@ -1,3 +1,23 @@
+# next
+
+**BREAKING:** Removal of Puppet and Facter dependencies! (aalmenar / #224)
+
+`Hiera::Scope#[]` now raises `FPM::Cookery::Hiera::ScopeError` when a key
+cannot be resolved through recipe methods or `FPM::Cookery::Facts`.
+Previously it returned nil silently, which could mask misconfigured Hiera data.
+
+Facter-specific facts like `processorcount` or `ipaddress` are no longer
+resolvable via `%{scope("key")}` interpolation. Only recipe methods and
+`FPM::Cookery::Facts` methods are available.
+
+The Puppet removal was required to add Ruby 4.0 support.
+
+Other changes:
+
+* Fix warning for json gem (aalmenar / #225)
+* Fix warning for erb deprecations (aalmenar / #226)
+* Add support for Ruby 4.0 (aalmenar / #227)
+
 # v0.38.0 (2025-07-07)
 * Fix compatibility with Ruby 3.2. (aalmenar / #221)
 * Fix compatibility with Ruby 3.4. (#222)
