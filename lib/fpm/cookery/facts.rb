@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'shellwords'
 
 module FPM
   module Cookery
@@ -77,6 +78,14 @@ module FPM
         end
 
         def detect_arch
+          case osfamily
+          when :debian
+            dpkg_path = find_command('dpkg')
+            raise PlatformDetectionError, "dpkg is required to detect architecture on Debian-based systems" unless dpkg_path
+            output = `#{Shellwords.escape(dpkg_path)} --print-architecture 2>/dev/null`.strip
+            return output.downcase.to_sym unless output.empty?
+          end
+
           arch = RbConfig::CONFIG['host_cpu']&.downcase
           return nil unless arch
           arch.to_sym
@@ -155,6 +164,10 @@ module FPM
             :gentoo
           when :darwin
             :darwin
+          else
+            warn "fpm-cookery: Unknown OS family for platform '#{source}'. " \
+                 "Set manually: FPM::Cookery::Facts.osfamily = 'debian'"
+            nil
           end
         end
 
@@ -172,8 +185,9 @@ module FPM
         end
 
         def lsb_release_codename
-          return nil unless command_exists?('lsb_release')
-          output = `lsb_release -cs 2>/dev/null`.strip
+          path = find_command('lsb_release')
+          return nil unless path
+          output = `#{Shellwords.escape(path)} -cs 2>/dev/null`.strip
           return nil if output.empty?
           # Validate output before creating symbol to prevent symbol table exhaustion
           # Codenames are usually short (e.g., "bookworm", "jammy") and alphanumeric with hyphens
@@ -185,13 +199,18 @@ module FPM
         end
 
         def command_exists?(cmd)
-          # Validate command name - must be simple name, no paths or shell metacharacters
-          return false unless cmd.match?(/\A[a-zA-Z0-9._-]+\z/)
+          !find_command(cmd).nil?
+        end
 
-          ENV['PATH'].to_s.split(File::PATH_SEPARATOR).any? do |dir|
+        def find_command(cmd)
+          # Validate command name - must be simple name, no paths or shell metacharacters
+          return nil unless cmd.match?(/\A[a-zA-Z0-9._-]+\z/)
+
+          ENV['PATH'].to_s.split(File::PATH_SEPARATOR).each do |dir|
             path = File.join(dir, cmd)
-            File.executable?(path) && File.file?(path)
+            return path if File.executable?(path) && File.file?(path)
           end
+          nil
         end
       end
     end

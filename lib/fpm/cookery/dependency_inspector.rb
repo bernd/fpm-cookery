@@ -119,6 +119,11 @@ module FPM
           true
         end
 
+        def reset!
+          @unsupported_platform_warned = false
+          @package_db_updated = false
+        end
+
         private
 
         def current_backend
@@ -138,14 +143,17 @@ module FPM
 
         def update_package_db_once
           return if @package_db_updated
-          @package_db_updated = true
 
           backend = current_backend
           return unless backend && backend[:update]
           return unless Process.euid == 0
 
           Log.info "Updating package database"
-          backend[:update].call
+          if backend[:update].call
+            @package_db_updated = true
+          else
+            Log.warn "Package database update failed; will retry on next verify"
+          end
         end
       end
     end
