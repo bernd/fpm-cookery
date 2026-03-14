@@ -1,6 +1,7 @@
 # next
 
-**BREAKING:** Removal of Puppet and Facter dependencies! (aalmenar / #224)
+> [!CAUTION]
+>**BREAKING CHANGE:** Removal of Puppet and Facter dependencies! (aalmenar / #224)
 
 `Hiera::Scope#[]` now raises `FPM::Cookery::Hiera::ScopeError` when a key
 cannot be resolved through recipe methods or `FPM::Cookery::Facts`.
@@ -12,7 +13,7 @@ resolvable via `%{scope("key")}` interpolation. Only recipe methods and
 
 The Puppet removal was required to add Ruby 4.0 support.
 
-Other changes:
+### Other changes
 
 * Fix warning for json gem (aalmenar / #225)
 * Fix warning for erb deprecations (aalmenar / #226)
