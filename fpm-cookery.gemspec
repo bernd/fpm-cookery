@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "pry"
   s.add_development_dependency "simplecov", "~> 0.11"
+  s.add_development_dependency "ostruct"
   s.add_runtime_dependency "fpm", "~> 1.1"
   s.add_runtime_dependency "hiera", "~> 3.12"
   s.add_runtime_dependency "addressable", "~> 2.8"
