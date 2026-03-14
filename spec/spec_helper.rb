@@ -1,4 +1,4 @@
-unless RUBY_ENGINE == "rbx"
+unless RUBY_ENGINE == "rbx" || ENV['COVERAGE'] == 'false'
   require "simplecov"
 
   formatters = [SimpleCov::Formatter::HTMLFormatter]

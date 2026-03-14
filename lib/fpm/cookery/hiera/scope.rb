@@ -1,4 +1,3 @@
-require 'facter'
 require 'fpm/cookery/facts'
 
 module FPM
@@ -14,9 +13,9 @@ module FPM
         end
 
         # Allow Hiera to perform +%{scope("key")}+ interpolations using data
-        # from the recipe class, +FPM::Cookery::Facts+, and +Facter+.  Expects
-        # +name+ to be a method name or +Facter+ fact name.  Returns the result
-        # of the lookup.  Will be +nil+ if lookup failed to fetch a result.
+        # from the recipe class and +FPM::Cookery::Facts+.  Expects +name+ to
+        # be a method name.  Returns the result of the lookup.  Will be +nil+
+        # if lookup failed to fetch a result.
         def [](name)
           [recipe, FPM::Cookery::Facts].each do |source|
             if source.respond_to?(name)
@@ -24,10 +23,7 @@ module FPM
             end
           end
 
-          # As a backup, try to retrieve it from +Facter+.
-          unless (result = Facter[name]).nil?
-            result.value
-          end
+          nil
         end
 
         # Newer versions of Hiera requires also +#include?+ method for context
@@ -36,8 +32,7 @@ module FPM
             return true if source.respond_to?(name)
           end
 
-          # If not found, check in +Facter+.
-          ! Facter[name].nil?
+          false
         end
       end
     end

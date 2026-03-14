@@ -25,6 +25,58 @@ namespace 'test:ruby' do |ns|
   end
 end
 
+namespace 'test:distro' do
+  src = File.dirname(File.expand_path(__FILE__))
+
+  distros = {
+    'debian-11'     => 'debian:11',
+    'debian-12'     => 'debian:12',
+    'debian-13'     => 'debian:trixie',
+    'ubuntu-20.04'  => 'ubuntu:20.04',
+    'ubuntu-22.04'  => 'ubuntu:22.04',
+    'ubuntu-24.04'  => 'ubuntu:24.04',
+    'rocky-8'       => 'rockylinux:8',
+    'rocky-9'       => 'rockylinux:9',
+    'alpine-3.18'   => 'alpine:3.18',
+    'alpine-3.19'   => 'alpine:3.19',
+    'alpine-3.20'   => 'alpine:3.20',
+    'fedora-40'     => 'fedora:40',
+    'fedora-41'     => 'fedora:41',
+  }
+
+  distros.each do |name, image|
+    install_cmd = case image
+    when /debian|ubuntu/
+      'apt-get update && apt-get install -y ruby ruby-dev build-essential git'
+    when /rockylinux:8/
+      # Rocky 8 ships with Ruby 2.5, enable Ruby 3.1 module stream
+      'dnf module enable -y ruby:3.1 && dnf install -y ruby ruby-devel gcc gcc-c++ make git redhat-rpm-config'
+    when /rockylinux|fedora/
+      'dnf install -y ruby ruby-devel gcc gcc-c++ make git redhat-rpm-config'
+    when /alpine/
+      'apk add ruby ruby-dev build-base git'
+    end
+
+    # Install bundler with version check for Ruby < 3.0
+    bundler_install = 'ruby -e "puts RUBY_VERSION" | grep -q "^2\\." && gem install bundler -v 2.4.22 || gem install bundler'
+
+    desc "Run tests on #{name}"
+    task name do
+      sh %(docker run -i --rm -v #{src}:/src #{image} sh -c '
+        #{install_cmd} &&
+        #{bundler_install} &&
+        git config --global --add safe.directory /src &&
+        cp -r /src /work && cd /work &&
+        bundle install -j 4 &&
+        COVERAGE=false bundle exec rspec spec/facts_spec.rb spec/dependency_inspector_spec.rb spec/integration/native_detection_spec.rb
+      ').gsub(/\s+/, ' ').strip
+    end
+  end
+
+  desc 'Run tests on all distributions'
+  task :all => distros.keys
+end
+
 namespace :docs do |ns|
   require 'systemu'
 
