@@ -34,11 +34,10 @@ module FPM
         if args.last.is_a?(Hash)
           opts = args.pop
           args += opts.map{ |k,v|
-            option = k.to_s.gsub('_','-')
             if v == true
-              "--#{option}"
+              "--#{k}"
             else
-              "--#{option}=#{v}"
+              "--#{k}=#{v}"
             end
           }
         end
